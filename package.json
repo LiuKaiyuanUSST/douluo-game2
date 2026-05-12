@@ -1,0 +1,10 @@
+{
+  "name": "soul-awakening",
+  "main": "index.html",
+  "window": {
+    "title": "斗罗大陆·七魂觉醒",
+    "width": 840,
+    "height": 750
+  },
+  "chromium-args": "--allow-file-access-from-files"
+}

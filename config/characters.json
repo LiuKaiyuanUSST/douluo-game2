@@ -1,0 +1,83 @@
+{
+  "players": {
+    "ts": {
+      "id": "ts",
+      "name": "唐三",
+      "wuhun": "蓝银草",
+      "level": 1,
+      "color": "#4a90e2"
+    },
+    "xw": {
+      "id": "xw",
+      "name": "小舞",
+      "wuhun": "柔骨兔",
+      "level": 1,
+      "color": "#e24a90"
+    },
+    "dmb": {
+      "id": "dmb",
+      "name": "戴沐白",
+      "wuhun": "邪眸白虎",
+      "level": 1,
+      "color": "#f1c40f"
+    }
+  },
+  "enemies": {
+    "student": {
+      "id": "student",
+      "name": "诺丁学院学员",
+      "wuhun": "大角羊",
+      "level": 1,
+      "color": "#95a5a6"
+    },
+    "beast": {
+      "id": "beast",
+      "name": "索托城外魂兽",
+      "wuhun": "大角羊",
+      "level": 1,
+      "color": "#95a5a6"
+    },
+    "boss_ws": {
+      "id": "boss_ws",
+      "name": "王圣",
+      "wuhun": "豹子",
+      "level": 2,
+      "color": "#d35400"
+    },
+    "xw_boss": {
+      "id": "xw_boss",
+      "name": "小舞(Boss)",
+      "wuhun": "柔骨兔",
+      "level": 5,
+      "color": "#e24a90"
+    },
+    "boss_dmb_weak": {
+      "id": "boss_dmb_weak",
+      "name": "戴沐白",
+      "wuhun": "邪眸白虎",
+      "level": 1,
+      "color": "#f1c40f"
+    },
+    "boss_dmb": {
+      "id": "boss_dmb",
+      "name": "戴沐白(认真)",
+      "wuhun": "邪眸白虎",
+      "level": 3,
+      "color": "#f39c12"
+    },
+    "boss_zwj": {
+      "id": "boss_zwj",
+      "name": "赵无极",
+      "wuhun": "大力金刚熊",
+      "level": 2,
+      "color": "#8B4513"
+    },
+    "beast_outskirt": {
+      "id": "beast_outskirt",
+      "name": "郊外魂兽",
+      "wuhun": "大角羊",
+      "level": 1,
+      "color": "#95a5a6"
+    }
+  }
+}

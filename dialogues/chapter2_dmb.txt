@@ -1,0 +1,51 @@
+[event name="before_boss_dmb"]
+[speaker name="narrator"]唐三和小舞来到索托城，走进玫瑰酒店。酒店大堂富丽堂皇，但前台只有一间空房。
+
+[speaker name="ts"]麻烦给我们开一间房。
+
+[speaker name="narrator"]这时，一个金发青年大步走来，正是戴沐白。
+
+[speaker name="dmb"]等等——那间房我要了。
+
+[speaker name="xw"]凭什么？我们先来的！
+
+[speaker name="dmb"]冷冷一笑：凭我的拳头比你们大。
+
+[options num="2"]
+[a]（冷静）看来阁下是不打算讲道理了？
+[b]（皱眉）那就手底下见真章吧。
+
+[after a]
+[speaker name="ts"]看来阁下是不打算讲道理了？
+
+[speaker name="dmb"]道理？谁的拳头硬谁就是道理！
+
+[goto next]
+
+[after b]
+[speaker name="ts"]那就手底下见真章吧。
+
+[speaker name="dmb"]露出虎牙般的笑容：有意思，两个一起上吧！
+
+[goto next]
+
+[event name="after_boss_dmb"]
+[speaker name="narrator"]一番激战后，双方都气喘吁吁。戴沐白收起了轻视之心。
+
+[speaker name="dmb"]哈哈，有意思！你们叫什么名字？
+
+[speaker name="ts"]唐三。
+
+[speaker name="xw"]小舞！
+
+[speaker name="dmb"]我是戴沐白，史莱克学院学员。你们很有潜力，要不要来史莱克看看？
+
+[speaker name="ts"]史莱克学院？我听说过，只收怪物不收普通人。
+
+[speaker name="dmb"]咧嘴一笑：所以你们很合适。跟我来吧，我带你们去见院长。
+
+[give name="gold" amount="50"]
+[give name="exp_str" amount="10"]
+[give name="exp_spd" amount="10"]
+
+[speaker name="narrator"]戴沐白虽然没加入队伍，但唐三和小舞获得了前往史莱克学院的引荐！

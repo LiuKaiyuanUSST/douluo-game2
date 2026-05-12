@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>斗罗大陆：七魂觉醒</title>
+    <style>
+        body { margin: 0; background: #111; color: #eee; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; }
+        #ui-layer { margin-top: 20px; text-align: center; }
+        #game-container { position: relative; border: 3px solid #444; background: #000; margin-top: 10px; cursor: crosshair; display: none; }
+        canvas { display: block; }
+        .btn-start { padding: 15px 30px; font-size: 20px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 10px; }
+        .btn-start:hover { background: #c0392b; }
+        #info-panel { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); padding: 10px; pointer-events: none; border-radius: 5px; display: none; }
+        .menu-btn { padding: 12px 30px; font-size: 18px; border: none; border-radius: 5px; cursor: pointer; margin: 10px; }
+        .menu-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <div id="ui-layer">
+        <h1>《斗罗大陆·七魂觉醒》</h1>
+        <button id="start-btn" class="btn-start">📁 开始游戏</button>
+        <button id="test-battle-btn" class="btn-start" style="background:#8e44ad;">⚔️ 战斗测试</button>
+        <div id="start-menu" style="display:none;">
+            <button id="new-game-btn" class="menu-btn" style="background:#2ecc71; color:white;">新游戏</button>
+            <button id="load-game-btn" class="menu-btn" style="background:#3498db; color:white;">读取进度</button>
+        </div>
+    </div>
+
+    <div id="game-container">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div id="info-panel">
+            <div id="status-text">准备就绪...</div>
+        </div>
+    </div>
+
+    <script type="module">
+        // 检查存档
+        const hasSave = !!localStorage.getItem('douluo_save_slot_1');
+        const loadBtn = document.getElementById('load-game-btn');
+        if (!hasSave) loadBtn.disabled = true;
+
+        // "开始游戏"显示菜单
+        document.getElementById('start-btn').onclick = () => {
+            document.getElementById('start-btn').style.display = 'none';
+            document.getElementById('start-menu').style.display = 'block';
+        };
+    </script>
+    <script type="module" src="main.js"></script>
+</body>
+</html>

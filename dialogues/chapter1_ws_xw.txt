@@ -1,0 +1,150 @@
+# ========== 角色定义 ==========
+# 旁白: narrator
+# 唐三: ts
+# 王圣: ws
+# 小舞: xw
+
+# ========== 关卡说明 ==========
+[stage_desc]
+[speaker name="narrator"]唐三来到诺丁初级魂师学院，被分配到七舍——工读生宿舍。推开门的瞬间，一个拳头迎面而来！
+
+# ========== 场景：打败王圣后 ==========
+[event name="after_boss_ws"]
+
+[speaker name="ws"]唐三，你打败我了。按照七舍的规矩，谁的拳头硬谁就是老大。以后你就是我们七舍的舍长了！
+
+[options num="2"]
+[a]（谦虚推辞）我只是来学习的，不想当什么老大。
+[b]（坦然接受）好，那我就当这个舍长，以后大家互相照应。
+
+# --- 分支 a: 谦虚推辞 ---
+[after a]
+[speaker name="ts"]我只是来学习的，不想当什么老大。
+
+[speaker name="ws"]正色道：这可不行！你看——（拉开衣袖露出七八处青紫伤痕）这些都是被其他宿舍的人欺负的。当老大不是耍威风，是要替兄弟们出头！
+
+[speaker name="ts"]……我明白了。那就让我来保护七舍的大家吧。
+
+[speaker name="ws"]咧嘴一笑：这才对嘛！
+
+[goto next]
+
+# --- 分支 b: 坦然接受 ---
+[after b]
+[speaker name="ts"]好，那我就当这个舍长。以后大家互相照应，有麻烦就找我。
+
+[speaker name="ws"]哈哈，爽快！其实当老大可不容易——（拉开衣袖露出伤痕）你看，平时还得替兄弟们挨揍呢。
+
+[speaker name="ts"]放心吧，既然是我的人，谁也别想欺负。
+
+[speaker name="ws"]感动地点头：老大！
+
+[goto next]
+
+# ========== 小舞登场 ==========
+[event name="xw_enters"]
+
+[speaker name="narrator"]正在这时，七舍的门被推开。一个穿着粉色衣裙、扎着蝎尾辫的女孩走了进来，她看了众人一眼，微微一笑。
+
+[speaker name="xw"]大家好，我叫小舞，跳舞的舞！我是新来的工读生。
+
+[speaker name="ws"]压低声音对唐三说：老大，新来的，按规矩得给她个下马威。
+
+[options num="2"]
+[a]（犹豫）她是个女孩子，这样不太好吧？
+[b]（认真）既然是规矩，那就来吧。
+
+# --- 分支 a: 犹豫 ---
+[after a]
+[speaker name="ts"]（面露尴尬）她是个女孩子，这不太好吧？
+
+[speaker name="xw"]耳朵很尖，听见了：怎么，女孩子就不能打吗？听说你是这儿的舍长？来来来，让我看看你有什么本事！
+
+[speaker name="ts"]无奈起身：那……得罪了。
+
+[goto next]
+
+# --- 分支 b: 认真 ---
+[after b]
+[speaker name="ts"]既然是七舍的规矩，那就按规矩来。小舞，请。
+
+[speaker name="xw"]眼睛一亮：咦，你倒是挺痛快的嘛。那我可就不客气了！
+
+[goto next]
+
+# ========== 战斗前奏 ==========
+[event name="before_xw_battle"]
+
+[speaker name="narrator"]两人在七舍的空地上摆开架势。小舞活动了一下手腕，脚尖轻点地面，整个人像一只灵巧的兔子。
+
+[speaker name="xw"]我叫小舞，武魂是柔骨兔，十二级敏攻系战魂师。你准备好了吗？
+
+[speaker name="narrator"]战斗一触即发！
+
+# ========== 战斗后：小舞胜 ==========
+[event name="after_boss_xw"]
+
+[speaker name="narrator"]小舞的柔技如同行云流水，几个回合便用剪刀脚将唐三摔倒在地。唐三喘着气躺在地上，心中既惊讶又佩服。
+
+[speaker name="xw"]坐在唐三旁边，得意地晃着腿：哎呀，不好意思，现在我是七舍的老大了！
+
+[speaker name="ws"]结结巴巴地说：老……老大？可是你……你是女孩子啊……
+
+[speaker name="xw"]女孩子怎么啦？规矩就是规矩，谁拳头硬谁就是老大！你说对不对，唐三？
+
+[options num="2"]
+[a]（心悦诚服）你说得对，以后你就是我们的老大。
+[b]（不服气但认输）这次是我大意了，下次再来！
+
+# --- 分支 b: 不服但认 ---
+[after b]
+[speaker name="ts"]（揉着肩膀）这次是我大意了，下次我一定能挡住你的柔技。
+
+[speaker name="xw"]笑得像只得意的兔子：随时欢迎挑战！不过你刚才的反应其实很快，比其他人强多了。你的魂力是多少级？
+
+[goto next]
+
+# --- 分支 a: 心悦诚服 ---
+[after a]
+[speaker name="ts"]你说得对。你的实力我确实服气，以后你就是我们七舍的舍长。
+
+[speaker name="xw"]哦？这么爽快就认了？我还想多跟你打几场呢。对了，你的魂力是多少级？刚才我感觉你的力量不一般。
+
+[goto next]
+
+# ========== 魂力对话 ==========
+[event name="soul_power_talk"]
+
+[speaker name="ts"]我是先天满魂力。
+
+[speaker name="xw"]眼睛瞪得圆圆的：先天满魂力？
+
+[speaker name="narrator"]小舞低声嘟囔了一句什么，然后笑了，笑得比阳光还灿烂。
+
+[speaker name="xw"]那倒是巧了——我也是先天满魂力。本以为只有我一个是特例，没想到还有你。
+
+[speaker name="ts"]惊讶：你也是？
+
+[speaker name="ws"]在一旁听得目瞪口呆：两……两个先天满魂力？！
+
+[speaker name="narrator"]小舞站起身来，走到唐三旁边的床铺，一屁股坐下。
+
+[speaker name="xw"]以后我就睡这里了。唐三，你这人挺有意思的。看你刚才耍王圣的时候我就觉得你不简单，果然没让我失望。
+
+[speaker name="ts"]摸着头笑了笑：以后请多指教了，小舞姐……啊不，小舞老大。
+
+[speaker name="xw"]叉着腰：小舞姐就挺好的，以后就这么叫！
+
+[speaker name="narrator"]就这样，唐三与小舞不打不相识。从那天起，他们成了最好的朋友，也是彼此最珍视的人。
+
+[speaker name="narrator"]七舍的工读生们看着新来的两位老大，眼中满是憧憬的光。他们隐约觉得，这两个人，将来会一起做很了不起的事。
+
+# ========== 关卡结束 ==========
+[event name="chapter_end"]
+
+[give name="xw" type="companion"]
+[give name="gold" amount="30"]
+[give name="exp_str" amount="5"]
+[give name="exp_spd" amount="5"]
+
+[speaker name="narrator"]【小舞加入了队伍！】

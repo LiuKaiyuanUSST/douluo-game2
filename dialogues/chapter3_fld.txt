@@ -1,0 +1,109 @@
+[event name="registration_fee"]
+[speaker name="narrator"]唐三跟着戴沐白来到史莱克学院报名处。一张破旧的木桌后面，坐着一位身形壮硕的老师——赵无极。
+
+[speaker name="zwj"]报名费，一百个金魂币，先交钱。
+
+[speaker name="ts"]（微微一愣，还是从怀中掏出钱袋递了过去）
+
+[speaker name="xw"]从唐三身后探出头：一百个？！你们史莱克是教魂师还是教抢钱啊？
+
+[options num="2"]
+[a]（附和点头）确实有点贵了。
+[b]（出言劝阻）小舞，别这么说。
+
+[after a]
+[speaker name="ts"]（苦笑）确实有点贵了。
+
+[speaker name="xw"]就是就是！戴沐白，你们院长该不会连教室的粉笔都要找学生收租金吧？
+
+[speaker name="dmb"]（干咳两声）那倒不至于……不过院长说过，舍得交这笔钱的，才是真心想来的人。
+
+[goto next]
+
+[after b]
+[speaker name="ts"]小舞，别这么说。既然来报考，总要按规矩办事。
+
+[speaker name="xw"]（鼓起腮帮子）就你老实。算了，反正又不是花我的钱。
+
+[speaker name="dmb"]（拍拍唐三的肩）够爽快。你放心，这一百金魂币花得不冤，我们学院的训练方式，绝对值这个价。
+
+[goto next]
+
+[event name="zzq_enters"]
+[speaker name="narrator"]唐三刚收好钱袋，身后传来极轻的脚步声。回头望去，一个黑衣少女不知何时已站在不远处。
+
+[speaker name="narrator"]她看上去年纪与唐三相仿，身段修长窈窕，一头黑瀑般的长发垂至腰际。最引人注目的是那双眸子，冷冽如冰泉，仿佛世间万物都不足以让她多停驻一眼。
+
+[speaker name="zzq"]（看向赵无极，声音清冷）报名。
+
+[speaker name="dmb"]（目光一触即收，摸了摸鼻子，嘴角扯出个不知是笑还是叹的弧度）还真来了……
+
+[speaker name="zzq"]（瞥了戴沐白一眼，微微皱眉，随即移开视线）
+
+[event name="nrr_enters"]
+[speaker name="narrator"]就在这时，一个清脆的声音从另一侧传来。
+
+[speaker name="narrator"]来人是个穿着鹅黄衣裙的少女，一头齐耳短发衬得她肤白如雪。她的眼睛又圆又亮，像两颗会说话的黑葡萄，眼波流转间透着一股与生俱来的贵气。
+
+[speaker name="nrr"]（端端正正地走到桌前，对唐三歪头一笑）这位同学，你也是来报考史莱克的？
+
+[options num="2"]
+[a]（友善地点头）是的，我叫唐三。
+[b]（客气地回应）嗯，你好。
+
+[after a]
+[speaker name="ts"]是的，我叫唐三。
+
+[speaker name="nrr"]（眼睛弯成月牙）唐三……这名字真好记。我叫宁荣荣。不过我的来历嘛，暂时保密，说出来怕吓着你。
+
+[speaker name="ts"]（微微一笑）那你打算什么时候告诉我？
+
+[speaker name="nrr"]（歪着头想了想）等你请我吃第一顿饭的时候吧。一个人出门在外，总得留几张底牌，你说对不对？
+
+[goto next]
+
+[after b]
+[speaker name="ts"]嗯，你好。
+
+[speaker name="nrr"]（嘟了嘟嘴）还挺冷淡的嘛。我叫宁荣荣，来自七宝琉璃宗。放心，我不是来摆架子的——至少现在不是。
+
+[speaker name="ts"]七宝琉璃宗？
+
+[speaker name="nrr"]（俏皮地将食指竖在唇边）嘘，小声点。虽然是来报名的，但被人围观就没意思了。
+
+[goto next]
+
+[event name="exam_announce"]
+[speaker name="narrator"]众人办完手续，被带到一片空旷的操场。赵无极活动着肩膀走到中央，露出一个不怀好意的笑容。
+
+[speaker name="zwj"]入学考试很简单——你们四个一起上，在我手底下撑过一炷香，就算过关。
+
+[speaker name="xw"]（眼睛一亮）四个人打你一个？老师，你确定？
+
+[speaker name="nrr"]（轻轻拍手，笑意盈盈）一上来就打老师？这可比我想的有意思多了。
+
+[speaker name="zzq"]（一语不发，直接迈步走入场地，冷冷盯着赵无极）
+
+[speaker name="dmb"]（后退几步退出战圈，低声对唐三说）小心点，赵老师是七十六级魂圣，别跟他硬碰硬。
+
+[speaker name="narrator"]宁荣荣收起笑容，朱竹清周身魂力涌动。史莱克学院的入学考试，一触即发！
+
+[event name="after_boss_zwj"]
+[speaker name="narrator"]一炷香燃尽。四人虽然气喘吁吁、衣衫凌乱，却依然站在场中，谁也没有倒下。
+
+[speaker name="zwj"]（收起魂力，眼中闪过一丝赞许）不错，都撑住了。今年的苗子，比上两届强。
+
+[speaker name="xw"]（揉着发麻的手臂，看向唐三）哥，你刚才替我挡那一下，也太乱来了吧？
+
+[speaker name="ts"]（微微摇头）你牵制他的时机刚刚好，不然我也没机会近身。
+
+[speaker name="nrr"]（笑吟吟地收起武魂）刚才谁说我是辅助系就得躲远点的？某人被赵老师一巴掌拍飞的时候，可是靠我的加速才闪开的。
+
+[speaker name="zzq"]（看向宁荣荣，语气依旧清冷，却多了一丝温度）那一手，确实及时。
+
+[speaker name="dmb"]（走过去扶起唐三，咧嘴一笑）行了，能有心情互相吹捧，看来伤得都不重。
+
+[speaker name="zwj"]（大手一挥）明天准时来操场集合。现在都给我回去养伤。
+
+[event name="chapter_end"]
+[speaker name="narrator"]第三章「开学考试」通关完成！你已成功通过史莱克学院的入学考试。

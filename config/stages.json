@@ -1,0 +1,35 @@
+{
+  "levels": [
+    {
+      "id": 1,
+      "name": "七舍争雄",
+      "size": 5,
+      "bg": "#1a1a1a",
+      "bosses": [
+        { "enemyId": "boss_ws", "dialogAfter": "after_boss_ws", "lose": false },
+        { "enemyId": "xw_boss", "dialogAfter": "after_boss_xw", "lose": true, "finalReward": "chapter_end" }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "初识邪眸",
+      "size": 5,
+      "bg": "#4a2c3e",
+      "bosses": [
+        { "enemyId": "boss_dmb_weak", "dialogAfter": null, "lose": false },
+        { "enemyId": "boss_dmb", "dialogAfter": "after_boss_dmb", "lose": false, "oneTurnTrigger": true }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "开学考试",
+      "size": 5,
+      "bg": "#2d1b00",
+      "bosses": [
+        { "enemyId": "boss_zwj", "dialogAfter": "after_boss_zwj", "lose": false, "finalReward": "chapter_end" }
+      ]
+    }
+  ]
+}
+
+
