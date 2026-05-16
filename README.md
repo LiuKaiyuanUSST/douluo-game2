@@ -61,6 +61,7 @@ DouluoGame/
     ├── gameLogic.js        # 游戏逻辑枢纽（跨模块依赖注册）
     ├── gameMusic.js        # 音频系统（背景音乐控制）
     ├── gameBattle.js       # 战斗相关逻辑（战斗辅助、Boss战）
+    ├── gameBeastForest.js  # 魂兽森林战斗、结算、魂环吸收入口
     ├── gameTown.js         # 城镇相关逻辑（移动、商店、关卡选择）
     ├── gameDialogs.js      # 对话框函数（武魂觉醒、伙伴选择等）
     ├── dialogue.js         # 对话引擎
@@ -96,11 +97,11 @@ DouluoGame/
 - Canvas 画布 (800×600)
 - 信息面板
 - 通过 `<script type="module" src="main.js">` 加载主程序
+- 存档检测：检查3个存档位（`douluo_save_slot_1` ~ `douluo_save_slot_3`）中任意一个有存档即可启用"读取进度"按钮
 
 **关键元素**：
 - `#gameCanvas` — 游戏主画布
 - `#game-message-bar` — 底部消息栏（由 JS 动态创建）
-- `#button-row` — 功能按钮行（由 JS 动态创建）
 
 ### 3.2 `main.js`
 
@@ -109,8 +110,12 @@ DouluoGame/
 **函数**：
 - `createInitialParty()` — 创建初始队伍（唐三·蓝银草）
 - `window.initGame()` — 初始化新游戏
-- `window.startFromSave()` — 从存档恢复游戏
+- `window.startFromSave(slot)` — 从指定存档位恢复游戏（slot=1~3）
 - `gameLoop()` — 主游戏循环（requestAnimationFrame）
+
+**存档选择**：
+- 主界面"读取进度"按钮点击后弹出存档选择对话框，显示3个存档位的信息（角色名+等级+位置）
+- 玩家选择存档位后调用 `startFromSave(slot)` 加载对应存档
 
 **调用关系**：
 ```
@@ -154,7 +159,6 @@ NW.js 配置文件，设置窗口标题、尺寸，以及 `--allow-file-access-f
 | `baseForce` | 基础力量 (0-7) | 2 |
 | `baseSpeed` | 基础速度 (0-7) | 2 |
 | `baseIntelligence` | 基础智力 (0-8) | 5 |
-| `innateSkill` | 必得技能（可选） | "缠绕" |
 | `talentName` | 天赋名称（可选） | "蓝银草" |
 | `availableSkillIds` | 可用技能ID列表 | ["缠绕","复生","蔓延"] |
 | `feature` | 武魂特色描述 | "坚韧控制者" |
@@ -269,8 +273,9 @@ NW.js 配置文件，设置窗口标题、尺寸，以及 `--allow-file-access-f
 | `findCharacterDef(charId)` | 从数据库查找角色定义 | gameLogic.js |
 | `readConfigs()` | 加载所有JSON配置文件 | main.js |
 | `createCharacter(wuhunName, charName, level)` | 根据武魂创建角色对象 | main.js, gameLogic.js, dialogue.js |
-| `saveGame()` | 保存游戏到 localStorage | uiPanels.js |
-| `loadGame()` | 从 localStorage 读取存档 | main.js, uiPanels.js |
+| `saveGame(slot)` | 保存游戏到 localStorage（slot=1~3） | uiPanels.js |
+| `loadGame(slot)` | 从 localStorage 读取指定存档位（slot=1~3） | main.js, uiPanels.js |
+| `getSaveSlotInfo(slot)` | 获取存档位信息（是否存在、角色名+等级+位置） | uiPanels.js, main.js |
 
 **createCharacter 创建的角色对象结构**：
 ```javascript
@@ -292,34 +297,99 @@ NW.js 配置文件，设置窗口标题、尺寸，以及 `--allow-file-access-f
 }
 ```
 
-### 5.3 史莱克学院与猎魂森林
+### 5.3 史莱克学院与圈养森林
 
 **地图结构**：
 - 史莱克学院（`shrek_academy`）是一个5×5的城镇地图，位于通关赵无极后的下一关入口
-- 地图布局：左上（4）上一关、右上（2）战斗塔、左下（1）商店、右下（3）下一关、第3行第2列（5）猎魂森林
-- 猎魂森林方块（type 5）目前显示"尚未开放"提示，后续版本将开放
+- 地图布局：左上（4）上一关、右上（2）战斗塔、左下（1）商店、右下（3）下一关、第3行第2列（5）圈养森林
+- 走到圈养森林方块（type 5）即可进入圈养森林迷宫
+
+**圈养森林迷宫**：
+- 5×5的迷宫，固定布局为：
+  ```
+  20101
+  00000
+  10001
+  00000
+  10101
+  ```
+  - `2` = 起点（玩家出生位置）
+  - `1` = 魂兽Boss位置（共7个）
+  - `0` = 普通格子
+- 7只百年魂兽随机分配到7个Boss位置，每次进入都不一样：
+  - 百年苍木·鬼藤（寄生藤蔓，绞杀无声）
+  - 百年雷霆·幽冥狼（群猎幽影，疾风迅雷）
+  - 百年沧澜·海蝰蛇（浅海小蛇，游速极快）
+  - 百年烈焰·火蜥蜴（百年火蜥，吐焰灼身）
+  - 百年蛊毒·曼陀罗蛇（剧毒蛇牙，一击麻痹）
+  - 百年巨兽·蛮牛（百年蛮牛，冲撞裂石）
+  - 百年天工·板斧（阔刃板斧，劈木开山）
+- 迷宫墙壁生成方式与普通迷宫类似（一堵墙一堵墙地加），但连通性检测不同：
+  - 必须保证从起点到每个Boss格都能到达
+  - 路径不能经过其他Boss格（即每个Boss区域独立）
+  - 加墙失败3次即停止
+- 走到Boss相邻格子时，该Boss格自动显示（问号变为魂兽名称和三角标记）
+- 走到Boss格触发战斗，随机选取主系（70%概率）或副系（30%概率）出战
 
 **大师对话引导**：
 - 进入史莱克学院后，第一次移动会触发大师对话
-- 大师讲解魂环→魂技→提升实力的关系，并引导玩家前往猎魂森林
+- 大师讲解魂环→魂技→提升实力的关系，并引导玩家前往圈养森林
 - 对话使用剧情音乐过渡（`startStoryMusicTransition` / `endStoryMusicTransition`）
 
 **战斗塔魂技检查**：
 - 在史莱克学院进入战斗塔时，系统会检查所有角色是否拥有魂技（skills）
-- 如果没有任何角色拥有魂技，会提示"你的角色还没有任何魂技！请前往猎魂森林猎取魂环获取魂技！"
-- 阻止玩家进入战斗塔，强制引导前往猎魂森林
+- 如果没有任何角色拥有魂技，会提示"你的角色还没有任何魂技！请前往圈养森林猎取魂环获取魂技！"
+- 阻止玩家进入战斗塔，强制引导前往圈养森林
 
 **文本统一**：
 - 游戏中所有涉及"技能"的显示文本已统一改为"魂技"
 - 包括：战斗日志（"使用未知魂技"）、帮助文件（魂技帮助、战斗帮助、等级帮助、武魂帮助）、对话文本等
 
-### 5.5 `engine/gameLogic.js` — 游戏逻辑枢纽
+### 5.4 `engine/gameBeastForest.js` — 魂兽森林战斗、结算、魂环吸收入口
+
+通用模块，可用于猎魂森林、落日森林、星斗大森林等场景。
+
+**函数**：
+| 函数 | 说明 |
+|------|------|
+| `startBeastForestBossFight(bossInfo)` | 进入魂兽森林Boss战斗，随机选取主系（70%概率）或副系（30%概率）出战 |
+| `handleBeastForestBattleWin()` | 战斗胜利处理：筛选存活角色、显示结算对话框、触发魂环吸收流程 |
+
+**战斗胜利结算流程**：
+1. 判断玩家的角色等级和参与战斗的仍然存活角色
+2. 筛选出已有技能数小于主角等级的角色（1级最多1个技能，2级最多2个技能，依此类推）
+3. 显示大师结算语："大师：您战胜了XX魂兽。您的等级为x级，您的角色最多可以拥有x个魂技。"
+4. 显示可选角色列表供玩家选择附加魂环
+5. 如果没有可用角色，显示"您没有待升级角色"，仅显示确认按钮
+6. 玩家选择角色后，调用 `startSoulRingMaze()` 进入魂环迷宫
+
+### 5.5 `engine/gameSoulRing.js` — 魂环吸收迷宫
+
+**函数**：
+| 函数 | 说明 |
+|------|------|
+| `startSoulRingMaze(character, bossInfo, chosenAffinity)` | 开始魂环吸收迷宫 |
+| `tryMoveSoulRingMaze(dx, dy)` | 魂环迷宫内移动 |
+
+**魂环吸收流程**：
+1. 生成5×5迷宫，要求从迷宫任何一个位置都可以达到正中心（标注为"魂核"）
+2. 迷宫生成算法：每次随机加一堵墙，检查是否所有地方可以到达正中心，三次添加失败则停止
+3. 进入迷宫后立即弹出大师提示语
+4. 在迷宫中心外随机位置生成一个随机颜色的实心圆球
+5. 玩家需要引导圆球到中心魂核
+6. 每收集一个圆球，进度增加（如1/3、2/3）
+7. 全部收集完成后，从6个技能中随机选择一个作为魂技
+8. 在角色界面添加魂环信息行
+9. 返回圈养森林地图，删除已击败的魂兽
+
+### 5.6 `engine/gameLogic.js` — 游戏逻辑枢纽
 
 `gameLogic.js` 是游戏逻辑的枢纽模块，负责从各子模块导入函数并重新导出，同时处理跨模块的依赖注册（避免循环依赖）。
 
 **原始 gameLogic.js 已被拆分为以下子模块**：
 - `gameMusic.js` — 音频系统（背景音乐控制）
 - `gameBattle.js` — 战斗相关逻辑（战斗辅助、Boss战、战斗流程）
+- `gameBeastForest.js` — 魂兽森林战斗、结算、魂环吸收入口
 - `gameTown.js` — 城镇相关逻辑（移动、商店、关卡选择）
 - `gameDialogs.js` — 对话框函数（武魂觉醒、系别说明、伙伴选择、报名费等）
 
@@ -336,6 +406,7 @@ NW.js 配置文件，设置窗口标题、尺寸，以及 `--allow-file-access-f
 | `openLevelSelect()` | gameTown.js | 打开关卡选择 |
 | `startLevel(levelIdx)` | gameTown.js | 进入迷宫关卡 |
 | `tryMoveMaze(dx, dy)` | gameTown.js | 迷宫内移动 |
+| `startHuntingForest()` | gameTown.js | 进入圈养森林 |
 | `startBossFight(bossDef)` | gameBattle.js | 开始Boss战 |
 | `performAttack(targetIndex)` | gameBattle.js | 执行玩家攻击 |
 | `skipPlayerTurn()` | gameBattle.js | 跳过玩家回合 |
@@ -357,7 +428,7 @@ gameLogic.js → registerShowMasterWuhunChoice(fn) → gameTown.js 通过注册�
 ...
 ```
 
-### 5.4 `engine/dialogue.js` — 对话引擎
+### 5.7 `engine/dialogue.js` — 对话引擎
 
 **类**：`DialogueEngine`
 
@@ -399,7 +470,7 @@ gameLogic.js → registerShowMasterWuhunChoice(fn) → gameTown.js 通过注册�
 | `advance()` | 推进到下一行 |
 | `endEvent()` | 结束事件 |
 
-### 5.5 `engine/eventHandlers.js` — 事件处理
+### 5.8 `engine/eventHandlers.js` — 事件处理
 
 **函数**：
 | 函数 | 说明 |
@@ -419,7 +490,7 @@ gameLogic.js → registerShowMasterWuhunChoice(fn) → gameTown.js 通过注册�
 - `方向键/WASD` — 城镇/迷宫移动
 - `F` — 战斗快速攻击随机目标
 
-### 5.6 `engine/maze.js` — 迷宫系统
+### 5.9 `engine/maze.js` — 迷宫系统
 
 **类**：`MazeManager`
 
@@ -429,20 +500,33 @@ gameLogic.js → registerShowMasterWuhunChoice(fn) → gameTown.js 通过注册�
 - `explored[][]` — 已探索标记
 - `wallRight[][]` — 右侧墙壁
 - `wallDown[][]` — 下方墙壁
+- `isHuntingForest` — 是否为魂兽森林模式（猎魂森林/圈养森林等）
+- `bossPositions[]` — 魂兽森林的Boss位置数组
+- `bossDefeated[]` — 每个Boss是否已被击败
+- `startPosition` — 魂兽森林起点位置
+- `bossCells` — 所有Boss格坐标的Set集合
 
 **方法**：
 | 方法 | 说明 |
 |------|------|
 | `constructor(size)` | 创建迷宫并生成墙壁 |
-| `generateWalls()` | 随机生成墙壁（保证连通性） |
-| `canReachAll()` | 连通性检测（Q算法） |
+| `setupHuntingForest()` | 设置魂兽森林模式（固定布局、随机分配魂兽、重新生成墙壁） |
+| `generateWalls()` | 随机生成墙壁（保证连通性；魂兽森林模式使用专用检测） |
+| `canReachAll()` | 普通连通性检测（Q算法） |
+| `canReachAllBosses()` | 魂兽森林连通性检测（从起点到每个Boss，不经过其他Boss格） |
+| `canReachBossWithoutOtherBosses(tx, ty)` | BFS检测从起点到目标Boss是否可达且不经过其他Boss |
+| `getPassableNeighbors(x, y)` | 获取四个方向中可通过的邻居 |
 | `canMove(dx, dy)` | 检查是否能移动 |
-| `move(dx, dy)` | 执行移动 |
-| `isBossCell()` | 检查是否在Boss格（右下角） |
+| `move(dx, dy)` | 执行移动（魂兽森林模式下自动调用revealAdjacentBosses） |
+| `revealAdjacentBosses()` | 走到Boss相邻格时自动显示该Boss（问号变名称） |
+| `isBossCell()` | 检查是否在Boss格（普通迷宫为右下角，魂兽森林为任意Boss格） |
+| `getCurrentBossInfo()` | 获取当前格子的Boss信息 |
+| `markBossDefeated(x, y)` | 标记Boss已被击败 |
+| `areAllBossesDefeated()` | 检查是否所有Boss都被击败 |
 
-**迷宫生成算法**：随机尝试在格子间添加墙壁，每次添加后检查是否所有格子仍然连通（使用Q算法），如果不连通则撤销。连续失败3次则停止。
+**迷宫生成算法**：随机尝试在格子间添加墙壁，每次添加后检查连通性，如果不连通则撤销。连续失败3次则停止。魂兽森林模式下使用 `canReachAllBosses()` 检测，确保从起点到每个Boss格都能到达且路径不经过其他Boss格。
 
-### 5.7 `engine/battle.js` — 战斗系统主类
+### 5.10 `engine/battle.js` — 战斗系统主类
 
 **类**：`BattleSystem`
 
@@ -475,7 +559,7 @@ gameLogic.js → registerShowMasterWuhunChoice(fn) → gameTown.js 通过注册�
 5. 攻击时选择SP消耗最高的技能，目标选择血量最低的
 6. 如果无法行动则跳过
 
-### 5.8 `engine/battleInit.js` — 战斗初始化
+### 5.11 `engine/battleInit.js` — 战斗初始化
 
 **函数**：
 | 函数 | 说明 |
@@ -506,7 +590,7 @@ gameLogic.js → registerShowMasterWuhunChoice(fn) → gameTown.js 通过注册�
 }
 ```
 
-### 5.9 `engine/battleAttack.js` — 攻击判定
+### 5.12 `engine/battleAttack.js` — 攻击判定
 
 **函数**：
 | 函数 | 说明 |
@@ -524,7 +608,7 @@ gameLogic.js → registerShowMasterWuhunChoice(fn) → gameTown.js 通过注册�
 6. 天赋效果：攻击方 onAttack / 防御方 onAttacked
 7. 昊天锤连击：25%概率额外攻击一次
 
-### 5.10 `engine/battleMark.js` — 状态标记系统
+### 5.13 `engine/battleMark.js` — 状态标记系统
 
 **函数**：
 | 函数 | 说明 |
@@ -549,7 +633,7 @@ gameLogic.js → registerShowMasterWuhunChoice(fn) → gameTown.js 通过注册�
 | `speed_up` | 极速（速度+2） | 本场 |
 | `smoke` | 烟雾（智力-2） | 本场 |
 
-### 5.11 `engine/battleSkill.js` — 技能执行
+### 5.14 `engine/battleSkill.js` — 技能执行
 
 **函数**：
 - `executeSkill(actor, skillId, target, battle)` — 执行技能
@@ -559,7 +643,7 @@ gameLogic.js → registerShowMasterWuhunChoice(fn) → gameTown.js 通过注册�
 | 系别 | 技能 | 消耗 | 类型 | 效果 |
 |------|------|------|------|------|
 | 苍木 | 缠绕 | 2 | bind | 普攻+100%缠绕 |
-| 苍木 | 复生 | 3 | reborn | 附加复生标记 |
+| 苍木 | 复生 | 3 | reborn | 50%回复1HP+附加复生标记 |
 | 苍木 | 蔓延 | 3 | spread | 概率永久+2攻击距离 |
 | 雷霆 | 雷神变 | 2 | thunder_emp | 普攻+50%额外命中1目标 |
 | 雷霆 | 雷霆万钧 | 3 | thunder_mass | 普攻+50%溅射2目标 |
@@ -568,7 +652,7 @@ gameLogic.js → registerShowMasterWuhunChoice(fn) → gameTown.js 通过注册�
 | 巨兽 | 肉盾 | 1 | shield | 防御+1档 |
 | 巨兽 | 蛮力 | 1 | brute | 普攻+1伤害 |
 | 蛊毒 | 中毒 | 2 | poison | 普攻+100%中毒 |
-| 蛊毒 | 扩散 | 3 | spread_poison | 普攻+随机2名中毒 |
+| 蛊毒 | 扩散 | 3 | spread_poison | 普攻+随机3名中毒 |
 | 蛊毒 | 驱毒 | 2 | cure_poison | 驱散中毒 |
 | 天工 | 治疗 | 2 | heal | 回复1HP |
 | 天工 | 一曰力 | 3 | power_up | 50%力量+2 |
@@ -576,9 +660,9 @@ gameLogic.js → registerShowMasterWuhunChoice(fn) → gameTown.js 通过注册�
 | 沧澜 | 痊愈 | 3 | heal_all | 50%全体回复1HP |
 | 沧澜 | 怒涛 | 2 | speed_up_self | 普攻+自身速度+2 |
 | 沧澜 | 净化 | 3 | cleanse | 清除所有负面状态 |
-| 烈焰 | 爆裂 | 2 | burn_mass | 普攻+随机2名燃烧 |
+| 烈焰 | 爆裂 | 2 | burn_mass | 普攻+50%概率全体燃烧 |
 | 烈焰 | 灼烧 | 1 | burn | 普攻+100%燃烧 |
-| 烈焰 | 浓烟弥漫 | 2 | smoke | 50%烟雾2名敌人 |
+| 烈焰 | 浓烟弥漫 | 2 | smoke | 100%烟雾2名敌人 |
 
 **被动技能**（`PASSIVE_SKILLS`）：
 - 增力：战斗开始时力量+1
@@ -589,7 +673,7 @@ gameLogic.js → registerShowMasterWuhunChoice(fn) → gameTown.js 通过注册�
 - 出战系 = 主系：主系技能100%，副系50%，其他系50%
 - 出战系 = 副系：主系技能50%，副系80%，其他系50%
 
-### 5.12 `engine/battleUtils.js` — 战斗工具函数
+### 5.15 `engine/battleUtils.js` — 战斗工具函数
 
 **函数**：
 | 函数 | 说明 |
@@ -606,7 +690,7 @@ gameLogic.js → registerShowMasterWuhunChoice(fn) → gameTown.js 通过注册�
 - `damageMin/Max`：根据攻击力分段
 - `defenseType`：根据防御力分段（0-3档）
 
-### 5.13 `engine/talents.js` — 天赋系统
+### 5.16 `engine/talents.js` — 天赋系统
 
 **天赋映射**（`TALENT_MAP`）：武魂名 → 天赋对象
 
@@ -616,8 +700,10 @@ gameLogic.js → registerShowMasterWuhunChoice(fn) → gameTown.js 通过注册�
 | 柔骨兔 | 柔骨迅击 | 首回合攻击距离+2 |
 | 幽冥灵猫 | 幽冥疾步 | 攻击距离+1 |
 | 海神 | 海神亲和 | 沧澜系魂技消耗-1 |
-| 邪火凤凰 | 邪火余烬 | 普攻附加燃烧 |
-| 蓝银草 | 蓝银领域 | 首回合缠绕额外目标 |
+| 邪火凤凰 | 邪火余烬 | 攻击附加燃烧 |
+
+| 蓝银草 | 蓝银领域 | 首回合缠绕/复生额外目标 |
+
 | 奇茸通天菊 | 奇茸巨力 | 战斗开始力量+2 |
 | 九心海棠 | 九心芬芳 | 前三回合治疗额外目标 |
 | 治愈权杖 | 治愈祈愿 | 前三回合治疗50%额外+1HP |
@@ -664,7 +750,7 @@ gameLogic.js → registerShowMasterWuhunChoice(fn) → gameTown.js 通过注册�
 - 绿色（1）：商店
 - 橙色（2）：战斗塔
 - 紫色（3/4）：出口（下一关/上一关）
-- 绿色（5）：猎魂森林（史莱克学院地图特有）
+- 绿色（5）：圈养森林（史莱克学院地图特有）
 - 蓝色圆点：玩家位置
 
 ### 6.4 `engine/uiShop.js` — 商店界面
@@ -678,6 +764,15 @@ gameLogic.js → registerShowMasterWuhunChoice(fn) → gameTown.js 通过注册�
 **函数**：`drawMaze()`
 
 绘制迷宫网格，显示墙壁、已探索区域、Boss标记（红色三角形）、玩家位置。
+
+**魂兽森林模式特殊渲染**：
+- 左上角显示"🌲 圈养森林"标题（根据具体森林名称动态显示）、角色生命值、金魂币
+- 右上角显示剩余魂兽数量（如"魂兽剩余: 5/7"）
+- 每个Boss格根据状态显示不同内容：
+  - 未探索：紫色三角标记 + 问号
+  - 已探索但未击败：对应系别颜色的三角标记 + 大号魂兽名称
+  - 已击败：灰色勾号 + "已击败"文字
+- 走到Boss相邻格时，该Boss格自动变为已探索状态（问号变为名称）
 
 ### 6.6 `engine/uiPanels.js` — 面板UI
 
@@ -1002,10 +1097,19 @@ main.js
 dmgResult.damage += 2;  // ← 改为2
 ```
 
+> ⚠️ **重要提示**：修改技能效果时，请务必同步更新以下3处：
+> 1. **`engine/skills.js`** — 修改 `desc` 字段（技能描述，游戏中技能说明按钮显示）
+> 2. **`engine/battleSkill.js`** — 修改对应的 `case` 分支（技能实际执行逻辑）
+> 3. **`dialogues/help_skill.txt`** — 修改帮助面板中的技能描述
+>
+> 这三处必须保持一致，否则会出现"技能描述与实际效果不符"的问题。
+
 ### 10.3 修改天赋效果
 
 
 **文件**：`engine/talents.js`
+
+> ⚠️ **重要提示**：修改天赋功能时，请务必同步修改 `desc` 字段（天赋描述），否则会出现"天赋描述与实际效果不符"的问题。
 
 **示例**：将昊天锤的连击概率从25%改为40%
 ```javascript
@@ -1096,9 +1200,20 @@ if (isPowerType) {
 ### 10.12 修改存档/读档
 
 
-**文件**：`engine/utilsCore.js` 中的 `saveGame()` 和 `loadGame()`
+**文件**：`engine/utilsCore.js` 中的 `saveGame(slot)`、`loadGame(slot)` 和 `getSaveSlotInfo(slot)`
 
-存档存储在 `localStorage` 的 `douluo_save_slot_1` 键中。
+游戏支持3个存档位（`douluo_save_slot_1` ~ `douluo_save_slot_3`），存储在 `localStorage` 中。
+
+**函数说明**：
+- `saveGame(slot)` — 保存游戏到指定存档位（slot=1~3）
+- `loadGame(slot)` — 从指定存档位读取存档（slot=1~3）
+- `getSaveSlotInfo(slot)` — 获取存档位信息，返回 `{ exists: boolean, displayName: string }`，其中 `displayName` 包含前3个角色的名字+等级+当前位置（如"唐三 Lv.5 | 小舞 Lv.3（史莱克学院门口）"）
+
+**存档面板**：`engine/uiPanels.js` 中的 `updateSaveSlots()` 函数负责渲染存档面板，显示3个存档位的信息和保存/读取按钮。
+
+**主界面读档**：`main.js` 中的 `load-game-btn` 点击事件会弹出存档选择对话框，显示3个存档位的信息供玩家选择。
+
+**存档数据包含**：当前关卡、已解锁关卡、玩家信息、队伍信息、背包物品、当前城镇、队伍阵型、游戏进度标记等。
 
 ### 10.13 添加新物品
 
@@ -1129,6 +1244,3 @@ if (isPowerType) {
 
 > **最后更新**：2026年5月
 > **运行方式**：使用 NW.js 打开项目目录，或直接在浏览器中打开 `index.html`（需支持 ES Module）
-> **技术栈**：HTML5 Canvas + Vanilla JavaScript (ES Module) + NW.js
-
-

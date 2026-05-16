@@ -201,14 +201,10 @@ export class BattleSystem {
     const target = this.enemyTeam[targetIndex];
     if (!attacker || !attacker.alive || !target || !target.alive) return null;
 
-    const result = resolveAttack(attacker, target, this);
-
-    if (attacker.talent?.name === '邪火余烬' && target.alive) {
-      this.addMark(target, 'burn');
-      result.message += ' 附加燃烧！';
-    }
+    const result = resolveAttack(attacker, target, this, true);
 
     this.setLog(result.message);
+
     this.playerActed = true;
     this.advanceTurn();
 
@@ -224,14 +220,6 @@ export class BattleSystem {
   enemyAI() {
     const actor = this.turnOrder[this.currentTurnIndex];
     if (!actor || actor.side !== 'enemy' || !actor.alive) return;
-
-    // 被缠绕直接跳过（已经在 getCurrentActor 中处理，但以防万一）
-    if (this.hasMark(actor, 'bind')) {
-      this.setLog(`${actor.name} 被缠绕，无法行动！`);
-      this.removeMark(actor, 'bind');
-      this.advanceTurn();
-      return;
-    }
 
     // 检查是否有 _useShieldFirst 标记（认真戴沐白第一回合放肉盾）
     if (actor._useShieldFirst && this.turnCount === 0) {
@@ -281,12 +269,9 @@ export class BattleSystem {
         target = { side: 'player', index: lowest[Math.floor(Math.random() * lowest.length)] };
         // 执行普通攻击（使用 resolveAttack 并推进回合）
         const defender = this.playerTeam[target.index];
-        const result = resolveAttack(actor, defender, this);
-        if (actor.talent?.name === '邪火余烬' && defender.alive) {
-          this.addMark(defender, 'burn');
-          result.message += ' 附加燃烧！';
-        }
+        const result = resolveAttack(actor, defender, this, true);
         this.setLog(result.message);
+
       } else {
         // 攻击技能：需要获取该技能的目标列表
         const targets = this.getTargetsForSkill(actor, chosenSkill.id);

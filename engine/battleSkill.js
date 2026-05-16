@@ -37,7 +37,8 @@ export function executeSkill(actor, skillId, target, battle) {
           message += ' 目标已有缠绕，不再附加。';
         }
         // 蓝银领域天赋：首回合额外指定一名敌方目标（无距离限制）
-        if (battle.turnCount === 0 && actor.talentData?.extraBindTarget) {
+        if (battle.turnCount === 0 && actor.talentData?.extraBindAndRebornTarget) {
+
           const opposing = getOpposingTeam();
           // 过滤掉原目标单位（对比单位对象，而非索引，因为不同阵营可能同名但不同对象）
           const others = opposing.filter(e => e.alive && e !== targetUnit);
@@ -65,11 +66,26 @@ export function executeSkill(actor, skillId, target, battle) {
         } else {
           message += ' 已有复生，不再施加。';
         }
+        // 蓝银领域天赋：首回合额外指定一名己方目标（无距离限制）
+        if (battle.turnCount === 0 && actor.talentData?.extraBindAndRebornTarget) {
+          const ownTeam = actor.side === 'player' ? battle.playerTeam : battle.enemyTeam;
+          const others = ownTeam.filter(e => e.alive && e !== unit);
+          if (others.length > 0) {
+            const extra = others[Math.floor(Math.random() * others.length)];
+            if (!battle.hasMark(extra, 'reborn')) {
+              battle.addMark(extra, 'reborn');
+              message += ` ${extra.name}也获得复生！`;
+            } else {
+              message += ` ${extra.name}已有复生。`;
+            }
+          }
+        }
       } else {
         message = `${actorPrefix}${actorName} 使用【复生】，目标无效。`;
       }
       break;
     }
+
     case 'spread': {
       const spreadProb = getActualProb(skill.affinity, actor.affinityUsed, actor.mainAffinity, actor.subAffinity, skill.baseProb);
       message = `${actorPrefix}${actorName} 使用【蔓延】`;
@@ -254,20 +270,37 @@ export function executeSkill(actor, skillId, target, battle) {
             const extra = otherTargets[Math.floor(Math.random() * otherTargets.length)];
             extra.hp = Math.min(extra.maxHp, extra.hp + 1);
             message += ` 额外治疗了${extra.name}！`;
-            if (actor.talentData?.healSPChance && Math.random() < actor.talentData.healSPChance) {
-              extra.spirit = Math.min(extra.maxSpirit, extra.spirit + 1);
-              message += ` ${extra.name}回复1SP！`;
+            // 治愈祈愿天赋：前三回合对额外目标以50%概率额外回复1点生命
+            if (actor.talentData?.healExtraChance && battle.turnCount < (actor.talentData.healBonusTurns || 3)) {
+              if (Math.random() < actor.talentData.healExtraChance) {
+                extra.hp = Math.min(extra.maxHp, extra.hp + 1);
+                message += ` ${extra.name}额外回复1HP！`;
+              }
             }
-            if (actor.talentData?.healSPChance && Math.random() < actor.talentData.healSPChance) {
-              unit.spirit = Math.min(unit.maxSpirit, unit.spirit + 1);
-              message += ` ${unit.name}回复1SP！`;
+            // 香肠滋补天赋：前三回合对额外目标以50%概率额外回复1点魂力
+            if (actor.talentData?.healSPChance && battle.turnCount < (actor.talentData.healBonusTurns || 3)) {
+              if (Math.random() < actor.talentData.healSPChance) {
+                extra.spirit = Math.min(extra.maxSpirit, extra.spirit + 1);
+                message += ` ${extra.name}回复1SP！`;
+              }
+            }
+            // 香肠滋补天赋：前三回合对主目标以50%概率额外回复1点魂力
+            if (actor.talentData?.healSPChance && battle.turnCount < (actor.talentData.healBonusTurns || 3)) {
+              if (Math.random() < actor.talentData.healSPChance) {
+                unit.spirit = Math.min(unit.maxSpirit, unit.spirit + 1);
+                message += ` ${unit.name}回复1SP！`;
+              }
             }
           }
         }
-        if (actor.talentData?.healExtraChance && Math.random() < actor.talentData.healExtraChance) {
-          unit.hp = Math.min(unit.maxHp, unit.hp + 1);
-          message += ` ${unit.name}额外回复1HP！`;
+        // 治愈祈愿天赋：前三回合对主目标以50%概率额外回复1点生命
+        if (actor.talentData?.healExtraChance && battle.turnCount < (actor.talentData.healBonusTurns || 3)) {
+          if (Math.random() < actor.talentData.healExtraChance) {
+            unit.hp = Math.min(unit.maxHp, unit.hp + 1);
+            message += ` ${unit.name}额外回复1HP！`;
+          }
         }
+
       } else {
         message = `${actorPrefix}${actorName} 使用【治疗】，目标无效。`;
       }
@@ -319,22 +352,30 @@ export function executeSkill(actor, skillId, target, battle) {
       message = `${actorPrefix}${actorName} 使用【痊愈】！`;
       const ownTeam = actor.side === 'player' ? battle.playerTeam : battle.enemyTeam;
       const healProb = getActualProb(skill.affinity, actor.affinityUsed, actor.mainAffinity, actor.subAffinity, skill.baseProb);
+      const healBonusTurns = actor.talentData?.healBonusTurns || 3;
       let anyHealed = false;
       ownTeam.forEach(u => {
         if (u.alive && Math.random() < healProb) {
           u.hp = Math.min(u.maxHp, u.hp + 1);
           message += ` ${u.name}回复1HP！`;
           anyHealed = true;
-          if (actor.talentData?.healExtraChance && Math.random() < actor.talentData.healExtraChance) {
-            u.hp = Math.min(u.maxHp, u.hp + 1);
-            message += ' (额外+1)';
+          // 治愈祈愿天赋：前三回合对每个目标以50%概率额外回复1点生命
+          if (actor.talentData?.healExtraChance && battle.turnCount < healBonusTurns) {
+            if (Math.random() < actor.talentData.healExtraChance) {
+              u.hp = Math.min(u.maxHp, u.hp + 1);
+              message += ' (额外+1)';
+            }
           }
-          if (actor.talentData?.healSPChance && Math.random() < actor.talentData.healSPChance) {
-            u.spirit = Math.min(u.maxSpirit, u.spirit + 1);
-            message += ` ${u.name}回复1SP！`;
+          // 香肠滋补天赋：前三回合对每个目标以50%概率额外回复1点魂力
+          if (actor.talentData?.healSPChance && battle.turnCount < healBonusTurns) {
+            if (Math.random() < actor.talentData.healSPChance) {
+              u.spirit = Math.min(u.maxSpirit, u.spirit + 1);
+              message += ` ${u.name}回复1SP！`;
+            }
           }
         }
       });
+
       if (!anyHealed) message += ' 无事发生。';
       break;
     }

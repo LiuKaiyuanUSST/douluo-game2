@@ -32,18 +32,20 @@ export const TALENT_MAP = {
   },
   '邪火凤凰': {
     name: '邪火余烬',
-    desc: '普攻时为目标对手附加燃烧标记。',
+    desc: '攻击时为目标对手附加燃烧标记。',
     onAttack(attacker, defender, dmgInfo, battle) {
       if (battle) battle.addMark(defender, 'burn');
     }
   },
+
   '蓝银草': {
     name: '蓝银领域',
-    desc: '首回合使用缠绕时可额外指定1名敌方目标（无距离限制）。',
+    desc: '首回合使用缠绕或复生时可额外指定1名目标（无距离限制）。',
     onBattleStart(unit) {
-      unit.talentData = { ...unit.talentData, extraBindTarget: true };
+      unit.talentData = { ...unit.talentData, extraBindAndRebornTarget: true };
     }
   },
+
   '奇茸通天菊': {
     name: '奇茸巨力',
     desc: '战斗开始时为自身附加巨力标记。',
