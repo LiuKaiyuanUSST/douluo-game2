@@ -2,18 +2,10 @@
 import { app } from './gameState.js';
 import { calcDerivedStats, recalcDerivedStats } from './battleUtils.js';
 import { randomSkillFromAffinity } from './skills.js';
+import { applyTalent } from './talents.js';
 
-const SAVE_KEY = 'douluo_save_slot_1';
-
-// 必得技能映射（武魂名 -> 技能ID）
-const INNATE_SKILL_MAP = {
-  "蓝银草": "缠绕",
-  "柔骨兔": "柔骨锁",
-  "九心海棠": "复生",
-  "治愈权杖": "复生",
-  "七宝琉璃塔": "一曰力",
-  "香肠": "治疗"
-};
+const SAVE_SLOTS = 3;
+function getSaveKey(slot) { return `douluo_save_slot_${slot}`; }
 
 export function createMessageBar() {
   if (document.getElementById('game-message-bar')) return;
@@ -98,19 +90,16 @@ export function createCharacter(wuhunName, charName = null, level = 1) {
 
   const stats = calcDerivedStats(wuhun.baseForce, wuhun.baseSpeed, wuhun.baseIntelligence, 0);
 
-  // 技能选择：优先包含必得技能，再从可用技能池中随机填充至2个
+  // 技能选择：从可用技能池中随机抽取2个
   let skills = [];
-  if (wuhun.innateSkill && !skills.includes(wuhun.innateSkill)) {
-    skills.push(wuhun.innateSkill);
-  }
-  const pool = wuhun.availableSkillIds.filter(s => s !== wuhun.innateSkill);
+  const pool = wuhun.availableSkillIds || [];
   while (skills.length < 2 && pool.length > 0) {
     const r = pool[Math.floor(Math.random() * pool.length)];
     if (!skills.includes(r)) skills.push(r);
   }
   skills = skills.slice(0, 6);
 
-  return {
+  const char = {
     id: charName ? charName.toLowerCase().replace(/\s+/g, '_') : wuhunName.toLowerCase(),
     name: charName || wuhunName,
     wuhun: wuhunName,
@@ -126,6 +115,9 @@ export function createCharacter(wuhunName, charName = null, level = 1) {
     alive: true,
     gold: 0
   };
+  // 应用武魂天赋（用于角色面板显示）
+  applyTalent(char);
+  return char;
 }
 
 function getDefaultColor(wuhunName) {
@@ -137,8 +129,30 @@ function getDefaultColor(wuhunName) {
   return colorMap[wuhunName] || '#4a90e2';
 }
 
-// ---------- 存档 ----------
-export function saveGame() {
+// ---------- 存档（3个存档位） ----------
+
+const TOWN_NAMES = {
+  'noting': '诺丁城',
+  'shrek': '史莱克学院门口',
+  'shrek_academy': '史莱克学院',
+  'suotuo': '索托城'
+};
+
+export function getSaveSlotInfo(slot) {
+  const json = localStorage.getItem(getSaveKey(slot));
+  if (!json) return { exists: false, displayName: '空' };
+  try {
+    const data = JSON.parse(json);
+    if (!data.party || data.party.length === 0) return { exists: false, displayName: '空' };
+    const names = data.party.slice(0, 3).map(m => `${m.name} Lv.${m.level}`);
+    const townName = TOWN_NAMES[data.currentTown] || data.currentTown || '未知';
+    return { exists: true, displayName: `${names.join(' | ')}（${townName}）` };
+  } catch (e) {
+    return { exists: false, displayName: '损坏' };
+  }
+}
+
+export function saveGame(slot) {
   const saveData = {
     currentLevel: app.currentLevel,
     unlockedLevels: app.unlockedLevels,
@@ -165,7 +179,9 @@ export function saveGame() {
       color: m.color,
       hp: m.hp,
       maxHp: m.maxHp,
-      alive: m.alive
+      alive: m.alive,
+      chosenAffinity: m.chosenAffinity,
+      soulRings: m.soulRings
     })),
     inventory: { ...app.inventory },
     currentTown: app.currentTown,
@@ -183,17 +199,17 @@ export function saveGame() {
     showAffinityHint: app.showAffinityHint
   };
   try {
-    localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
-    setMoveTip('💾 游戏已保存');
+    localStorage.setItem(getSaveKey(slot), JSON.stringify(saveData));
+    setMoveTip(`💾 已保存到存档位 ${slot}`);
   } catch (e) {
     setMoveTip('保存失败：存储空间不足');
   }
 }
 
-export function loadGame() {
-  const json = localStorage.getItem(SAVE_KEY);
+export function loadGame(slot) {
+  const json = localStorage.getItem(getSaveKey(slot));
   if (!json) {
-    setMoveTip('没有找到存档');
+    setMoveTip(`存档位 ${slot} 没有存档`);
     return false;
   }
   try {
@@ -210,7 +226,7 @@ export function loadGame() {
           return createCharacter('蓝银草', m.name, m.level);
         }
         const stats = calcDerivedStats(wuhun.baseForce, wuhun.baseSpeed, wuhun.baseIntelligence, 0);
-        return {
+        const member = {
           id: m.id,
           name: m.name,
           wuhun: m.wuhun,
@@ -220,8 +236,12 @@ export function loadGame() {
           color: m.color || '#4a90e2',
           hp: Math.min(m.hp, stats.maxHp),
           maxHp: stats.maxHp,
-          alive: m.alive
+          alive: m.alive,
+          chosenAffinity: m.chosenAffinity || undefined,
+          soulRings: m.soulRings || []
         };
+        applyTalent(member);
+        return member;
       } else {
         alert('检测到旧版存档，已自动转换为武魂系统，部分数据可能丢失。');
         return createCharacter('蓝银草', m.name, 1);
@@ -267,7 +287,7 @@ export function loadGame() {
       member.alive = member.hp > 0;
     }
 
-    setMoveTip('📂 存档读取成功');
+    setMoveTip(`📂 从存档位 ${slot} 读取成功`);
     return true;
   } catch (e) {
     setMoveTip('存档损坏，无法读取');

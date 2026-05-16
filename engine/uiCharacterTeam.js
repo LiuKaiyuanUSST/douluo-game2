@@ -2,7 +2,7 @@
 import { app } from './gameState.js';
 import { calcDerivedStats } from './battleUtils.js';
 import { setMoveTip } from './utilsCore.js';
-import { TALENT_MAP } from './talents.js';
+import { getSkillById } from './skills.js';
 
 const FORMATION_OPTIONS = [
     { key: 'front-front-front', label: '前-前-前' },
@@ -101,12 +101,24 @@ function updateCharacterList() {
                     <div style="margin-top:6px; padding:4px 0; border-top:1px solid #555; font-size:14px; color:#ccc;">
                         <div>🎯 武魂特色：${wuhun.feature || '无'} | 天赋属性：${wuhun.talentAttr || '无'}</div>
                         <div>🔮 主系：<span style="color:#f39c12;">${wuhun.mainAffinity}</span> | 副系：<span style="color:#8e44ad;">${wuhun.subAffinity}</span></div>
-                        <div>✨ 天赋：${TALENT_MAP[member.wuhun]?.name || '无'} — ${TALENT_MAP[member.wuhun]?.desc || '无'}</div>
+                        <div>✨ 天赋：${member.talent?.name || '无'} — ${member.talent?.desc || '无'}</div>
                     </div>
                     <div style="margin-top:6px; display:flex; flex-wrap: wrap; gap:4px;">
                         <span style="color:#aaa;">已学魂技:</span>
-                        ${member.skills.map(s => `<span style="background:#4a6a7f; padding:2px 8px; border-radius:4px;">${s}</span>`).join('')}
+                        ${member.skills.map(s => `<span class="skill-tag" data-skill="${s}" style="background:#4a6a7f; padding:2px 8px; border-radius:4px; cursor:pointer;" title="点击查看详情">${s}</span>`).join('')}
                     </div>
+                    ${member.soulRings && member.soulRings.length > 0 ? `
+                    <div style="margin-top:6px; display:flex; flex-direction:column; gap:2px;">
+                        ${member.soulRings.map((ring, i) => `
+                            <div style="display:flex; align-items:center; gap:6px; font-size:13px; color:#ffd700;">
+                                <span>第${i+1}魂环</span>
+                                <span style="background:#3a2a1a; padding:1px 6px; border-radius:3px; color:#f39c12;">${ring.beastName}</span>
+                                <span style="color:#aaa;">→</span>
+                                <span style="background:#2a4a3a; padding:1px 6px; border-radius:3px; color:#2ecc71;">魂技 ${ring.skillName}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    ` : ''}
                     <div style="margin-top:6px; display:flex; flex-wrap: wrap; gap:4px;">
                         <span style="color:#aaa;">经验值:</span>
                         <span style="color:#e74c3c;">烈焰${member.exp?.['烈焰'] || 0}</span>
@@ -136,6 +148,58 @@ function updateCharacterList() {
             const id = e.target.dataset.id;
             toggleCharacterAffinity(id);
         });
+    });
+
+    // 技能标签点击弹出说明
+    document.querySelectorAll('.skill-tag').forEach(tag => {
+        tag.addEventListener('click', (e) => {
+            const skillId = e.currentTarget.dataset.skill;
+            showSkillInfoPopup(skillId);
+        });
+    });
+}
+
+// 弹出技能说明
+function showSkillInfoPopup(skillId) {
+    const existing = document.getElementById('skill-info-popup');
+    if (existing) existing.remove();
+
+    const skillDef = getSkillById(skillId);
+    if (!skillDef) return;
+
+    const popup = document.createElement('div');
+    popup.id = 'skill-info-popup';
+    popup.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 380px;
+        background: rgba(0, 0, 0, 0.95);
+        color: white;
+        border: 2px solid #8e44ad;
+        border-radius: 10px;
+        padding: 20px 25px;
+        z-index: 5000;
+        font-family: 'Segoe UI', sans-serif;
+        text-align: center;
+    `;
+    popup.innerHTML = `
+        <h3 style="margin-top:0; color:#ffcc88;">⚡ ${skillDef.name}</h3>
+        <div style="margin:12px 0; padding:10px; background:#1a1a2e; border-radius:6px; text-align:left;">
+            <div style="margin-bottom:6px;"><strong style="color:#f39c12;">系别：</strong>${skillDef.affinity || '通用'}</div>
+            ${skillDef.cost !== undefined ? `<div style="margin-bottom:6px;"><strong style="color:#f39c12;">消耗：</strong>${skillDef.cost} SP</div>` : ''}
+            <div><strong style="color:#f39c12;">描述：</strong>${skillDef.desc || '无描述'}</div>
+        </div>
+        <button id="close-skill-info-popup" style="
+            background:#666; color:white; border:none; padding:8px 30px;
+            border-radius:6px; cursor:pointer; font-size:16px;
+        ">关闭</button>
+    `;
+    document.body.appendChild(popup);
+
+    document.getElementById('close-skill-info-popup').addEventListener('click', () => {
+        if (popup && popup.parentNode) popup.parentNode.removeChild(popup);
     });
 }
 
@@ -233,7 +297,7 @@ function renderTeamPanel() {
         <h2 style="margin-top:0;">⚔️ 出战队伍</h2>
         ${formHtml}
         ${slotHtml}
-        <p style="margin:10px 0;">💡 点击上方槽位选中，再点击下方角色来编入。选中槽位高亮。</p>
+        <p style="margin:10px 0;">💡 点击上方槽位选中，再点击下方角色来编入。选中槽位高亮。双击槽位清空。</p>
         ${charListHtml}
         <div style="margin-top:15px; display:flex; gap:10px;">
             <button id="save-team-btn" style="background:#2ecc71; color:white; border:none; padding:8px 20px; border-radius:6px; cursor:pointer; flex:1;">保存队伍</button>

@@ -85,10 +85,22 @@ export function showMasterWuhunChoice() {
             subAffinity: '蛊毒',
             feature: blueSilverFeature.feature,
             talentAttr: blueSilverFeature.talentAttr,
-            isRecommended: true
+            isRecommended: true,
+            recText: '新手推荐'
         };
 
-        const randomNames = getRandomWuhunOptions(4);
+        const haotianFeature = getWuhunFeature('昊天锤');
+        const haotianOption = {
+            name: '昊天锤',
+            mainAffinity: '天工',
+            subAffinity: '巨兽',
+            feature: haotianFeature.feature,
+            talentAttr: haotianFeature.talentAttr,
+            isRecommended: true,
+            recText: '新手强烈推荐'
+        };
+
+        const randomNames = getRandomWuhunOptions(3, ['昊天锤']);
         const randomOptions = randomNames.map(name => {
             const wuhun = app.wuhunDatabase[name];
             return {
@@ -97,15 +109,16 @@ export function showMasterWuhunChoice() {
                 subAffinity: wuhun.subAffinity,
                 feature: wuhun.feature || '未知',
                 talentAttr: wuhun.talentAttr || '未知',
-                isRecommended: false
+                isRecommended: false,
+                recText: ''
             };
         });
 
-        const allOptions = [blueSilverOption, ...randomOptions];
+        const allOptions = [haotianOption, blueSilverOption, ...randomOptions];
 
         let optionsHtml = '';
         allOptions.forEach((opt, index) => {
-            const recText = opt.isRecommended ? ' <span style="color:#ff6b6b; font-size:14px;">（强烈建议新玩家选择）</span>' : '';
+            const recText = opt.isRecommended ? ` <span style="color:#ff6b6b; font-size:14px;">（${opt.recText}）</span>` : '';
             optionsHtml += `
                 <button class="wuhun-choice-btn" data-index="${index}" style="
                     display:block; margin:8px 0; padding:12px 15px; width:100%;
@@ -848,12 +861,13 @@ export function showShrekAcademyMasterDialog() {
         container.innerHTML = `
             <div style="margin-bottom:12px; color:#ffcc88; font-style:italic; font-size:18px;">大师</div>
             <div style="font-size:18px; line-height:1.7; margin-bottom:16px;">
-                在史莱克学院附近有一处<strong style="color:#2ecc71;">猎魂森林</strong>，那里有各种魂兽出没。
+                在史莱克学院附近有一处<strong style="color:#2ecc71;">圈养森林</strong>，那里有各种魂兽出没。
             </div>
             <div style="font-size:16px; line-height:1.8; margin-bottom:16px; padding:14px; background:#1a2a1a; border-radius:8px; border:1px solid #4a6a4a;">
                 <div style="font-size:15px; line-height:1.8;">
-                    🗺️ 前往<strong style="color:#2ecc71;">猎魂森林</strong>猎杀魂兽，获取魂环，<br>
+                    🗺️ 前往<strong style="color:#2ecc71;">圈养森林</strong>猎杀魂兽，获取魂环，<br>
                     就能获得强大的<strong style="color:#3498db;">魂技</strong>！<br><br>
+                    这是天斗帝国圈养低等级魂兽的地方，非常适合你们这些刚入门的魂师。<br><br>
                     记住，只有不断获取魂环，才能不断提升实力！
                 </div>
             </div>
@@ -861,7 +875,7 @@ export function showShrekAcademyMasterDialog() {
                 display:block; margin:0 auto; padding:12px 40px;
                 background:#2ecc71; color:white; border:none; border-radius:8px;
                 cursor:pointer; font-size:18px; font-weight:bold;
-            ">前往猎魂森林</button>
+            ">前往圈养森林</button>
         `;
         document.getElementById('shrek-master-ok-btn').addEventListener('click', () => {
             container.remove();
@@ -869,6 +883,83 @@ export function showShrekAcademyMasterDialog() {
             app.shrekAcademyFirstMove = true;
             endStoryMusicTransition();
             setMoveTip("💡 前往猎魂森林猎取魂环，获取魂技！");
+        });
+    }
+
+    showPhase1();
+}
+
+// ========== 第一次从猎魂森林返回主城对话框 ==========
+
+export function showFirstForestReturnDialog() {
+    if (app.firstForestReturnDialogShown) return;
+    startStoryMusicTransition();
+    app.dialogActive = true;
+
+    const container = document.createElement('div');
+    container.id = 'first-forest-return-container';
+    container.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 620px;
+        background: rgba(0, 0, 0, 0.95);
+        color: white;
+        font-family: 'Segoe UI', sans-serif;
+        padding: 30px 40px;
+        box-sizing: border-box;
+        z-index: 2000;
+        border-radius: 12px;
+        border: 2px solid #ffcc00;
+    `;
+    document.body.appendChild(container);
+
+    function showPhase1() {
+        container.innerHTML = `
+            <div style="margin-bottom:12px; color:#ffcc88; font-style:italic; font-size:18px;">大师</div>
+            <div style="font-size:18px; line-height:1.7; margin-bottom:16px;">
+                唐三，你从圈养森林回来了。感觉如何？
+            </div>
+            <div style="font-size:16px; line-height:1.8; margin-bottom:16px; padding:14px; background:#1a2a1a; border-radius:8px; border:1px solid #4a6a4a;">
+                <div style="margin-bottom:6px;">💡 魂环吸收提示：</div>
+                <div style="font-size:15px; line-height:1.8;">
+                    猎杀魂兽后，你可以选择一位角色吸收魂环，获得魂技。<br><br>
+                    如果对获得的魂技不满意，可以到<strong style="color:#f39c12;">商店</strong>购买<strong style="color:#e74c3c;">忘魂草</strong>（100金魂币），<br>
+                    使用后可以遗忘角色的第一魂技和第一魂环，重新获取。
+                </div>
+            </div>
+            <button id="forest-return-next-btn" style="
+                display:block; margin:10px auto 0 auto; padding:12px 40px;
+                background:#e67e22; color:white; border:none; border-radius:8px;
+                cursor:pointer; font-size:18px; font-weight:bold;
+            ">继续</button>
+        `;
+        document.getElementById('forest-return-next-btn').addEventListener('click', showPhase2);
+    }
+
+    function showPhase2() {
+        container.innerHTML = `
+            <div style="margin-bottom:12px; color:#ffcc88; font-style:italic; font-size:18px;">大师</div>
+            <div style="font-size:18px; line-height:1.7; margin-bottom:16px;">
+                另外，你可以在<strong style="color:#e67e22;">角色界面</strong>查看每个角色的武魂系别，<br>
+                在<strong style="color:#e67e22;">队伍界面</strong>调整出战阵型和站位。
+            </div>
+            <div style="font-size:17px; line-height:1.7; margin-bottom:20px; color:#ffcc88;">
+                好了，继续你的冒险吧！
+            </div>
+            <button id="forest-return-ok-btn" style="
+                display:block; margin:0 auto; padding:12px 40px;
+                background:#2ecc71; color:white; border:none; border-radius:8px;
+                cursor:pointer; font-size:18px; font-weight:bold;
+            ">明白了</button>
+        `;
+        document.getElementById('forest-return-ok-btn').addEventListener('click', () => {
+            container.remove();
+            app.dialogActive = false;
+            app.firstForestReturnDialogShown = true;
+            endStoryMusicTransition();
+            setMoveTip("💡 点击相邻格子移动，或使用方向键/WASD");
         });
     }
 

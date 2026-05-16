@@ -13,8 +13,8 @@ export const PASSIVE_SKILLS = [
 
 export const SKILL_POOL = {
     '苍木': [
-        { id: '缠绕', name: '缠绕', cost: 2, type: 'bind', target: 'enemy', baseProb: 1.0, desc: '普攻并100%附加缠绕（无法攻击1回合）' },
-        { id: '复生', name: '复生', cost: 3, type: 'reborn', target: 'ally', baseProb: 1.0, desc: '100%附加复生（回合结束50%回复1HP）' },
+        { id: '缠绕', name: '缠绕', cost: 2, type: 'bind', target: 'enemy', baseProb: 1.0, desc: '普攻并100%附加缠绕（普攻无法造成伤害1回合）' },
+        { id: '复生', name: '复生', cost: 3, type: 'reborn', target: 'ally', baseProb: 0.5, desc: '50%概率为目标回复1点生命，然后附加复生（每回合结束50%回复1HP）' },
         { id: '蔓延', name: '蔓延', cost: 3, type: 'spread', target: 'self', baseProb: 1.0, desc: '概率本场战斗攻击距离永久+2（概率受系别影响）' }
     ],
     '雷霆': [
@@ -29,7 +29,7 @@ export const SKILL_POOL = {
     ],
     '蛊毒': [
         { id: '中毒', name: '中毒', cost: 2, type: 'poison', target: 'enemy', baseProb: 1.0, desc: '普攻并100%附加中毒标记（50%掉1HP，累计2次移除）' },
-        { id: '扩散', name: '扩散', cost: 3, type: 'spread_poison', target: 'random_enemy', baseProb: 1.0, desc: '普攻并100%为随机2名敌人附加中毒' },
+        { id: '扩散', name: '扩散', cost: 3, type: 'spread_poison', target: 'random_enemy', baseProb: 1.0, desc: '普攻并100%为随机3名敌人附加中毒（50%掉1HP，累计2次移除）' },
         { id: '驱毒', name: '驱毒', cost: 2, type: 'cure_poison', target: 'ally', baseProb: 1.0, desc: '普攻并100%为我方一人驱散中毒' }
     ],
     '天工': [
@@ -43,9 +43,9 @@ export const SKILL_POOL = {
         { id: '净化', name: '净化', cost: 3, type: 'cleanse', target: 'all_ally', baseProb: 1.0, desc: '100%驱除本方所有负面状态' }
     ],
     '烈焰': [
-        { id: '爆裂', name: '爆裂', cost: 2, type: 'burn_mass', target: 'random_enemy', baseProb: 1.0, desc: '普攻并100%随机2名敌人附加燃烧（50%掉1HP，累计2次移除）' },
+        { id: '爆裂', name: '爆裂', cost: 2, type: 'burn_mass', target: 'random_enemy', baseProb: 0.5, desc: '普攻并以50%概率为所有敌方角色附加燃烧标记（50%掉1HP，累计2次移除）' },
         { id: '灼烧', name: '灼烧', cost: 1, type: 'burn', target: 'enemy', baseProb: 1.0, desc: '普攻并100%为目标附加燃烧' },
-        { id: '浓烟弥漫', name: '浓烟弥漫', cost: 2, type: 'smoke', target: 'enemy', baseProb: 0.5, desc: '50%概率为2名攻击范围内敌人附加烟雾（智力-2）' }
+        { id: '浓烟弥漫', name: '浓烟弥漫', cost: 2, type: 'smoke', target: 'enemy', baseProb: 1.0, desc: '100%概率为2名攻击范围内对手附加烟雾（智力-2）' }
     ]
 };
 

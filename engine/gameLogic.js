@@ -51,10 +51,12 @@ import {
     registerShowAffinityGuideDialog as _registerShowAffinityGuideDialog,
     registerShowSecondLevelHintDialog as _registerShowSecondLevelHintDialog,
     registerShowShrekAcademyMasterDialog as _registerShowShrekAcademyMasterDialog,
+    registerShowFirstForestReturnDialog as _registerShowFirstForestReturnDialog,
     registerBuildEnemyFromMonster as _registerBuildEnemyFromMonster,
     registerBuildUnitsFromParty as _registerBuildUnitsFromParty,
     registerStartBossFight as _registerStartBossFight
 } from './gameTown.js';
+
 
 // 对话框函数
 import {
@@ -66,9 +68,11 @@ import {
     showZwjRegistrationDialog as _showZwjRegistrationDialog,
     showBlackScreen as _showBlackScreen,
     showShrekAcademyMasterDialog as _showShrekAcademyMasterDialog,
+    showFirstForestReturnDialog as _showFirstForestReturnDialog,
     registerStartDialogue as _registerStartDialogue,
     registerGoToTown as _registerGoToTownForDialogs
 } from './gameDialogs.js';
+
 
 // ========== 跨模块依赖注册 ==========
 // 由于 gameBattle.js、gameTown.js 和 gameDialogs.js 之间存在循环依赖，
@@ -86,7 +90,9 @@ _registerShowZwjRegistrationDialog(_showZwjRegistrationDialog);
 _registerShowAffinityGuideDialog(_showAffinityGuideDialog);
 _registerShowSecondLevelHintDialog(_showSecondLevelHintDialog);
 _registerShowShrekAcademyMasterDialog(_showShrekAcademyMasterDialog);
+_registerShowFirstForestReturnDialog(_showFirstForestReturnDialog);
 _registerBuildEnemyFromMonster(_buildEnemyFromMonster);
+
 _registerBuildUnitsFromParty(_buildUnitsFromParty);
 _registerStartBossFight(_startBossFight);
 
@@ -147,5 +153,7 @@ export const showShrekPartnerChoice = _showShrekPartnerChoice;
 export const showZwjRegistrationDialog = _showZwjRegistrationDialog;
 export const showBlackScreen = _showBlackScreen;
 export const showShrekAcademyMasterDialog = _showShrekAcademyMasterDialog;
+export const showFirstForestReturnDialog = _showFirstForestReturnDialog;
 export const registerStartDialogue = _registerStartDialogue;
+
 export const registerGoToTownForDialogs = _registerGoToTownForDialogs;

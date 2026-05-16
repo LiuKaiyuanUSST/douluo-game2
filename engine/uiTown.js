@@ -31,7 +31,7 @@ export function drawTown() {
       if (type === 2) ctx.fillText("战斗塔", cx, cy);
       if (type === 3) ctx.fillText("下一关", cx, cy);
       if (type === 4) ctx.fillText("上一关", cx, cy);
-      if (type === 5) ctx.fillText("猎魂森林", cx, cy);
+      if (type === 5) ctx.fillText("圈养森林", cx, cy);
     }
   }
   ctx.textAlign = "start";

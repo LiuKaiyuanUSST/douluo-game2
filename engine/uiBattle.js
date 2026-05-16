@@ -83,7 +83,7 @@ export function drawBattle() {
     if (u.alive) {
       ctx.fillStyle = "#ddd";
       ctx.font = "bold 18px Arial";
-      const displayName = u.wuhun ? `${u.name}·${u.wuhun}` : u.name;
+      const displayName = u._hideWuhun ? u.name : (u.wuhun ? `${u.name}·${u.wuhun}` : u.name);
       ctx.fillText(displayName, rightPanelX + 10, yBase);
       ctx.font = "11px Arial";
       ctx.fillText(`Lv.${u.level||1} ${u.affinityUsed||''} SP:${u.spirit}/${u.maxSpirit}  HP:${u.hp}/${u.maxHp}`, rightPanelX + 10, yBase + 16);
@@ -112,7 +112,7 @@ export function drawBattle() {
     } else {
       ctx.fillStyle = "#666";
       ctx.font = "bold 18px Arial";
-      const displayName = u.wuhun ? `${u.name}·${u.wuhun}` : u.name;
+      const displayName = u._hideWuhun ? u.name : (u.wuhun ? `${u.name}·${u.wuhun}` : u.name);
       ctx.fillText(displayName + " (阵亡)", rightPanelX + 10, yBase);
     }
   }
@@ -161,7 +161,7 @@ export function drawBattle() {
       ctx.fillStyle = "white";
       ctx.font = "bold 16px Arial";
       ctx.textAlign = "center";
-      const displayName = u.wuhun ? `${u.name}·${u.wuhun}` : u.name;
+      const displayName = u._hideWuhun ? u.name : (u.wuhun ? `${u.name}·${u.wuhun}` : u.name);
       ctx.fillText(displayName, x, y + slotRadius + 18);
     }
   }

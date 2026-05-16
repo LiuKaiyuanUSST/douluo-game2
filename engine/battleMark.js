@@ -16,7 +16,7 @@ export function addMark(unit, type, duration = 1, extra = {}, battle = null) {
   }
 
   if (type === 'bind') {
-    unit.marks.push({ type: 'bind' });
+    unit.marks.push({ type: 'bind', remaining: 1 });
     logPrefix(`${unit.name}被缠绕！`);
   }
   else if (type === 'lock') {
@@ -91,7 +91,7 @@ export function applyStartTurnEffects(unit, battle) {
       }
       if (m.count >= 2) return false;
     }
-    if (m.type === 'lock') {
+    if (m.type === 'bind' || m.type === 'lock') {
       m.remaining--;
       if (m.remaining <= 0) return false;
     }

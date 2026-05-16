@@ -3,7 +3,7 @@ import { app, initApp } from './engine/gameState.js';
 import {
     readConfigs, createMessageBar, setMoveTip,
     createSaveButton, createReturnToTownButton, createBackpackButton,
-    createCharacterButton, createTeamButton, createHelpButton, createButtonRow, loadGame, createCharacter
+    createCharacterButton, createTeamButton, createHelpButton, createButtonRow, loadGame, createCharacter, getSaveSlotInfo
 } from './engine/utils.js';
 import { initTownMap, goToTown, startLevel, initDialogue, onBattleWin, onBattleLoss, startDialogue, playCityMusic } from './engine/gameLogic.js';
 import { drawTown, drawShop, drawMaze, drawBattle } from './engine/uiRenderer.js';
@@ -100,7 +100,7 @@ window.initGame = async function() {
     }
 };
 
-window.startFromSave = async function() {
+window.startFromSave = async function(slot) {
     try {
         initApp();
         createMessageBar();
@@ -115,7 +115,7 @@ window.startFromSave = async function() {
         initDialogue();
         initTownMap();
 
-        const loaded = loadGame();
+        const loaded = loadGame(slot);
         if (!loaded) {
             app.party = createInitialParty();
             app.player = { ...app.party[0], gold: 50, id: app.party[0].id };
@@ -165,10 +165,41 @@ document.getElementById('new-game-btn').addEventListener('click', () => {
     window.initGame();
 });
 document.getElementById('load-game-btn').addEventListener('click', () => {
-    if (!localStorage.getItem('douluo_save_slot_1')) return;
-    document.getElementById('ui-layer').style.display = 'none';
-    document.getElementById('game-container').style.display = 'block';
-    window.startFromSave();
+    // 弹出存档选择对话框
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; display:flex; justify-content:center; align-items:center;';
+    const dialog = document.createElement('div');
+    dialog.style.cssText = 'background:#222; border:2px solid #888; border-radius:12px; padding:30px; min-width:400px; text-align:center;';
+    let html = '<h2 style="color:#ffcc88; margin-top:0;">📂 选择存档</h2>';
+    for (let slot = 1; slot <= 3; slot++) {
+        const info = getSaveSlotInfo(slot);
+        const color = info.exists ? '#2ecc71' : '#666';
+        html += `<div style="border:1px solid #555; border-radius:8px; margin:10px 0; padding:12px; background:rgba(255,255,255,0.05);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <span style="font-weight:bold; color:${color};">存档位 ${slot}</span>
+                <span style="font-size:13px; color:#aaa;">${info.exists ? '有存档' : '空'}</span>
+            </div>
+            <div style="font-size:14px; color:#ddd; margin-bottom:8px; min-height:20px;">${info.displayName}</div>
+            <button class="load-slot-select" data-slot="${slot}" style="padding:8px 20px; background:#3498db; color:white; border:none; border-radius:6px; cursor:pointer; font-size:14px;" ${info.exists ? '' : 'disabled'}>${info.exists ? '读取此存档' : '（空）'}</button>
+        </div>`;
+    }
+    html += '<button id="cancel-load-select" style="margin-top:10px; padding:8px 20px; background:#666; color:white; border:none; border-radius:6px; cursor:pointer; font-size:14px;">取消</button>';
+    dialog.innerHTML = html;
+    overlay.appendChild(dialog);
+    document.body.appendChild(overlay);
+
+    document.querySelectorAll('.load-slot-select').forEach(btn => {
+        btn.onclick = () => {
+            const slot = parseInt(btn.dataset.slot);
+            document.body.removeChild(overlay);
+            document.getElementById('ui-layer').style.display = 'none';
+            document.getElementById('game-container').style.display = 'block';
+            window.startFromSave(slot);
+        };
+    });
+    document.getElementById('cancel-load-select').onclick = () => {
+        document.body.removeChild(overlay);
+    };
 });
 
 // 战斗测试
@@ -325,23 +356,6 @@ function gameLoop() {
                         }, nextDelay);
                         drawBattle();
                         return;
-                    }
-                } else {
-                    if (!app.battleTargeting && !app.battleSkillMode && app.battle.hasMark(actor, 'bind')) {
-                        app.battle.log = `${actor.name} 被缠绕，无法行动！`;
-                        app.battle.removeMark(actor, 'bind');
-                        app.battle.playerActed = true;
-                        app.battle.advanceTurn();
-                        app.applyDelay = true;
-                        if (app.battle.finished) {
-                            setTimeout(() => {
-                                if (app.battle.winner === 'player') onBattleWin(app.maze && app.maze.isBossCell());
-                                else onBattleLoss();
-                                requestAnimationFrame(gameLoop);
-                            }, SPEED_DELAY[app.battleSpeed] || 0);
-                            drawBattle();
-                            return;
-                        }
                     }
                 }
             }

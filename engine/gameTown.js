@@ -3,6 +3,8 @@ import { app } from './gameState.js';
 import { setMoveTip } from './utils.js';
 import { MazeManager } from './maze.js';
 import { playCityMusic, stopCityMusic, playFightMusic, stopFightMusic } from './gameMusic.js';
+import { startBeastForestBossFight } from './gameBeastForest.js';
+import { tryMoveSoulRingMaze } from './gameSoulRing.js';
 
 export function initTownMap() { app.townPlayerPos = { x: 0, y: 0 }; }
 
@@ -25,6 +27,13 @@ export function goToTown(resetPos = true) {
         showXiaoWuWuhunChoice();
         return;
     }
+
+    // 第一次从猎魂森林返回主城时弹出大师提示
+    if (app.currentLevel === -1 && !app.firstForestReturnDialogShown) {
+        showFirstForestReturnDialog();
+        return;
+    }
+
 
     const hasDead = app.party.some(m => m.alive === false);
     if (app.showAffinityHint) {
@@ -80,7 +89,8 @@ export function tryMoveTown(dx, dy) {
         return false;
     }
     if (targetType === 5) {
-        setMoveTip("💡 猎魂森林尚未开放，敬请期待！");
+        // 进入猎魂森林
+        startHuntingForest();
         return false;
     }
     if (targetType === 3 || targetType === 4) {
@@ -221,7 +231,33 @@ export function startLevel(levelIdx) {
 
 export function tryMoveMaze(dx, dy) {
     if (app.state !== 'MAZE') return false;
+    
+    // 魂环吸收迷宫模式 - 使用独立的移动逻辑
+    if (app.maze._isSoulRingMaze) {
+        return tryMoveSoulRingMaze(dx, dy);
+    }
+    
     if (!app.maze.move(dx, dy)) return false;
+    
+    // 猎魂森林模式
+    if (app.maze.isHuntingForest) {
+        if (app.maze.isBossCell()) {
+            const bossInfo = app.maze.getCurrentBossInfo();
+            if (bossInfo) {
+                if (bossInfo.defeated) {
+                    setMoveTip(`🌲 该魂兽已被击败`);
+                } else {
+                    // 触发魂兽森林Boss战斗
+                    startBeastForestBossFight(bossInfo);
+                }
+            }
+        } else {
+            setMoveTip("🌲 猎魂森林 - 探索并找到所有魂兽");
+        }
+        return true;
+    }
+    
+    // 普通迷宫逻辑
     if (app.maze.isBossCell()) {
         const stage = app.config.stages.levels[app.currentLevel];
         if (stage.bosses && stage.bosses.length) startBossFight(stage.bosses[0]);
@@ -264,6 +300,52 @@ export function tryMoveMaze(dx, dy) {
     return true;
 }
 
+// ---------- 猎魂森林相关函数 ----------
+
+// 进入猎魂森林
+export function startHuntingForest() {
+    stopCityMusic();
+    playFightMusic();
+
+    app.currentLevel = -1; // 特殊标记为猎魂森林
+    app.maze = new MazeManager(5);
+    app.maze.setupHuntingForest();
+    app.state = 'MAZE';
+
+    app.battleTargeting = false;
+    app.battleEnemyTurnDone = false;
+    app.showResurrectionHint = false;
+
+    setMoveTip("🌲 欢迎来到圈养森林！请探索并找到你需要的魂兽");
+}
+
+// 构建猎魂森林boss敌人
+function buildHuntingForestBoss(bossInfo) {
+    // 根据系别确定武魂和技能
+    const affinityWuhunMap = {
+        '苍木': { wuhun: '鬼藤', skill: '缠绕' },
+        '雷霆': { wuhun: '幽冥狼', skill: '雷霆万钧' },
+        '沧澜': { wuhun: '海蝰蛇', skill: '怒涛' },
+        '烈焰': { wuhun: '火蜥蜴', skill: '灼烧' },
+        '蛊毒': { wuhun: '曼陀罗蛇', skill: '中毒' },
+        '巨兽': { wuhun: '蛮牛', skill: '蛮力' },
+        '天工': { wuhun: '板斧', skill: '一曰力' }
+    };
+
+    const wuhunData = affinityWuhunMap[bossInfo.affinity] || { wuhun: '豹子', skill: '蛮力' };
+
+    return {
+        name: `百年${bossInfo.affinity}${bossInfo.name}`,
+        wuhun: wuhunData.wuhun,
+        level: 1,
+        skills: [wuhunData.skill],
+        chosenAffinity: bossInfo.affinity,
+        subAffinity: bossInfo.affinity,
+        color: bossInfo.color || '#e74c3c',
+        desc: bossInfo.desc
+    };
+}
+
 // 以下函数通过 gameLogic.js 注册，避免循环依赖
 export function registerShowMasterWuhunChoice(fn) { showMasterWuhunChoice = fn; }
 export function registerShowXiaoWuWuhunChoice(fn) { showXiaoWuWuhunChoice = fn; }
@@ -272,6 +354,7 @@ export function registerShowZwjRegistrationDialog(fn) { showZwjRegistrationDialo
 export function registerShowAffinityGuideDialog(fn) { showAffinityGuideDialog = fn; }
 export function registerShowSecondLevelHintDialog(fn) { showSecondLevelHintDialog = fn; }
 export function registerShowShrekAcademyMasterDialog(fn) { showShrekAcademyMasterDialog = fn; }
+export function registerShowFirstForestReturnDialog(fn) { showFirstForestReturnDialog = fn; }
 export function registerBuildEnemyFromMonster(fn) { buildEnemyFromMonster = fn; }
 export function registerBuildUnitsFromParty(fn) { buildUnitsFromParty = fn; }
 export function registerStartBossFight(fn) { startBossFight = fn; }
@@ -283,6 +366,7 @@ let showZwjRegistrationDialog = function() { console.warn('showZwjRegistrationDi
 let showAffinityGuideDialog = function() { console.warn('showAffinityGuideDialog not registered'); };
 let showSecondLevelHintDialog = function() { console.warn('showSecondLevelHintDialog not registered'); };
 let showShrekAcademyMasterDialog = function() { console.warn('showShrekAcademyMasterDialog not registered'); };
+let showFirstForestReturnDialog = function() { console.warn('showFirstForestReturnDialog not registered'); };
 let buildEnemyFromMonster = function() { console.warn('buildEnemyFromMonster not registered'); };
 let buildUnitsFromParty = function() { console.warn('buildUnitsFromParty not registered'); };
 let startBossFight = function() { console.warn('startBossFight not registered'); };

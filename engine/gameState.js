@@ -70,6 +70,8 @@ export let app = {
   secondLevelEntered: false,
   pendingXiaoWuChoice: false,
   shrekAcademyFirstMove: false,
+  firstForestReturnDialogShown: false,
+
 
   // 新的数据库
   wuhunDatabase: {},         // 武魂名 -> { name, mainAffinity, subAffinity, baseForce, baseSpeed, baseIntelligence, availableSkillIds, innateSkill?, talentName? }

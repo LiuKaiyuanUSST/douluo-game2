@@ -16,9 +16,7 @@ export function drawShop() {
   ctx.fillText("杂货铺", 20, 130);
   const items = [
     { name: "九品紫芝", price: 10, effect: () => { app.inventory.jiupin = (app.inventory.jiupin || 0) + 1; } },
-    { name: "力量之石", price: 15, effect: () => { setMoveTip("力量经验+5（暂未实装）"); } },
-    { name: "速度之石", price: 15, effect: () => { setMoveTip("速度经验+5（暂未实装）"); } },
-    { name: "智力之石", price: 15, effect: () => { setMoveTip("智力经验+5（暂未实装）"); } }
+    { name: "忘魂草", price: 100, effect: () => { app.inventory.wanghun = (app.inventory.wanghun || 0) + 1; } }
   ];
   const startX = 100, startY = 150, boxW = 120, boxH = 120, gap = 30;
   app.shopButtons = [];

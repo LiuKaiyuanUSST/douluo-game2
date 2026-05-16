@@ -5,6 +5,7 @@ import { BattleSystem } from './battle.js';
 import { findCharacterDef } from './utilsCore.js';
 import { playFightMusic, stopCityMusic, startStoryMusicTransition, endStoryMusicTransition } from './gameMusic.js';
 import { DialogueEngine } from './dialogue.js';
+import { handleBeastForestBattleWin } from './gameBeastForest.js';
 
 let dialogueEngine = null;
 
@@ -204,13 +205,26 @@ export function skipPlayerTurn() {
 
 export function onBattleWin(isBoss) {
     syncPartyHP();
+    
+    // 检测是否为魂兽森林战斗
+    if (app._beastForestBossInfo) {
+        handleBeastForestBattleWin();
+        return;
+    }
+    
     const stage = app.config.stages.levels[app.currentLevel];
     if (app.battle) {
         app.battleLog.push("战斗胜利！");
     }
     if (!isBoss) {
-        app.player.gold = (app.player.gold || 0) + Math.floor(Math.random()*5)+3;
-        setMoveTip(`战斗胜利！获得 ${Math.floor(Math.random()*5)+3} 金魂币`);
+        // 每个敌方单位各自掉落随机金币
+        const enemyUnits = app.battle ? app.battle.enemyTeam : [];
+        let totalGold = 0;
+        for (let i = 0; i < enemyUnits.length; i++) {
+            totalGold += Math.floor(Math.random() * 5) + 3;
+        }
+        app.player.gold = (app.player.gold || 0) + totalGold;
+        setMoveTip(`战斗胜利！获得 ${totalGold} 金魂币（${enemyUnits.length}人掉落）`);
         app.state = 'MAZE'; app.battle = null; return;
     }
     if (!stage?.bosses) { goToTown(true); return; }
@@ -249,6 +263,34 @@ export function onBattleLoss() {
         const bossDef = stage.bosses[app.currentBossPhase];
         if (bossDef?.lose) { handleBossLoss(bossDef); return; }
     }
+
+    // 检查是否全灭（有3位及以上角色时）
+    const aliveCount = app.party.filter(m => m.alive !== false).length;
+    const totalCount = app.party.length;
+    if (totalCount >= 3 && aliveCount === 0) {
+        // 唐三1血复活
+        const ts = app.party.find(m => m.id === 'ts');
+        if (ts) {
+            ts.hp = 1;
+            ts.alive = true;
+        }
+        if (app.player) {
+            app.player.hp = 1;
+            app.player.alive = true;
+        }
+    }
+
+    // 非Boss战（小怪战）全灭时弹出提示
+    const isMobFight = !app.maze?.isBossCell();
+    if (isMobFight && aliveCount === 0) {
+        goToTown(true);
+        // 延迟弹出提示，确保主城已加载
+        setTimeout(() => {
+            showBattleLossHint();
+        }, 300);
+        return;
+    }
+
     if (app.currentLevel === 0) {
         app.showAffinityHint = true;
         setMoveTip("敌人为巨兽系，请在角色界面切换唐三为蛊毒系以克制对手");
@@ -292,7 +334,185 @@ export function useBackpackItem(itemType) {
         if (!app.party.some(m => m.alive === false)) app.showResurrectionHint = false;
         return true;
     }
+    if (itemType === 'wanghun') {
+        // 忘魂草：仅对只有1个魂环的角色生效，移除第一魂技和第一魂环
+        const eligible = app.party.filter(m => m.soulRings && m.soulRings.length === 1);
+        if (eligible.length === 0) { setMoveTip("没有符合条件的角色（仅对拥有1个魂环的角色生效）"); return false; }
+        showForgetSkillDialog(eligible);
+        return false; // 不立即关闭背包，由对话框处理
+    }
     return false;
+}
+
+function showForgetSkillDialog(eligible) {
+    app.dialogActive = true;
+    const container = document.createElement('div');
+    container.id = 'forget-skill-dialog';
+    container.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 400px;
+        background: rgba(0, 0, 0, 0.95);
+        color: white;
+        font-family: 'Segoe UI', sans-serif;
+        padding: 30px 40px;
+        box-sizing: border-box;
+        z-index: 3000;
+        border-radius: 12px;
+        border: 2px solid #e74c3c;
+        text-align: center;
+    `;
+    container.innerHTML = `
+        <div style="font-size:20px; margin-bottom:15px; color:#e74c3c;">🌿 忘魂草</div>
+        <div style="font-size:16px; line-height:1.6; margin-bottom:20px;">
+            选择要遗忘第一魂技的角色（仅拥有1个魂环的角色）：
+        </div>
+        <div id="forget-char-list"></div>
+        <button id="forget-cancel-btn" style="
+            display:block; margin:15px auto 0; padding:10px 30px;
+            background:#666; color:white; border:none; border-radius:8px;
+            cursor:pointer; font-size:16px;
+        ">取消</button>
+    `;
+    document.body.appendChild(container);
+
+    const listDiv = document.getElementById('forget-char-list');
+    eligible.forEach((char, index) => {
+        const btn = document.createElement('button');
+        btn.style.cssText = `
+            display:block; margin:8px 0; padding:12px 15px; width:100%;
+            background:#2a3a4a; color:white; border:2px solid ${char.color || '#4a90e2'}; border-radius:8px;
+            cursor:pointer; font-size:16px; text-align:left;
+            transition: background 0.2s;
+        `;
+        const skillName = char.skills && char.skills.length > 0 ? char.skills[0] : '未知';
+        btn.innerHTML = `
+            <div style="font-weight:bold; font-size:18px; color:${char.color || '#4a90e2'};">${char.name} · ${char.wuhun}</div>
+            <div style="font-size:13px; color:#aaa; margin-top:4px;">
+                第一魂技：${skillName}
+            </div>
+        `;
+        btn.onmouseover = () => btn.style.background = '#3a5a6f';
+        btn.onmouseout = () => btn.style.background = '#2a3a4a';
+        btn.onclick = () => {
+            // 显示确认对话框
+            showForgetConfirmDialog(char, skillName, container);
+        };
+        listDiv.appendChild(btn);
+    });
+
+    document.getElementById('forget-cancel-btn').onclick = () => {
+        if (container.parentNode) container.parentNode.removeChild(container);
+        app.dialogActive = false;
+    };
+}
+
+// 忘魂草确认对话框（游戏内样式）
+function showForgetConfirmDialog(char, skillName, parentContainer) {
+    const confirmContainer = document.createElement('div');
+    confirmContainer.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 380px;
+        background: rgba(0, 0, 0, 0.95);
+        color: white;
+        font-family: 'Segoe UI', sans-serif;
+        padding: 30px 35px;
+        box-sizing: border-box;
+        z-index: 3100;
+        border-radius: 12px;
+        border: 2px solid #e74c3c;
+        text-align: center;
+    `;
+    confirmContainer.innerHTML = `
+        <div style="font-size:22px; margin-bottom:15px; color:#e74c3c;">⚠️ 确认遗忘</div>
+        <div style="font-size:16px; line-height:1.8; margin-bottom:20px;">
+            确定要遗忘 <strong style="color:${char.color || '#4a90e2'};">${char.name}</strong> 的第一魂技<br>
+            「<strong style="color:#f39c12;">${skillName}</strong>」吗？
+        </div>
+        <div style="display:flex; gap:12px; justify-content:center;">
+            <button id="forget-confirm-yes" style="
+                padding:10px 30px;
+                background:#e74c3c; color:white; border:none; border-radius:8px;
+                cursor:pointer; font-size:16px; font-weight:bold;
+            ">确认遗忘</button>
+            <button id="forget-confirm-no" style="
+                padding:10px 30px;
+                background:#666; color:white; border:none; border-radius:8px;
+                cursor:pointer; font-size:16px;
+            ">取消</button>
+        </div>
+    `;
+    document.body.appendChild(confirmContainer);
+
+    document.getElementById('forget-confirm-yes').onclick = () => {
+        // 移除第一魂技和第一魂环
+        if (char.skills && char.skills.length > 0) char.skills.shift();
+        if (char.soulRings && char.soulRings.length > 0) char.soulRings.shift();
+        app.inventory.wanghun = (app.inventory.wanghun || 1) - 1;
+
+        // 关闭确认对话框
+        if (confirmContainer.parentNode) confirmContainer.parentNode.removeChild(confirmContainer);
+        // 关闭忘魂草选择对话框
+        if (parentContainer.parentNode) parentContainer.parentNode.removeChild(parentContainer);
+        app.dialogActive = false;
+
+        // 关闭背包面板
+        const backpackPanel = document.getElementById('backpack-panel');
+        if (backpackPanel) {
+            backpackPanel.style.display = 'none';
+        }
+
+        setMoveTip(`${char.name} 的第一魂技已被遗忘！`);
+    };
+
+    document.getElementById('forget-confirm-no').onclick = () => {
+        if (confirmContainer.parentNode) confirmContainer.parentNode.removeChild(confirmContainer);
+    };
+}
+
+// 战斗失败提示对话框（小怪全灭时弹出）
+function showBattleLossHint() {
+    const hintContainer = document.createElement('div');
+    hintContainer.id = 'battle-loss-hint';
+    hintContainer.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 420px;
+        background: rgba(0, 0, 0, 0.95);
+        color: white;
+        font-family: 'Segoe UI', sans-serif;
+        padding: 30px 35px;
+        box-sizing: border-box;
+        z-index: 3100;
+        border-radius: 12px;
+        border: 2px solid #e74c3c;
+        text-align: center;
+    `;
+    hintContainer.innerHTML = `
+        <div style="font-size:28px; margin-bottom:10px;">💀</div>
+        <div style="font-size:20px; margin-bottom:15px; color:#e74c3c;">战斗失败</div>
+        <div style="font-size:16px; line-height:1.8; margin-bottom:20px;">
+            如果战斗中生命状态不佳，<br>
+            建议点击下方<strong style="color:#f39c12;">主城</strong>按钮补给之后再返回战斗塔哦！
+        </div>
+        <button id="battle-loss-ok-btn" style="
+            padding:10px 40px;
+            background:#2ecc71; color:white; border:none; border-radius:8px;
+            cursor:pointer; font-size:16px; font-weight:bold;
+        ">知道了</button>
+    `;
+    document.body.appendChild(hintContainer);
+
+    document.getElementById('battle-loss-ok-btn').onclick = () => {
+        if (hintContainer.parentNode) hintContainer.parentNode.removeChild(hintContainer);
+    };
 }
 
 // 以下函数通过 gameLogic.js 注册，避免循环依赖

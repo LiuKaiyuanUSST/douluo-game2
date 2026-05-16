@@ -10,7 +10,7 @@
     "innateSkill": "缠绕",
     "talentName": "蓝银草",
     "availableSkillIds": ["缠绕", "复生", "蔓延"],
-    "feature": "坚韧控制者",
+    "feature": "十年蓝银，韧如丝缠",
     "talentAttr": "控制"
   },
   "柔骨兔": {
@@ -24,7 +24,7 @@
     "innateSkill": "柔骨锁",
     "talentName": "柔骨兔",
     "availableSkillIds": ["柔骨锁", "雷神变"],
-    "feature": "近身柔技",
+    "feature": "月影柔骨，锁敌无形",
     "talentAttr": "柔技"
   },
   "邪眸白虎": {
@@ -37,7 +37,7 @@
     "baseIntelligence": 1,
     "talentName": "白虎",
     "availableSkillIds": ["兽王", "雷神变"],
-    "feature": "正面强攻",
+    "feature": "邪眸虎啸，正面强攻",
     "talentAttr": "强攻"
   },
   "大力金刚熊": {
@@ -50,7 +50,7 @@
     "baseIntelligence": 1,
     "talentName": "大力金刚熊",
     "availableSkillIds": ["兽王", "治疗"],
-    "feature": "不动明王",
+    "feature": "大力金刚，不动如山",
     "talentAttr": "防御"
   },
   "蓝电霸王龙": {
@@ -63,7 +63,7 @@
     "baseIntelligence": 0,
     "talentName": "蓝电霸王龙",
     "availableSkillIds": ["雷神变", "兽王"],
-    "feature": "极致力量强攻",
+    "feature": "蓝电龙爪，雷霆万钧",
     "talentAttr": "力量"
   },
   "邪火凤凰": {
@@ -76,7 +76,7 @@
     "baseIntelligence": 2,
     "talentName": "邪火凤凰",
     "availableSkillIds": ["灼烧", "中毒"],
-    "feature": "邪火重炮",
+    "feature": "邪火燎原，凤凰重炮",
     "talentAttr": "火焰"
   },
   "七宝琉璃塔": {
@@ -90,7 +90,7 @@
     "innateSkill": "一曰力",
     "talentName": "七宝琉璃塔",
     "availableSkillIds": ["一曰力", "治疗"],
-    "feature": "最强增幅辅助",
+    "feature": "七宝流光，增幅无双",
     "talentAttr": "辅助"
   },
   "香肠": {
@@ -104,7 +104,7 @@
     "innateSkill": "治疗",
     "talentName": "香肠",
     "availableSkillIds": ["治疗", "复生"],
-    "feature": "食物系天才",
+    "feature": "美味香肠，食补天才",
     "talentAttr": "食物"
   },
   "昊天锤": {
@@ -117,7 +117,7 @@
     "baseIntelligence": 0,
     "talentName": "昊天锤",
     "availableSkillIds": ["蛮力", "一曰力"],
-    "feature": "极致力量强攻",
+    "feature": "昊天一击，力破万法",
     "talentAttr": "力量"
   },
   "七杀剑": {
@@ -130,7 +130,7 @@
     "baseIntelligence": 0,
     "talentName": "七杀剑",
     "availableSkillIds": ["一曰力", "雷神变"],
-    "feature": "极致点杀",
+    "feature": "七杀出鞘，一剑封喉",
     "talentAttr": "点杀"
   },
   "九心海棠": {
@@ -144,7 +144,7 @@
     "innateSkill": "复生",
     "talentName": "九心海棠",
     "availableSkillIds": ["复生", "治疗"],
-    "feature": "纯净治愈",
+    "feature": "海棠花开，愈心回春",
     "talentAttr": "治愈"
   },
   "治愈权杖": {
@@ -158,7 +158,7 @@
     "innateSkill": "复生",
     "talentName": "治愈权杖",
     "availableSkillIds": ["治疗", "复生"],
-    "feature": "治疗系魂师",
+    "feature": "神圣权杖，生机再现",
     "talentAttr": "治疗"
   },
   "奇茸通天菊": {
@@ -172,7 +172,7 @@
     "innateSkill": "复生",
     "talentName": "奇茸通天菊",
     "availableSkillIds": ["复生", "治疗"],
-    "feature": "花瓣攻防一体",
+    "feature": "菊瓣如刃，攻守兼备",
     "talentAttr": "攻防"
   },
   "破魂枪": {
@@ -185,7 +185,7 @@
     "baseIntelligence": 0,
     "talentName": "破魂枪",
     "availableSkillIds": ["雷神变", "蛮力"],
-    "feature": "一击穿魂",
+    "feature": "破魂一枪，穿心夺魄",
     "talentAttr": "穿透"
   },
   "幽冥灵猫": {
@@ -198,7 +198,7 @@
     "baseIntelligence": 1,
     "talentName": "幽冥灵猫",
     "availableSkillIds": ["柔骨锁", "雷神变"],
-    "feature": "敏攻刺杀",
+    "feature": "幽冥潜行，暗夜刺杀",
     "talentAttr": "刺杀"
   },
   "猫鹰": {
@@ -211,7 +211,7 @@
     "baseIntelligence": 1,
     "talentName": "猫鹰",
     "availableSkillIds": ["雷神变"],
-    "feature": "高速飞行敏攻",
+    "feature": "猫鹰展翅，疾风迅雷",
     "talentAttr": "飞行"
   },
   "月刃": {
@@ -224,7 +224,7 @@
     "baseIntelligence": 1,
     "talentName": "月刃",
     "availableSkillIds": ["灼烧"],
-    "feature": "月刃强攻",
+    "feature": "月刃如钩，寒光斩敌",
     "talentAttr": "月刃"
   },
   "风铃鸟": {
@@ -237,7 +237,7 @@
     "baseIntelligence": 1,
     "talentName": "风铃鸟",
     "availableSkillIds": ["雷神变"],
-    "feature": "极致速度",
+    "feature": "风铃轻响，疾影无踪",
     "talentAttr": "速度"
   },
   "海神": {
@@ -250,7 +250,7 @@
     "baseIntelligence": 4,
     "talentName": "海神",
     "availableSkillIds": ["雷神变"],
-    "feature": "海洋主宰",
+    "feature": "海神三叉，波涛听令",
     "talentAttr": "海洋"
   },
   "火龙": {
@@ -263,7 +263,7 @@
     "baseIntelligence": 1,
     "talentName": "火龙",
     "availableSkillIds": ["灼烧", "雷神变"],
-    "feature": "火爆龙炎",
+    "feature": "火龙吐息，烈焰焚天",
     "talentAttr": "龙炎"
   },
   "火焰领主": {
@@ -276,7 +276,7 @@
     "baseIntelligence": 3,
     "talentName": "火焰领主",
     "availableSkillIds": ["灼烧", "兽王"],
-    "feature": "攻防一体站场",
+    "feature": "烈火铸甲，站场不倒",
     "talentAttr": "站场"
   },
   "烈火苍狼": {
@@ -289,7 +289,7 @@
     "baseIntelligence": 1,
     "talentName": "烈火苍狼",
     "availableSkillIds": ["灼烧", "兽王"],
-    "feature": "苍狼之速",
+    "feature": "狼奔火逐，迅捷如风",
     "talentAttr": "狼速"
   },
   "妖狐": {
@@ -302,7 +302,7 @@
     "baseIntelligence": 3,
     "talentName": "妖狐",
     "availableSkillIds": ["灼烧", "中毒"],
-    "feature": "魅惑精神系",
+    "feature": "妖狐幻媚，惑心控魂",
     "talentAttr": "魅惑"
   },
   "罗三炮": {
@@ -315,7 +315,7 @@
     "baseIntelligence": 7,
     "talentName": "罗三炮",
     "availableSkillIds": ["中毒", "雷神变"],
-    "feature": "变异武魂",
+    "feature": "三炮咆哮，雷霆变异",
     "talentAttr": "变异"
   },
   "碧磷蛇皇": {
@@ -328,7 +328,7 @@
     "baseIntelligence": 5,
     "talentName": "碧磷蛇皇",
     "availableSkillIds": ["中毒", "复生"],
-    "feature": "毒控法坦",
+    "feature": "蛇皇毒雾，控场坚壁",
     "talentAttr": "毒控"
   },
   "碧磷蛇": {
@@ -341,7 +341,7 @@
     "baseIntelligence": 4,
     "talentName": "碧磷蛇",
     "availableSkillIds": ["中毒", "复生"],
-    "feature": "毒控高速",
+    "feature": "碧磷游走，毒牙迅捷",
     "talentAttr": "毒速"
   },
   "鬼王": {
@@ -354,7 +354,7 @@
     "baseIntelligence": 3,
     "talentName": "鬼王",
     "availableSkillIds": ["中毒", "兽王"],
-    "feature": "鬼手强攻",
+    "feature": "鬼王之手，撕裂灵魂",
     "talentAttr": "鬼手"
   },
   "大力猩": {
@@ -367,7 +367,7 @@
     "baseIntelligence": 0,
     "talentName": "大力猩",
     "availableSkillIds": ["兽王", "雷神变"],
-    "feature": "纯力量魂师",
+    "feature": "大力猩猿，力拔山兮",
     "talentAttr": "力量"
   },
   "骨龙": {
@@ -380,7 +380,7 @@
     "baseIntelligence": 3,
     "talentName": "骨龙",
     "availableSkillIds": ["兽王", "中毒"],
-    "feature": "骨毒反噬",
+    "feature": "白骨之龙，毒骨反噬",
     "talentAttr": "骨毒"
   },
   "豹子": {
@@ -394,18 +394,6 @@
     "availableSkillIds": [],
     "feature": "速度型",
     "talentAttr": "速度"
-  },
-  "大角羊": {
-    "name": "大角羊",
-    "category": "npc",
-    "mainAffinity": "巨兽",
-    "subAffinity": "苍木",
-    "baseForce": 1,
-    "baseSpeed": 2,
-    "baseIntelligence": 1,
-    "availableSkillIds": [],
-    "feature": "普通型",
-    "talentAttr": "普通"
   },
   "破草锄": {
     "name": "破草锄",
@@ -502,5 +490,187 @@
     "availableSkillIds": [],
     "feature": "打铁用的铜锤",
     "talentAttr": "铁锤"
+  },
+  "孤竹": {
+    "name": "孤竹",
+    "category": "npc",
+    "mainAffinity": "苍木",
+    "subAffinity": "沧澜",
+    "baseForce": 2,
+    "baseSpeed": 1,
+    "baseIntelligence": 1,
+    "talentName": "孤竹",
+    "availableSkillIds": [],
+    "feature": "十年孤竹，坚韧直立",
+    "talentAttr": "坚韧"
+  },
+  "闪电兔": {
+    "name": "闪电兔",
+    "category": "npc",
+    "mainAffinity": "雷霆",
+    "subAffinity": "烈焰",
+    "baseForce": 1,
+    "baseSpeed": 3,
+    "baseIntelligence": 0,
+    "talentName": "闪电兔",
+    "availableSkillIds": [],
+    "feature": "电弧跃动，迅若闪光",
+    "talentAttr": "迅雷"
+  },
+  "尖尾雨燕": {
+    "name": "尖尾雨燕",
+    "category": "npc",
+    "mainAffinity": "沧澜",
+    "subAffinity": "雷霆",
+    "baseForce": 0,
+    "baseSpeed": 4,
+    "baseIntelligence": 0,
+    "talentName": "尖尾雨燕",
+    "availableSkillIds": [],
+    "feature": "贴水疾飞，翅刃如刀",
+    "talentAttr": "飞刃"
+  },
+  "斑斓猫": {
+    "name": "斑斓猫",
+    "category": "npc",
+    "mainAffinity": "烈焰",
+    "subAffinity": "蛊毒",
+    "baseForce": 2,
+    "baseSpeed": 2,
+    "baseIntelligence": 0,
+    "talentName": "斑斓猫",
+    "availableSkillIds": [],
+    "feature": "花斑火猫，爪带灼痕",
+    "talentAttr": "灼毒"
+  },
+  "断肠草": {
+    "name": "断肠草",
+    "category": "npc",
+    "mainAffinity": "蛊毒",
+    "subAffinity": "苍木",
+    "baseForce": 0,
+    "baseSpeed": 1,
+    "baseIntelligence": 3,
+    "talentName": "断肠草",
+    "availableSkillIds": [],
+    "feature": "十年毒草，入口断肠",
+    "talentAttr": "剧毒"
+  },
+  "大角羊": {
+    "name": "大角羊",
+    "category": "npc",
+    "mainAffinity": "巨兽",
+    "subAffinity": "天工",
+    "baseForce": 1,
+    "baseSpeed": 2,
+    "baseIntelligence": 1,
+    "talentName": "大角羊",
+    "availableSkillIds": [],
+    "feature": "弯角冲撞，皮糙力厚",
+    "talentAttr": "冲撞"
+  },
+  "锄头": {
+    "name": "锄头",
+    "category": "npc",
+    "mainAffinity": "天工",
+    "subAffinity": "巨兽",
+    "baseForce": 1,
+    "baseSpeed": 1,
+    "baseIntelligence": 2,
+    "talentName": "锄头",
+    "availableSkillIds": [],
+    "feature": "锄地农具，朴实器具",
+    "talentAttr": "农具"
+  },
+  "鬼藤": {
+    "name": "鬼藤",
+    "category": "npc",
+    "mainAffinity": "苍木",
+    "subAffinity": "蛊毒",
+    "baseForce": 1,
+    "baseSpeed": 2,
+    "baseIntelligence": 6,
+    "talentName": "鬼藤",
+    "availableSkillIds": ["缠绕"],
+    "feature": "寄生藤蔓，绞杀无声",
+    "talentAttr": "绞杀"
+  },
+  "幽冥狼": {
+    "name": "幽冥狼",
+    "category": "npc",
+    "mainAffinity": "雷霆",
+    "subAffinity": "沧澜",
+    "baseForce": 2,
+    "baseSpeed": 6,
+    "baseIntelligence": 1,
+    "talentName": "幽冥狼",
+    "availableSkillIds": ["雷神变"],
+    "feature": "群猎幽影，疾风迅雷",
+    "talentAttr": "群猎"
+  },
+  "海蝰蛇": {
+    "name": "海蝰蛇",
+    "category": "npc",
+    "mainAffinity": "沧澜",
+    "subAffinity": "雷霆",
+    "baseForce": 1,
+    "baseSpeed": 7,
+    "baseIntelligence": 1,
+    "talentName": "海蝰蛇",
+    "availableSkillIds": ["怒涛"],
+    "feature": "浅海小蛇，游速极快",
+    "talentAttr": "疾泳"
+  },
+  "火蜥蜴": {
+    "name": "火蜥蜴",
+    "category": "npc",
+    "mainAffinity": "烈焰",
+    "subAffinity": "巨兽",
+    "baseForce": 3,
+    "baseSpeed": 3,
+    "baseIntelligence": 3,
+    "talentName": "火蜥蜴",
+    "availableSkillIds": ["灼烧"],
+    "feature": "百年火蜥，吐焰灼身",
+    "talentAttr": "吐焰"
+  },
+  "曼陀罗蛇": {
+    "name": "曼陀罗蛇",
+    "category": "npc",
+    "mainAffinity": "蛊毒",
+    "subAffinity": "苍木",
+    "baseForce": 2,
+    "baseSpeed": 4,
+    "baseIntelligence": 3,
+    "talentName": "曼陀罗蛇",
+    "availableSkillIds": ["中毒"],
+    "feature": "剧毒蛇牙，一击麻痹",
+    "talentAttr": "麻痹"
+  },
+  "蛮牛": {
+    "name": "蛮牛",
+    "category": "npc",
+    "mainAffinity": "巨兽",
+    "subAffinity": "天工",
+    "baseForce": 5,
+    "baseSpeed": 3,
+    "baseIntelligence": 1,
+    "talentName": "蛮牛",
+    "availableSkillIds": ["蛮力"],
+    "feature": "百年蛮牛，冲撞裂石",
+    "talentAttr": "裂石"
+  },
+  "板斧": {
+    "name": "板斧",
+    "category": "npc",
+    "mainAffinity": "天工",
+    "subAffinity": "烈焰",
+    "baseForce": 5,
+    "baseSpeed": 1,
+    "baseIntelligence": 3,
+    "talentName": "板斧",
+    "availableSkillIds": ["一曰力"],
+    "feature": "阔刃板斧，劈木开山",
+    "talentAttr": "开山"
   }
 }

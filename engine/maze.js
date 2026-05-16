@@ -12,32 +12,98 @@ export class MazeManager {
         this.wallRight = Array(size).fill().map(() => Array(size).fill(false));
         this.wallDown = Array(size).fill().map(() => Array(size).fill(false));
 
+        // 猎魂森林相关属性
+        this.isHuntingForest = false;      // 是否为猎魂森林模式
+        this.bossPositions = [];           // 7个boss的位置 [{x, y}]
+        this.bossDefeated = [];            // 每个boss是否已被击败
+        this.startPosition = { x: 0, y: 0 }; // 起点位置（标2的位置）
+        this.bossCells = new Set();        // 所有boss格坐标的字符串集合 "x,y"
+
         // 生成迷宫墙壁
+        this.generateWalls();
+    }
+
+    // ---------- 设置猎魂森林模式 ----------
+    setupHuntingForest() {
+        this.isHuntingForest = true;
+
+        // 固定地图布局：2是起点，1是boss位置
+        // 20101
+        // 00000
+        // 10001
+        // 00000
+        // 10101
+        const layout = [
+            [2, 0, 1, 0, 1],
+            [0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 1],
+            [0, 0, 0, 0, 0],
+            [1, 0, 1, 0, 1]
+        ];
+
+        // 收集所有boss位置
+        const bossPositions = [];
+        for (let y = 0; y < this.size; y++) {
+            for (let x = 0; x < this.size; x++) {
+                if (layout[y][x] === 1) {
+                    bossPositions.push({ x, y });
+                    this.bossCells.add(`${x},${y}`);
+                } else if (layout[y][x] === 2) {
+                    this.startPosition = { x, y };
+                }
+            }
+        }
+
+        // 7个魂兽
+        const soulBeasts = [
+            { name: '鬼藤', affinity: '苍木', desc: '寄生藤蔓，绞杀无声', color: '#27ae60' },
+            { name: '幽冥狼', affinity: '雷霆', desc: '群猎幽影，疾风迅雷', color: '#3498db' },
+            { name: '海蝰蛇', affinity: '沧澜', desc: '浅海小蛇，游速极快', color: '#1abc9c' },
+            { name: '火蜥蜴', affinity: '烈焰', desc: '百年火蜥，吐焰灼身', color: '#e74c3c' },
+            { name: '曼陀罗蛇', affinity: '蛊毒', desc: '剧毒蛇牙，一击麻痹', color: '#8e44ad' },
+            { name: '蛮牛', affinity: '巨兽', desc: '百年蛮牛，冲撞裂石', color: '#f39c12' },
+            { name: '板斧', affinity: '天工', desc: '阔刃板斧，劈木开山', color: '#e67e22' }
+        ];
+
+        // 随机打乱魂兽顺序，分配到7个位置
+        const shuffled = [...soulBeasts].sort(() => Math.random() - 0.5);
+        this.bossPositions = bossPositions.map((pos, i) => ({
+            ...pos,
+            ...shuffled[i],
+            defeated: false
+        }));
+        this.bossDefeated = bossPositions.map(() => false);
+
+        // 设置玩家起点
+        this.px = this.startPosition.x;
+        this.py = this.startPosition.y;
+        this.explored = Array(this.size).fill().map(() => Array(this.size).fill(false));
+        this.explored[this.py][this.px] = true;
+
+        // 重置墙壁并重新生成（使用猎魂森林专用连通性检测）
+        this.wallRight = Array(this.size).fill().map(() => Array(this.size).fill(false));
+        this.wallDown = Array(this.size).fill().map(() => Array(this.size).fill(false));
         this.generateWalls();
     }
 
     // ---------- 连通性检测 Q 函数 ----------
     canReachAll() {
         const size = this.size;
-        // 标记数组：0未访问，1已访问但非活跃，2活跃扩展中
         const mark = Array(size).fill().map(() => Array(size).fill(0));
-        mark[this.py][this.px] = 2;   // 起点(0,0)实际是(0,0)，这里用当前玩家位置？算法描述中说起点是0,0
-        // 按用户描述，起点应为(0,0)，但我们生成时玩家在(0,0)
         const startX = 0, startY = 0;
         mark[startY][startX] = 2;
 
-        let nonZeroCount = 1; // 当前非0格子数
+        let nonZeroCount = 1;
         let prevCount = 0;
 
         while (nonZeroCount > prevCount) {
             prevCount = nonZeroCount;
 
-            // 1. 将标记为 2 的格子相邻且无墙的格子标记为 1
             const toOne = [];
             for (let y = 0; y < size; y++) {
                 for (let x = 0; x < size; x++) {
                     if (mark[y][x] === 2) {
-                        const neighbors = this.getPassableNeighbors(x, y, mark, false);
+                        const neighbors = this.getPassableNeighbors(x, y);
                         for (const [nx, ny] of neighbors) {
                             if (mark[ny][nx] === 0) {
                                 toOne.push([nx, ny]);
@@ -51,18 +117,16 @@ export class MazeManager {
                 nonZeroCount++;
             }
 
-            // 2. 将所有非0标记统一变为 1
             for (let y = 0; y < size; y++) {
                 for (let x = 0; x < size; x++) {
                     if (mark[y][x] !== 0) mark[y][x] = 1;
                 }
             }
 
-            // 3. 找到所有标记为 1 的格子且其邻居存在 0 的，标记为 2
             for (let y = 0; y < size; y++) {
                 for (let x = 0; x < size; x++) {
                     if (mark[y][x] === 1) {
-                        const neighbors = this.getPassableNeighbors(x, y, mark, true);
+                        const neighbors = this.getPassableNeighbors(x, y);
                         for (const [nx, ny] of neighbors) {
                             if (mark[ny][nx] === 0) {
                                 mark[y][x] = 2;
@@ -73,7 +137,6 @@ export class MazeManager {
                 }
             }
 
-            // 重新统计非0数量
             nonZeroCount = 0;
             for (let y = 0; y < size; y++) {
                 for (let x = 0; x < size; x++) {
@@ -82,7 +145,6 @@ export class MazeManager {
             }
         }
 
-        // 检查是否所有格子都可达
         for (let y = 0; y < size; y++) {
             for (let x = 0; x < size; x++) {
                 if (mark[y][x] === 0) return false;
@@ -91,23 +153,59 @@ export class MazeManager {
         return true;
     }
 
-    // 获取四个方向中可通过的邻居（考虑内部墙和边界）
-    getPassableNeighbors(x, y, mark, includeBlocked = false) {
+    // ---------- 猎魂森林专用连通性检测 ----------
+    // 检查从起点到每个boss是否都能到达，且不经过其他boss格
+    canReachAllBosses() {
+        if (!this.isHuntingForest) return this.canReachAll();
+
+        const size = this.size;
+
+        // 对每个boss，检查从起点是否能到达它，且路径不经过其他boss格
+        for (const boss of this.bossPositions) {
+            if (!this.canReachBossWithoutOtherBosses(boss.x, boss.y)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // BFS检查从起点到目标点是否可达，且不经过其他boss格（目标boss格本身除外）
+    canReachBossWithoutOtherBosses(targetX, targetY) {
+        const size = this.size;
+        const visited = Array(size).fill().map(() => Array(size).fill(false));
+        const queue = [{ x: this.startPosition.x, y: this.startPosition.y }];
+        visited[this.startPosition.y][this.startPosition.x] = true;
+
+        while (queue.length > 0) {
+            const { x, y } = queue.shift();
+
+            if (x === targetX && y === targetY) return true;
+
+            const neighbors = this.getPassableNeighbors(x, y);
+            for (const [nx, ny] of neighbors) {
+                if (visited[ny][nx]) continue;
+                // 如果是其他boss格，不能经过
+                if (this.bossCells.has(`${nx},${ny}`) && !(nx === targetX && ny === targetY)) continue;
+                visited[ny][nx] = true;
+                queue.push({ x: nx, y: ny });
+            }
+        }
+        return false;
+    }
+
+    // 获取四个方向中可通过的邻居
+    getPassableNeighbors(x, y) {
         const result = [];
         const size = this.size;
-        // 上
         if (y > 0 && !this.wallDown[y-1][x]) {
             result.push([x, y-1]);
         }
-        // 下
         if (y < size-1 && !this.wallDown[y][x]) {
             result.push([x, y+1]);
         }
-        // 左
         if (x > 0 && !this.wallRight[y][x-1]) {
             result.push([x-1, y]);
         }
-        // 右
         if (x < size-1 && !this.wallRight[y][x]) {
             result.push([x+1, y]);
         }
@@ -117,12 +215,10 @@ export class MazeManager {
     // ---------- 墙壁生成算法 ----------
     generateWalls() {
         const size = this.size;
-        // W 矩阵：0表示可尝试拆墙，1表示不再尝试
         const W = Array(size).fill().map(() => Array(size).fill(0));
-        let failedCount = 0;  // 连续把 W==0 变成 W==1 的次数
+        let failedCount = 0;
 
         while (true) {
-            // 找所有 W 为 0 的坐标
             const zeros = [];
             for (let y = 0; y < size; y++) {
                 for (let x = 0; x < size; x++) {
@@ -132,14 +228,11 @@ export class MazeManager {
             if (zeros.length === 0) break;
             if (failedCount >= 3) break;
 
-            // 随机选一个
             const idx = Math.floor(Math.random() * zeros.length);
             const [cx, cy] = zeros[idx];
             let succeed = false;
 
-            // 尝试顺序：右、下、左、上（随机打乱）
-            const dirs = [[1,0], [0,1], [-1,0], [0,-1]]; // dx,dy
-            // 随机打乱方向顺序
+            const dirs = [[1,0], [0,1], [-1,0], [0,-1]];
             for (let i = dirs.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [dirs[i], dirs[j]] = [dirs[j], dirs[i]];
@@ -150,7 +243,6 @@ export class MazeManager {
                 const ny = cy + dy;
                 if (nx < 0 || nx >= size || ny < 0 || ny >= size) continue;
 
-                // 判断方向对应哪堵墙
                 let wallModified = false;
                 if (dx === 1 && cx < size-1 && !this.wallRight[cy][cx]) {
                     this.wallRight[cy][cx] = true;
@@ -167,11 +259,12 @@ export class MazeManager {
                 }
 
                 if (wallModified) {
-                    if (this.canReachAll()) {
+                    // 使用猎魂森林专用检测或普通检测
+                    const valid = this.isHuntingForest ? this.canReachAllBosses() : this.canReachAll();
+                    if (valid) {
                         succeed = true;
                         break;
                     } else {
-                        // 撤销
                         if (dx === 1 && cx < size-1) this.wallRight[cy][cx] = false;
                         else if (dx === -1 && cx > 0) this.wallRight[cy][cx-1] = false;
                         else if (dy === 1 && cy < size-1) this.wallDown[cy][cx] = false;
@@ -194,7 +287,6 @@ export class MazeManager {
         const nx = this.px + dx;
         const ny = this.py + dy;
         if (nx < 0 || nx >= this.size || ny < 0 || ny >= this.size) return false;
-        // 检查是否有墙
         if (dx === -1 && this.wallRight[this.py][this.px-1]) return false;
         if (dx === 1 && this.wallRight[this.py][this.px]) return false;
         if (dy === -1 && this.wallDown[this.py-1][this.px]) return false;
@@ -207,10 +299,53 @@ export class MazeManager {
         this.px += dx;
         this.py += dy;
         this.explored[this.py][this.px] = true;
+        
+        // 猎魂森林模式：走到boss相邻格时，自动显示该boss（不再显示问号）
+        if (this.isHuntingForest) {
+            this.revealAdjacentBosses();
+        }
+        
         return true;
     }
 
+    // 猎魂森林：走到boss旁边时，自动显示该boss的信息（不再显示问号）
+    revealAdjacentBosses() {
+        const dirs = [[1,0], [-1,0], [0,1], [0,-1]];
+        for (const [dx, dy] of dirs) {
+            const nx = this.px + dx;
+            const ny = this.py + dy;
+            if (nx >= 0 && nx < this.size && ny >= 0 && ny < this.size) {
+                if (this.bossCells.has(`${nx},${ny}`)) {
+                    this.explored[ny][nx] = true;
+                }
+            }
+        }
+    }
+
     isBossCell() {
+        if (this.isHuntingForest) {
+            return this.bossCells.has(`${this.px},${this.py}`);
+        }
         return this.px === this.size - 1 && this.py === this.size - 1;
+    }
+
+    // 获取当前格子的boss信息
+    getCurrentBossInfo() {
+        if (!this.isHuntingForest) return null;
+        const boss = this.bossPositions.find(b => b.x === this.px && b.y === this.py);
+        return boss || null;
+    }
+
+    // 标记boss已被击败
+    markBossDefeated(x, y) {
+        const boss = this.bossPositions.find(b => b.x === x && b.y === y);
+        if (boss) {
+            boss.defeated = true;
+        }
+    }
+
+    // 检查是否所有boss都被击败
+    areAllBossesDefeated() {
+        return this.bossPositions.every(b => b.defeated);
     }
 }

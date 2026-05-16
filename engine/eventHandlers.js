@@ -3,6 +3,7 @@ import { app } from './gameState.js';
 import { tryMoveTown, tryMoveMaze, performAttack, handleShopPurchase, goToTown, skipPlayerTurn, onBattleWin, onBattleLoss } from './gameLogic.js';
 import { setMoveTip, toggleBackpack } from './utils.js';
 import { getActualProb, getSkillById } from './skills.js';
+// 魂环吸收迷宫移动已集成到 gameTown.js 的 tryMoveMaze 中
 
 function showBattleLogPanel() {
   if (app.showBattleLog) return;

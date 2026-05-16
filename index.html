@@ -34,10 +34,15 @@
     </div>
 
     <script type="module">
-        // 检查存档
-        const hasSave = !!localStorage.getItem('douluo_save_slot_1');
+        // 检查是否有任何存档
+        function checkAnySave() {
+            for (let i = 1; i <= 3; i++) {
+                if (localStorage.getItem(`douluo_save_slot_${i}`)) return true;
+            }
+            return false;
+        }
         const loadBtn = document.getElementById('load-game-btn');
-        if (!hasSave) loadBtn.disabled = true;
+        if (!checkAnySave()) loadBtn.disabled = true;
 
         // "开始游戏"显示菜单
         document.getElementById('start-btn').onclick = () => {

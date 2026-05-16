@@ -8,7 +8,7 @@ export function inRange(battle, attacker, defender) {
   return Math.abs(getPos(attacker) - getPos(defender)) <= battle.getEffectiveRange(attacker);
 }
 
-export function resolveAttack(attacker, defender, battle) {
+export function resolveAttack(attacker, defender, battle, isNormalAttack = false) {
   // 闪避判定
   const attackerAgility = (attacker.speed + (attacker.speedBonus||0)) + (attacker.intel + (attacker.intelligenceBonus||0));
   const defenderAgility = (defender.speed + (defender.speedBonus||0)) + (defender.intel + (defender.intelligenceBonus||0));
@@ -45,6 +45,11 @@ export function resolveAttack(attacker, defender, battle) {
   }
 
   let damage = Math.max(0, baseDamage - reduction) + bonus;
+
+  // 缠绕效果：普攻无法造成伤害
+  if (isNormalAttack && attacker.marks && attacker.marks.some(m => m.type === 'bind')) {
+    damage = 0;
+  }
 
   // 天工减免
   if (defender.affinityUsed === '天工' && Math.random() < 0.05) damage = 0;

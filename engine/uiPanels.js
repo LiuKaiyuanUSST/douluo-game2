@@ -1,7 +1,6 @@
 import { app } from './gameState.js';
 import { useBackpackItem, goToTown } from './gameLogic.js';
-import { setMoveTip } from './utilsCore.js';
-import { saveGame, loadGame } from './utilsCore.js';
+import { setMoveTip, saveGame, loadGame, getSaveSlotInfo } from './utilsCore.js';
 import { toggleCharacterPanel, toggleTeamPanel } from './uiCharacterTeam.js';
 
 // ---------- 按钮行 ----------
@@ -146,7 +145,7 @@ export function createHelpButton(buttonRow) {
     buttonRow.appendChild(btn);
 }
 
-// ---------- 存档面板 ----------
+// ---------- 存档面板（3个存档位） ----------
 function createSavePanel() {
     if (document.getElementById('save-panel')) return;
     const panel = document.createElement('div');
@@ -156,7 +155,7 @@ function createSavePanel() {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 300px;
+        width: 500px;
         background: rgba(0,0,0,0.92);
         color: white;
         border: 2px solid #aaa;
@@ -169,28 +168,88 @@ function createSavePanel() {
     `;
     panel.innerHTML = `
         <h3 style="margin-top:0;">💾 存档管理</h3>
-        <button id="panel-save-game-btn" style="display:block; width:100%; margin:10px 0; padding:10px; background:#2ecc71; color:white; border:none; border-radius:6px; cursor:pointer; font-size:16px;">保存当前进度</button>
-        <button id="panel-load-game-btn" style="display:block; width:100%; margin:10px 0; padding:10px; background:#3498db; color:white; border:none; border-radius:6px; cursor:pointer; font-size:16px;">读取进度</button>
+        <div id="save-slots-container"></div>
         <button id="panel-new-game-btn" style="display:block; width:100%; margin:10px 0; padding:10px; background:#e67e22; color:white; border:none; border-radius:6px; cursor:pointer; font-size:16px;">🔄 开始新游戏</button>
         <button id="panel-close-btn" style="display:block; width:100%; margin:10px 0 0; padding:8px; background:#666; color:white; border:none; border-radius:6px; cursor:pointer;">关闭</button>
     `;
     document.body.appendChild(panel);
 
-    document.getElementById('panel-save-game-btn').addEventListener('click', () => {
-        saveGame();
-        toggleSavePanel(false);
-    });
-    document.getElementById('panel-load-game-btn').addEventListener('click', () => {
-        const success = loadGame();
-        if (success) toggleSavePanel(false);
-    });
     document.getElementById('panel-new-game-btn').addEventListener('click', () => {
         if (confirm('确定要开始新游戏吗？当前进度将会丢失！')) {
-            localStorage.removeItem('douluo_save_slot_1');
+            // 重置游戏状态（不清除存档）
+            app.party = [];
+            app.player = null;
+            app.inventory = { jiupin: 0 };
+            app.currentLevel = null;
+            app.unlockedLevels = [];
+            app.currentTown = 'noting';
+            app.townPlayerPos = { x: 0, y: 0 };
+            app.activeTeam = [null, null, null];
+            app.selectedFormation = 'front-back-front';
+            app.wuhunChosen = false;
+            app.xwWuhunChosen = false;
+            app.shrekPartnerChosen = false;
+            app.shrekFirstMoveDone = false;
+            app.fldRegistrationDone = false;
+            app.firstLevelEntered = false;
+            app.secondLevelEntered = false;
+            app.pendingXiaoWuChoice = false;
+            app.showAffinityHint = false;
+            app.showResurrectionHint = false;
+            app.state = 'TOWN';
+            app.maze = null;
+            app.battle = null;
+            app.battleTargeting = false;
+            app.battleEnemyTurnDone = false;
+            app.backpackOpen = false;
+            app.dialogActive = false;
+            toggleSavePanel(false);
             location.reload();
         }
     });
     document.getElementById('panel-close-btn').addEventListener('click', () => toggleSavePanel(false));
+}
+
+function updateSaveSlots() {
+    const container = document.getElementById('save-slots-container');
+    if (!container) return;
+    let html = '';
+    for (let slot = 1; slot <= 3; slot++) {
+        const info = getSaveSlotInfo(slot);
+        const slotColor = info.exists ? '#2ecc71' : '#666';
+        html += `
+            <div style="border:1px solid #555; border-radius:8px; margin:8px 0; padding:10px; background:rgba(255,255,255,0.05);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                    <span style="font-weight:bold; color:${slotColor};">存档位 ${slot}</span>
+                    <span style="font-size:13px; color:#aaa;">${info.exists ? '有存档' : '空'}</span>
+                </div>
+                <div style="font-size:13px; color:#ddd; margin-bottom:8px; min-height:20px; word-break:break-all;">${info.displayName}</div>
+                <div style="display:flex; gap:8px;">
+                    <button class="save-slot-btn" data-slot="${slot}" style="flex:1; padding:8px; background:#2ecc71; color:white; border:none; border-radius:6px; cursor:pointer; font-size:14px;">💾 保存</button>
+                    <button class="load-slot-btn" data-slot="${slot}" style="flex:1; padding:8px; background:#3498db; color:white; border:none; border-radius:6px; cursor:pointer; font-size:14px;">📂 读取</button>
+                </div>
+            </div>
+        `;
+    }
+    container.innerHTML = html;
+
+    // 绑定保存按钮事件
+    document.querySelectorAll('.save-slot-btn').forEach(btn => {
+        btn.onclick = () => {
+            const slot = parseInt(btn.dataset.slot);
+            saveGame(slot);
+            updateSaveSlots();
+        };
+    });
+
+    // 绑定读取按钮事件
+    document.querySelectorAll('.load-slot-btn').forEach(btn => {
+        btn.onclick = () => {
+            const slot = parseInt(btn.dataset.slot);
+            const success = loadGame(slot);
+            if (success) toggleSavePanel(false);
+        };
+    });
 }
 
 function toggleSavePanel(show = null) {
@@ -200,6 +259,7 @@ function toggleSavePanel(show = null) {
     if (show === false || panel.style.display === 'block') {
         panel.style.display = 'none';
     } else {
+        updateSaveSlots();
         panel.style.display = 'block';
     }
 }
@@ -242,10 +302,14 @@ function updateBackpackList() {
     if (app.inventory.jiupin > 0) {
         items.push({ name: '九品紫芝', count: app.inventory.jiupin, type: 'jiupin' });
     }
+    if (app.inventory.wanghun > 0) {
+        items.push({ name: '忘魂草', count: app.inventory.wanghun, type: 'wanghun' });
+    }
     if (items.length === 0) {
         list.innerHTML = '<p style="text-align:center;">背包空空如也</p>';
         return;
     }
+
     let html = '';
     items.forEach(item => {
         html += `<div style="display:flex; justify-content:space-between; align-items:center; margin:5px 0;">
