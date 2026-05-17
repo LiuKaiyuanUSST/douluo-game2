@@ -4,7 +4,8 @@ import { app } from './gameState.js';
 const MARK_CN = {
   poison: '毒', burn: '燃', bind: '缠', lock: '锁',
   reborn: '生', beast_king: '王', shield: '盾',
-  power_up: '力', speed_up: '速', smoke: '烟'
+  power_up: '力', speed_up: '速', smoke: '烟',
+  delay: '迟'
 };
 
 export function drawBattle() {
@@ -46,14 +47,18 @@ export function drawBattle() {
       ctx.fillText(`攻:${atkStr} 防:${defStr}档 速:${spd} 距:${range} 灵巧:${agi}`, leftPanelX + 10, yBase + 32);
       
       if (u.marks && u.marks.length > 0) {
-        let marksText = '';
-        u.marks.forEach(m => {
-          const positive = ['reborn', 'beast_king', 'shield', 'power_up', 'speed_up'];
-          ctx.fillStyle = positive.includes(m.type) ? '#44ff44' : '#ff4444';
-          marksText += `[${MARK_CN[m.type] || m.type}] `;
-        });
+        const positive = ['reborn', 'beast_king', 'shield', 'power_up', 'speed_up'];
         ctx.font = "bold 11px Arial";
-        ctx.fillText(`状态: ${marksText}`, leftPanelX + 10, yBase + 50);
+        let markX = leftPanelX + 10;
+        ctx.fillStyle = "#ddd";
+        ctx.fillText('状态: ', markX, yBase + 50);
+        markX += ctx.measureText('状态: ').width;
+        u.marks.forEach(m => {
+          ctx.fillStyle = positive.includes(m.type) ? '#44ff44' : '#ff4444';
+          const text = `[${MARK_CN[m.type] || m.type}] `;
+          ctx.fillText(text, markX, yBase + 50);
+          markX += ctx.measureText(text).width;
+        });
       }
       ctx.fillStyle = "#555";
       ctx.fillRect(leftPanelX + 10, yBase + 60, panelW - 30, 6);
@@ -95,14 +100,18 @@ export function drawBattle() {
       ctx.fillText(`攻:${atkStr} 防:${defStr}档 速:${spd} 距:${range} 灵巧:${agi}`, rightPanelX + 10, yBase + 32);
       
       if (u.marks && u.marks.length > 0) {
-        let marksText = '';
-        u.marks.forEach(m => {
-          const positive = ['reborn', 'beast_king', 'shield', 'power_up', 'speed_up'];
-          ctx.fillStyle = positive.includes(m.type) ? '#44ff44' : '#ff4444';
-          marksText += `[${MARK_CN[m.type] || m.type}] `;
-        });
+        const positive = ['reborn', 'beast_king', 'shield', 'power_up', 'speed_up'];
         ctx.font = "bold 11px Arial";
-        ctx.fillText(`状态: ${marksText}`, rightPanelX + 10, yBase + 50);
+        let markX = rightPanelX + 10;
+        ctx.fillStyle = "#ddd";
+        ctx.fillText('状态: ', markX, yBase + 50);
+        markX += ctx.measureText('状态: ').width;
+        u.marks.forEach(m => {
+          ctx.fillStyle = positive.includes(m.type) ? '#44ff44' : '#ff4444';
+          const text = `[${MARK_CN[m.type] || m.type}] `;
+          ctx.fillText(text, markX, yBase + 50);
+          markX += ctx.measureText(text).width;
+        });
       }
       ctx.fillStyle = "#555";
       ctx.fillRect(rightPanelX + 10, yBase + 60, panelW - 30, 6);

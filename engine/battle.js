@@ -112,7 +112,7 @@ export class BattleSystem {
   }
 
   addMark(unit, type, duration, extra) {
-    addMark(unit, type, duration, extra, this);
+    return addMark(unit, type, duration, extra, this);
   }
 
   removeMark(unit, markType) {
@@ -157,7 +157,15 @@ export class BattleSystem {
     if (!skill) return [];
     if (skill.target === 'self' || skill.target === 'all_ally') return [];
     if (skill.target === 'ally') return this.getAllyTargets(actor).map(idx => ({ side: actor.side, index: idx }));
-    // 敌方目标
+    // 蓝银领域天赋：使用缠绕时无距离限制
+    if (skillId === '缠绕' && actor.talentData?.extraBindAndRebornTarget) {
+      const opposing = actor.side === 'player' ? this.enemyTeam : this.playerTeam;
+      return opposing.reduce((arr, unit, i) => {
+        if (unit.alive) arr.push({ side: unit.side, index: i });
+        return arr;
+      }, []);
+    }
+    // 敌方目标（有距离限制）
     if (actor.side === 'player') {
       return this.getValidTargets(actor).map(idx => ({ side: 'enemy', index: idx }));
     } else {
@@ -222,6 +230,7 @@ export class BattleSystem {
     if (!actor || actor.side !== 'enemy' || !actor.alive) return;
 
     // 检查是否有 _useShieldFirst 标记（认真戴沐白第一回合放肉盾）
+
     if (actor._useShieldFirst && this.turnCount === 0) {
       const shieldSkill = this.getAvailableSkills(actor).find(s => s.id === '肉盾');
       if (shieldSkill && !shieldSkill.disabled) {
@@ -229,6 +238,7 @@ export class BattleSystem {
         return;
       }
     }
+
 
     // 获取所有可用技能（含普攻）
     const allSkills = this.getAvailableSkills(actor);

@@ -54,10 +54,10 @@ function toggleCharacterAffinity(memberId) {
     if (!wuhun) return;
     if (!member.chosenAffinity || member.chosenAffinity === wuhun.mainAffinity) {
         member.chosenAffinity = wuhun.subAffinity;
-        setMoveTip(`已切换为【${wuhun.subAffinity}】出战：主系魂技50%，副系魂技80%，其他系50%`);
+        setMoveTip(`已切换为【${wuhun.subAffinity}】出战：主系魂技80%，副系魂技80%，其他系50%`);
     } else {
         member.chosenAffinity = wuhun.mainAffinity;
-        setMoveTip(`已切换为【${wuhun.mainAffinity}】出战：主系魂技100%，副系魂技50%，其他系50%`);
+        setMoveTip(`已切换为【${wuhun.mainAffinity}】出战：主系魂技100%，副系魂技80%，其他系50%`);
     }
     updateCharacterList();
 }
@@ -270,15 +270,19 @@ function renderTeamPanel() {
     slotHtml += '</div>';
 
     const usedIds = app.activeTeam.filter(id => id !== null);
-    const available = app.party.filter(m => m.alive !== false);
+    // 显示所有角色，但阵亡的标记为不可选
     let charListHtml = '<div style="max-height:200px; overflow-y:auto; border:1px solid #444; padding:5px;">';
-    if (available.length === 0) {
+    if (app.party.length === 0) {
         charListHtml += '<p>没有可用的角色</p>';
     } else {
-        for (const member of available) {
+        for (const member of app.party) {
             const isUsed = usedIds.includes(member.id);
+            const isDead = member.alive === false;
             const wuhun = app.wuhunDatabase[member.wuhun];
-            const style = isUsed ? 'opacity:0.5; pointer-events:none;' : 'cursor:pointer;';
+            // 阵亡或已编入的角色不可选
+            const disabled = isUsed || isDead;
+            const style = disabled ? 'opacity:0.5; pointer-events:none;' : 'cursor:pointer;';
+            const hpText = isDead ? '💀 阵亡' : `❤️ ${member.hp}/${member.maxHp}`;
             charListHtml += `
                 <div class="team-char-option" data-id="${member.id}" style="
                     padding:8px; margin:3px; background:#2a2a2a; border-radius:5px;
@@ -286,7 +290,9 @@ function renderTeamPanel() {
                 ">
                     <span style="color:${member.color};">●</span> ${member.name}·${member.wuhun}
                     ${wuhun ? `(Lv.${member.level} 力:${wuhun.baseForce} 速:${wuhun.baseSpeed} 智:${wuhun.baseIntelligence})` : ''}
+                    <span style="float:right; font-size:13px;">${hpText}</span>
                     ${isUsed ? ' <span style="color:#e74c3c;">(已编入)</span>' : ''}
+                    ${isDead ? ' <span style="color:#e74c3c;">(阵亡)</span>' : ''}
                 </div>
             `;
         }

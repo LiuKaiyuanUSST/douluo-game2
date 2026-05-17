@@ -662,7 +662,7 @@ gameLogic.js → registerShowMasterWuhunChoice(fn) → gameTown.js 通过注册�
 | 沧澜 | 净化 | 3 | cleanse | 清除所有负面状态 |
 | 烈焰 | 爆裂 | 2 | burn_mass | 普攻+50%概率全体燃烧 |
 | 烈焰 | 灼烧 | 1 | burn | 普攻+100%燃烧 |
-| 烈焰 | 浓烟弥漫 | 2 | smoke | 100%烟雾2名敌人 |
+| 烈焰 | 浓烟弥漫 | 2 | smoke | 普攻+100%概率烟雾2名敌人 |
 
 **被动技能**（`PASSIVE_SKILLS`）：
 - 增力：战斗开始时力量+1

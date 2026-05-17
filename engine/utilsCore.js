@@ -196,7 +196,9 @@ export function saveGame(slot) {
     firstLevelEntered: app.firstLevelEntered,
     secondLevelEntered: app.secondLevelEntered,
     pendingXiaoWuChoice: app.pendingXiaoWuChoice,
-    showAffinityHint: app.showAffinityHint
+    showAffinityHint: app.showAffinityHint,
+    shrekBattleTowerCleared: app.shrekBattleTowerCleared
+
   };
   try {
     localStorage.setItem(getSaveKey(slot), JSON.stringify(saveData));
@@ -214,6 +216,7 @@ export function loadGame(slot) {
   }
   try {
     const data = JSON.parse(json);
+    
     app.currentLevel = data.currentLevel;
     app.unlockedLevels = data.unlockedLevels;
 
@@ -268,8 +271,13 @@ export function loadGame(slot) {
     app.secondLevelEntered = data.secondLevelEntered || false;
     app.pendingXiaoWuChoice = data.pendingXiaoWuChoice || false;
     app.showAffinityHint = data.showAffinityHint || false;
+    app.shrekBattleTowerCleared = data.shrekBattleTowerCleared || false;
+
+    // 存档迁移：补充旧存档中缺少的新版本标记（如新关卡相关的标记等）
+    migrateSaveData(data);
 
     app.state = 'TOWN';
+
     app.maze = null;
     app.battle = null;
     app.battleTargeting = false;
@@ -289,8 +297,56 @@ export function loadGame(slot) {
 
     setMoveTip(`📂 从存档位 ${slot} 读取成功`);
     return true;
-  } catch (e) {
-    setMoveTip('存档损坏，无法读取');
-    return false;
-  }
+    } catch (e) {
+        setMoveTip('存档损坏，无法读取');
+        return false;
+    }
+}
+
+// ---------- 存档迁移：补充旧存档缺失的字段 ----------
+
+// 所有对话/剧情相关的标记及其默认值
+const SAVE_FLAGS_DEFAULTS = {
+    wuhunChosen: false,
+    xwWuhunChosen: false,
+    shrekPartnerChosen: false,
+    shrekFirstMoveDone: false,
+    fldRegistrationDone: false,
+    firstLevelEntered: false,
+    secondLevelEntered: false,
+    pendingXiaoWuChoice: false,
+    showAffinityHint: false,
+    shrekBattleTowerCleared: false,
+    shrekAcademyFirstMove: false,         // 史莱克学院第一次移动
+    firstForestReturnDialogShown: false,  // 第一次猎魂森林回归对话
+    mhjStoryCompleted: false,             // 马红俊剧情完成
+    mhjNewPartnerChosen: false,           // 马红俊新伙伴已选择
+    qiGuaiFlenderSpeechDone: false,       // 七怪跑步弗兰德训话
+    qiGuaiComplainDone: false,            // 七怪跑步抱怨剧情
+    qiGuaiHelpDone: false,                // 七怪跑步互相帮助
+    qiGuaiPartnerChosen: false,           // 七怪跑步伙伴选择
+    qiGuaiFirstReturnHintShown: false,    // 七怪跑步第一次回城提示
+    firstTownReturnWithDead: false,
+
+    showResurrectionHint: false,
+    lastMoveWasAffinityHint: false,
+};
+
+function migrateSaveData(data) {
+    // 补充缺失的剧情标记
+    for (const [key, defaultValue] of Object.entries(SAVE_FLAGS_DEFAULTS)) {
+        if (data[key] === undefined) {
+            app[key] = defaultValue;
+        }
+    }
+    
+    // 确保新解锁的关卡不会被旧存档数据干扰
+    // 如果存档中的 unlockedLevels 不完整，只保留有效的关卡索引
+    if (app.config.stages && app.config.stages.levels) {
+        const maxLevelIdx = app.config.stages.levels.length - 1;
+        app.unlockedLevels = (app.unlockedLevels || [0]).filter(idx => idx >= 0 && idx <= maxLevelIdx);
+        if (app.unlockedLevels.length === 0) app.unlockedLevels = [0];
+        // 如果存档里 currentLevel 超出了范围，重置为 0
+        if (app.currentLevel > maxLevelIdx) app.currentLevel = 0;
+    }
 }

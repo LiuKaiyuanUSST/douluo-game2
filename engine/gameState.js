@@ -12,7 +12,8 @@ export let app = {
 
   config: {},
   currentLevel: 0,
-  unlockedLevels: [0],
+  unlockedLevels: [0, 4],  // 预解锁"七怪跑步"关卡供测试查看
+
   maze: null,
   battle: null,
   player: null,               // 玩家快捷引用（主角唐三）
@@ -40,8 +41,15 @@ export let app = {
     shrek_academy: {
       map: [ [4,0,0,0,2], [0,0,0,0,0], [0,5,0,0,0], [0,0,0,0,0], [1,0,0,0,3] ],
       name: '史莱克学院',
-      exits: { 4: { targetTown: 'shrek', targetPos: {x:4,y:4} } }
+      exits: { 3: { targetTown: 'shrek_village', targetPos: {x:0,y:0} }, 4: { targetTown: 'shrek', targetPos: {x:4,y:4} } }
+    },
+    shrek_village: {
+      map: [ [4,0,0,0,2], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [1,0,0,0,0] ],
+      name: '史莱克村',
+      exits: { 4: { targetTown: 'shrek_academy', targetPos: {x:3,y:0} } }
     }
+
+
   },
   townPlayerPos: { x: 0, y: 0 },
   levelSelectDiv: null,
@@ -71,6 +79,16 @@ export let app = {
   pendingXiaoWuChoice: false,
   shrekAcademyFirstMove: false,
   firstForestReturnDialogShown: false,
+  shrekBattleTowerCleared: false,   // 史莱克学院门口的战斗塔是否已通关
+  mhjStoryCompleted: false,         // 邪火凤凰马红俊剧情是否已完成
+  mhjNewPartnerChosen: false,       // 马红俊剧情后新伙伴是否已选择（从剩余史莱克七怪中选）
+  qiGuaiFlenderSpeechDone: false,   // 七怪跑步弗兰德训话剧情是否已播放
+  qiGuaiComplainDone: false,        // 七怪跑步抱怨剧情是否已播放
+  qiGuaiHelpDone: false,            // 七怪跑步互相帮助剧情是否已播放
+  qiGuaiPartnerChosen: false,       // 七怪跑步伙伴选择是否已完成
+  qiGuaiFirstReturnHintShown: false,// 七怪跑步第一次非通关回城提示是否已显示
+  qiGuaiMazeCompleted: false,       // 七怪跑步迷宫是否已通关完成
+
 
 
   // 新的数据库

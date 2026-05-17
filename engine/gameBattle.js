@@ -158,7 +158,15 @@ export function startBossFight(bossDef) {
         enemyData._useShieldFirst = true;
     }
 
+    // 邪火凤凰马红俊：魂技为爆裂
+    if (bossDef.enemyId === 'boss_mhj') {
+        if (!enemyData.skills.includes('爆裂')) {
+            enemyData.skills.push('爆裂');
+        }
+    }
+
     const enemyUnits = [enemyData];
+
     const playerUnits = buildUnitsFromParty(1);
     app.battle = new BattleSystem(playerUnits, enemyUnits, {
         playerFormation: app.selectedFormation,
@@ -231,12 +239,13 @@ export function onBattleWin(isBoss) {
     const bossDef = stage.bosses[app.currentBossPhase];
     if (!bossDef) { goToTown(true); return; }
     if (bossDef.dialogAfter) {
-        const file = (app.currentLevel===0) ? 'chapter1_ws_xw.txt' : (app.currentLevel===2) ? 'chapter3_fld.txt' : 'chapter2_dmb.txt';
+        const file = (app.currentLevel===0) ? 'chapter1_ws_xw.txt' : (app.currentLevel===2) ? 'chapter3_fld.txt' : (app.currentLevel===3) ? 'chapter4_mhj.txt' : 'chapter2_dmb.txt';
         startDialogue(bossDef.dialogAfter, file, () => {
             if (bossDef.lose) handleBossLoss(bossDef);
             else proceedToNextBoss();
         });
     } else proceedToNextBoss();
+
 }
 
 function proceedToNextBoss() {
@@ -249,9 +258,18 @@ function proceedToNextBoss() {
         if (next < app.config.stages.levels.length && !app.unlockedLevels.includes(next)) {
             app.unlockedLevels.push(next); app.unlockedLevels.sort((a,b)=>a-b);
         }
+        // 通关史莱克学院门口的战斗塔（关卡索引2）后标记已通关
+        if (app.currentLevel === 2) {
+            app.shrekBattleTowerCleared = true;
+        }
+        // 通关邪火凤凰马红俊关卡（关卡索引3）后标记剧情完成
+        if (app.currentLevel === 3) {
+            app.mhjStoryCompleted = true;
+        }
         goToTown(true);
     }
 }
+
 
 export function onBattleLoss() {
     syncPartyHP();
@@ -310,7 +328,8 @@ function handleBossLoss(bossDef) {
         }
     };
     if (!bossDef.dialogAfter) { unlock(); goToTown(true); return; }
-    const file = (app.currentLevel===0) ? 'chapter1_ws_xw.txt' : (app.currentLevel===2) ? 'chapter3_fld.txt' : 'chapter2_dmb.txt';
+    const file = (app.currentLevel===0) ? 'chapter1_ws_xw.txt' : (app.currentLevel===2) ? 'chapter3_fld.txt' : (app.currentLevel===3) ? 'chapter4_mhj.txt' : 'chapter2_dmb.txt';
+
     startDialogue(bossDef.dialogAfter, file, () => {
         startDialogue('chapter_end', file, () => { unlock(); goToTown(true); });
     });

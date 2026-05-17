@@ -1,0 +1,88 @@
+[event name="flender_speech"]
+[speaker name="narrator"]翌日清晨，弗兰德将七人叫到院中。
+
+[speaker name="fld"]（负手而立）第一课，跑步。绕索托城外一圈，不准用魂力。七个人出发，七个人回来。少一个，全队重跑。
+
+[speaker name="mhj"]（小声嘀咕）跑步算什么课……
+
+[speaker name="fld"]（镜片反光一闪）战场上，你跑得慢，死的就是你——和被你拖累的队友。
+
+[options num="2"]
+[a]（皱眉）院长说得太过了吧。
+[b]（若有所思）有道理。
+
+[after a]
+[speaker name="ts"]（皱眉）院长，这话是不是太过了？
+
+[speaker name="fld"]（冷哼一声）过？等你上了战场就知道，我的话一点不过。
+
+[speaker name="ask"]（小声附和）就是……吓死人了……
+
+[speaker name="dmb"]（抱着手臂，淡淡道）院长说得没错。跑不动的人，第一个死。
+
+[goto next]
+
+[after b]
+[speaker name="ts"]（若有所思）确实有道理。
+
+[speaker name="xw"]（瞪大眼睛）哥！你怎么站院长那边！
+
+[speaker name="fld"]（满意地瞥了唐三一眼）总算有个脑子清楚的。
+
+[speaker name="zwj"]（站在一旁，闷声开口）小怪物们，别磨蹭了，出发。
+
+[goto next]
+
+[event name="complain"]
+[speaker name="narrator"]出城不远，抱怨声就响了起来。
+
+[speaker name="ask"]（气喘吁吁）我……我一个辅助系的……为什么要跑啊……
+
+[speaker name="mhj"]（擦着汗）就是，院长大清早的受了什么刺激……
+
+[speaker name="xw"]（脚步轻快，回头做了个鬼脸）因为院长说了，你跑得慢，第一个死的就是你！
+
+[speaker name="nrr"]（落在队伍末尾，脸色发白，咬着嘴唇没说话）
+
+
+[speaker name="dmb"]（跑在前头，头也不回）省着力气。宁荣荣，跟紧。
+
+[event name="help_each_other"]
+[speaker name="narrator"]跑到半程，宁荣荣脚步越来越沉，渐渐落在了最后。
+
+[speaker name="nrr"]（声音微弱）我……跑不动了……
+
+
+[speaker name="narrator"]朱竹清放慢脚步，退到她身边，伸手架住了她的胳膊。
+
+[speaker name="zzq"]（声音清冷，手上却很稳）我扶你。
+
+[speaker name="nrr"]（眼眶一热）竹清……
+
+
+[speaker name="narrator"]另一边，奥斯卡双腿发软，一屁股坐在地上。
+
+[speaker name="ask"]（哀嚎）不行了不行了，我真不行了……
+
+[speaker name="dmb"]（折返回来，在他面前蹲下）上来。
+
+[speaker name="ask"]（愣住）戴老大……
+
+[speaker name="dmb"]（不耐烦地回头）别废话，快点。
+
+[speaker name="narrator"]奥斯卡咬咬牙，趴到了戴沐白背上。七人相互扶持，继续向前。
+
+[speaker name="narrator"]身后远处，赵无极的身影不紧不慢地缀着，见状微微点了点头。
+
+[event name="after_battle_summary"]
+[speaker name="narrator"]日落时分，七人互相搀扶着回到村口。衣衫破损，满脸疲惫——但一个不少。
+
+[speaker name="fld"]（扫视众人，沉默片刻）知道今天为什么让你们跑？
+
+[speaker name="ts"]（抬头）为了让我们知道，身边的人不会走。
+
+[speaker name="fld"]（嘴角微挑，背过身去）还行，没白跑。
+
+[speaker name="zwj"]（抱着胳膊，闷声开口）跑到极限还能互相扛着，这份心性，比跑得快有用。
+
+[speaker name="fld"]（头也不回往院里走，挥了挥手）晚饭加肉，仅限今天。

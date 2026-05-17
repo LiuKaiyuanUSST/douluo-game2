@@ -78,6 +78,15 @@
       "wuhun": "大角羊",
       "level": 1,
       "color": "#95a5a6"
+    },
+    "boss_mhj": {
+      "id": "boss_mhj",
+      "name": "邪火凤凰·马红俊",
+      "wuhun": "邪火凤凰",
+      "level": 3,
+      "color": "#e74c3c",
+      "chosenAffinity": "烈焰",
+      "subAffinity": "烈焰"
     }
   }
 }

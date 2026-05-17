@@ -52,9 +52,14 @@ import {
     registerShowSecondLevelHintDialog as _registerShowSecondLevelHintDialog,
     registerShowShrekAcademyMasterDialog as _registerShowShrekAcademyMasterDialog,
     registerShowFirstForestReturnDialog as _registerShowFirstForestReturnDialog,
+    registerShowMhjNewPartnerChoice as _registerShowMhjNewPartnerChoice,
+    registerShowQiGuaiPartnerChoice as _registerShowQiGuaiPartnerChoice,
+    registerShowQiGuaiFirstReturnHint as _registerShowQiGuaiFirstReturnHint,
     registerBuildEnemyFromMonster as _registerBuildEnemyFromMonster,
+
     registerBuildUnitsFromParty as _registerBuildUnitsFromParty,
-    registerStartBossFight as _registerStartBossFight
+    registerStartBossFight as _registerStartBossFight,
+    registerStartDialogue as _registerStartDialogueForTown
 } from './gameTown.js';
 
 
@@ -69,7 +74,11 @@ import {
     showBlackScreen as _showBlackScreen,
     showShrekAcademyMasterDialog as _showShrekAcademyMasterDialog,
     showFirstForestReturnDialog as _showFirstForestReturnDialog,
-    registerStartDialogue as _registerStartDialogue,
+    showMhjNewPartnerChoice as _showMhjNewPartnerChoice,
+    showQiGuaiPartnerChoice as _showQiGuaiPartnerChoice,
+    showQiGuaiFirstReturnHint as _showQiGuaiFirstReturnHint,
+    registerStartDialogue as _registerStartDialogueForDialogs,
+
     registerGoToTown as _registerGoToTownForDialogs
 } from './gameDialogs.js';
 
@@ -91,13 +100,20 @@ _registerShowAffinityGuideDialog(_showAffinityGuideDialog);
 _registerShowSecondLevelHintDialog(_showSecondLevelHintDialog);
 _registerShowShrekAcademyMasterDialog(_showShrekAcademyMasterDialog);
 _registerShowFirstForestReturnDialog(_showFirstForestReturnDialog);
+_registerShowMhjNewPartnerChoice(_showMhjNewPartnerChoice);
+_registerShowQiGuaiPartnerChoice(_showQiGuaiPartnerChoice);
+_registerShowQiGuaiFirstReturnHint(_showQiGuaiFirstReturnHint);
 _registerBuildEnemyFromMonster(_buildEnemyFromMonster);
+
 
 _registerBuildUnitsFromParty(_buildUnitsFromParty);
 _registerStartBossFight(_startBossFight);
 
+// 注册 gameTown.js 需要的 startDialogue 函数
+_registerStartDialogueForTown(_startDialogue);
+
 // 注册 gameDialogs.js 需要的函数
-_registerStartDialogue(_startDialogue);
+_registerStartDialogueForDialogs(_startDialogue);
 _registerGoToTownForDialogs(_goToTown);
 
 // ========== 重新导出所有功能 ==========
@@ -154,6 +170,10 @@ export const showZwjRegistrationDialog = _showZwjRegistrationDialog;
 export const showBlackScreen = _showBlackScreen;
 export const showShrekAcademyMasterDialog = _showShrekAcademyMasterDialog;
 export const showFirstForestReturnDialog = _showFirstForestReturnDialog;
-export const registerStartDialogue = _registerStartDialogue;
+export const showMhjNewPartnerChoice = _showMhjNewPartnerChoice;
+export const showQiGuaiPartnerChoice = _showQiGuaiPartnerChoice;
+export const showQiGuaiFirstReturnHint = _showQiGuaiFirstReturnHint;
+export const registerStartDialogue = _registerStartDialogueForDialogs;
+
 
 export const registerGoToTownForDialogs = _registerGoToTownForDialogs;

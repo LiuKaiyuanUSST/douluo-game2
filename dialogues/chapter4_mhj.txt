@@ -1,0 +1,81 @@
+[event name="village_walk"]
+[speaker name="narrator"]入学考试当晚
+
+[speaker name="narrator"]在餐厅大快朵颐之后，戴沐白大步走来，拍了拍唐三的肩膀。
+
+[speaker name="dmb"]唐三，小舞，走，带你们去村子里转转。
+
+[speaker name="xw"]（眼睛一亮）好啊！
+
+[speaker name="ask"]（从戴沐白身后探出半个身子，声音温和）那个……我能一起吗？
+
+[speaker name="narrator"]说话的是个清秀少年，眉眼干净，看向唐三和小舞的目光里带着几分小心翼翼的期待。
+
+[speaker name="dmb"]（爽朗一笑）这是奥斯卡，我们学院的。
+
+[speaker name="ask"]（挠了挠头）你们是昨天新入学的吧？以后有什么需要帮忙的，尽管开口。
+
+[options num="2"]
+[a]（友善地点头）一起来吧。
+[b]（微笑）正好，多个带路的人。
+
+[after a]
+[speaker name="ts"]一起来吧。
+
+[speaker name="ask"]（明显松了口气，笑意爬上眼角）多谢。
+
+[goto next]
+
+[after b]
+[speaker name="ts"]正好，多个带路的人。
+
+[speaker name="ask"]（认真点头）村里的路我都记熟了，你们想去哪儿我都能带。
+
+[goto next]
+
+[event name="separate"]
+[speaker name="narrator"]四人沿村道走着，小舞忽然停下脚步，盯着一旁吹糖人的小摊，眼珠子都快粘上去了。
+
+[speaker name="xw"]哥，你看这个！
+
+[speaker name="ts"]（无奈摇头）又馋上了？
+
+[speaker name="dmb"]（回头看了一眼，笑道）你们先逛着，我和奥斯卡去前面铁匠铺看看，一会儿追上来。
+
+[speaker name="ask"]（被戴沐白拽着走，还不忘回头）很快就回来！
+
+[speaker name="narrator"]两人走远，唐三陪小舞在糖人摊前逗留了片刻。
+
+[event name="meet_mhj"]
+[speaker name="narrator"]等唐三和小舞继续往前走，不远处传来争执声。一个红发少年正拽着一个女孩的手腕不放，身上隐隐蒸腾着热气。
+
+[speaker name="mhj"]你别走啊！我保证下次不会了！
+
+[speaker name="girl"]（带着哭腔）你先放手……太烫了……
+
+[speaker name="narrator"]唐三眉头一皱，刚要开口，小舞已抢先一步冲了出去。
+
+[speaker name="xw"]（掠身上前，一记鞭腿扫出）欺负女孩子算什么本事！
+
+[speaker name="mhj"]（侧身闪开，怒道）哪儿冒出来的？少管闲事！
+
+[event name="boss_mhj"]
+[speaker name="narrator"]马红俊双掌一翻，火光骤起，灼热气浪扑面而来。
+
+[event name="after_boss_mhj"]
+[speaker name="narrator"]一番激斗，马红俊终是力竭，被小舞压制在地。唐三收回蓝银草，掌心却阵阵发烫——自己的武魂被对方的火焰隐隐克制，这一战赢得并不轻松。
+
+[speaker name="mhj"]（大口喘息）你们……配合还真默契……
+
+[speaker name="girl"]（急忙跑过来张开手臂）你们别打了！他对我挺好的，就是身上总是特别热，我不舒服。
+
+[speaker name="mhj"]（低下头，声音闷闷的）我知道跟我站近了难受……可我控制不住。
+
+[speaker name="narrator"]这时，戴沐白和奥斯卡听到动静赶了过来。戴沐白一看这架势，哭笑不得。
+
+[speaker name="dmb"]（扶额）你们还真是……这是马红俊，也是史莱克的学员。
+
+[speaker name="narrator"]不打不相识，史莱克又一位同伴，就此相识。
+
+
+

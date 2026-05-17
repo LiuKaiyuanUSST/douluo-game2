@@ -2,7 +2,16 @@ import { app } from './gameState.js';
 
 export function drawMaze() {
   const { ctx, maze, player } = app;
-  const cellSize = 80, offset = 100;
+  // 根据迷宫尺寸动态调整格子大小：9x9用55px，8x8用60px，5x5用80px
+  const cellSize = maze.size >= 9 ? 55 : (maze.size >= 8 ? 60 : 80);
+  // 9x9: 居中(800-495)/2≈152，接近底部600-495-50=55
+  const offset = maze.size >= 9 ? 152 : (maze.size >= 8 ? 50 : 100);
+  const offsetY = maze.size >= 9 ? 80 : offset;
+
+
+
+
+
   
   // 检测是否为魂环吸收迷宫
   if (maze._isSoulRingMaze) {
@@ -10,28 +19,39 @@ export function drawMaze() {
     return;
   }
   
-  const stageName = maze.isHuntingForest ? "🌲 圈养森林" : (app.config.stages.levels[app.currentLevel]?.name || "未知关卡");
-  
+  const stageName = maze.isHuntingForest ? "🌲 圈养森林" : 
+    (maze._isCustomMaze ? maze._customMazeName : 
+    (app.config.stages.levels[app.currentLevel]?.name || "未知关卡"));
+
   // 绘制背景
   ctx.fillStyle = "#1a1a2e";
   ctx.fillRect(0, 0, app.canvas.width, app.canvas.height);
-  
+
   for (let y = 0; y < maze.size; y++) {
     for (let x = 0; x < maze.size; x++) {
+      const cellKey = `${x},${y}`;
       ctx.strokeStyle = "#333";
-      ctx.strokeRect(offset + x * cellSize, offset + y * cellSize, cellSize, cellSize);
-      if (maze.explored[y][x]) {
+      ctx.strokeRect(offset + x * cellSize, offsetY + y * cellSize, cellSize, cellSize);
+      if (maze.blockedCells && maze.blockedCells.has(cellKey)) {
+        // 挖空格子：浅灰色填充（空心区域）
+        ctx.fillStyle = "#555";
+        ctx.fillRect(offset + x * cellSize + 2, offsetY + y * cellSize + 2, cellSize - 4, cellSize - 4);
+      } else if (maze.explored[y][x]) {
         ctx.fillStyle = "#222";
-        ctx.fillRect(offset + x * cellSize + 2, offset + y * cellSize + 2, cellSize - 4, cellSize - 4);
+        ctx.fillRect(offset + x * cellSize + 2, offsetY + y * cellSize + 2, cellSize - 4, cellSize - 4);
       }
     }
   }
 
+
+
   // 绘制猎魂森林的boss标记
   if (maze.isHuntingForest) {
+
     for (const boss of maze.bossPositions) {
       const bx = offset + boss.x * cellSize + cellSize / 2;
-      const by = offset + boss.y * cellSize + cellSize / 2;
+      const by = offsetY + boss.y * cellSize + cellSize / 2;
+
       
       if (boss.defeated) {
         // 已击败的boss显示灰色勾
@@ -72,9 +92,16 @@ export function drawMaze() {
       }
     }
   } else {
-    // 普通迷宫的boss标记（右下角）
-    const bossX = offset + (maze.size-1)*cellSize + cellSize/2;
-    const bossY = offset + (maze.size-1)*cellSize + cellSize/2;
+    // 普通/自定义迷宫的boss标记
+    let bossX, bossY;
+    if (maze._isCustomMaze) {
+      bossX = offset + maze.endX * cellSize + cellSize / 2;
+      bossY = offsetY + maze.endY * cellSize + cellSize / 2;
+    } else {
+      bossX = offset + (maze.size-1)*cellSize + cellSize/2;
+      bossY = offsetY + (maze.size-1)*cellSize + cellSize/2;
+    }
+
     ctx.fillStyle = "#e74c3c";
     ctx.beginPath();
     ctx.moveTo(bossX, bossY-15);
@@ -83,8 +110,10 @@ export function drawMaze() {
     ctx.fill();
     ctx.fillStyle = "white";
     ctx.font = "bold 14px Arial";
-    ctx.fillText("BOSS", bossX-18, bossY+20);
+    ctx.fillText(maze._isCustomMaze ? "终点" : "BOSS", bossX-18, bossY+20);
+
   }
+
 
   // 绘制墙壁
   ctx.save();
@@ -93,7 +122,8 @@ export function drawMaze() {
   for (let y = 0; y < maze.size; y++) {
     for (let x = 0; x < maze.size; x++) {
       const cellX = offset + x * cellSize;
-      const cellY = offset + y * cellSize;
+      const cellY = offsetY + y * cellSize;
+
       if (x < maze.size-1 && maze.wallRight[y][x]) {
         const leftExplored = maze.explored[y][x];
         const rightExplored = maze.explored[y][x+1];
@@ -121,8 +151,9 @@ export function drawMaze() {
   // 绘制玩家
   ctx.fillStyle = player.color;
   ctx.beginPath();
-  ctx.arc(offset + maze.px * cellSize + cellSize/2, offset + maze.py * cellSize + cellSize/2, 20, 0, 2*Math.PI);
+  ctx.arc(offset + maze.px * cellSize + cellSize/2, offsetY + maze.py * cellSize + cellSize/2, 20, 0, 2*Math.PI);
   ctx.fill();
+
 
   // 绘制信息（向右偏移避免被覆盖）
   const hpText = app.party.map(m => `${m.name}: ${m.hp}/${m.maxHp}${m.alive === false ? '(阵亡)' : ''}`).join('  ');

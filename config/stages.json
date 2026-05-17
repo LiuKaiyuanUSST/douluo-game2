@@ -28,8 +28,25 @@
       "bosses": [
         { "enemyId": "boss_zwj", "dialogAfter": "after_boss_zwj", "lose": false, "finalReward": "chapter_end" }
       ]
+    },
+    {
+      "id": 4,
+      "name": "邪火凤凰",
+      "size": 5,
+      "bg": "#3d0000",
+      "bosses": [
+        { "enemyId": "boss_mhj", "dialogBefore": "boss_mhj", "dialogAfter": "after_boss_mhj", "lose": false, "finalReward": "chapter_end" }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "七怪跑步",
+      "size": 9,
+      "bg": "#0a0a2e",
+      "bosses": [
+        { "enemyId": "boss_run", "dialogAfter": null, "lose": true, "finalReward": "chapter_end" }
+      ]
     }
+
   ]
 }
-
-

@@ -107,6 +107,13 @@ export class DialogueEngine {
             return;
         }
 
+        // 检查是否超出当前事件范围（防止内容泄漏到下一个事件）
+        const eventIndices = this.eventMap[this.currentEvent];
+        if (this.currentLineIdx > eventIndices.end) {
+            this.endEvent();
+            return;
+        }
+
         if (line.startsWith('[speaker')) {
             const match = line.match(/\[speaker\s+name="(\w+)"\](.*)/);
             if (match) {
@@ -246,7 +253,10 @@ export class DialogueEngine {
             fld: '弗兰德',
             zwj: '赵无极',
             nrr: '宁荣荣',
-            zzq: '朱竹清'
+            zzq: '朱竹清',
+            mhj: '马红俊',
+            ask: '奥斯卡',
+            girl: '女孩'
         };
         return map[roleId] || roleId;
     }

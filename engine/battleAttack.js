@@ -46,10 +46,12 @@ export function resolveAttack(attacker, defender, battle, isNormalAttack = false
 
   let damage = Math.max(0, baseDamage - reduction) + bonus;
 
-  // 缠绕效果：普攻无法造成伤害
-  if (isNormalAttack && attacker.marks && attacker.marks.some(m => m.type === 'bind')) {
+  // 缠绕效果：普攻无法造成伤害（无论普攻还是技能中的普攻部分）
+  if (attacker.marks && attacker.marks.some(m => m.type === 'bind')) {
     damage = 0;
   }
+
+
 
   // 天工减免
   if (defender.affinityUsed === '天工' && Math.random() < 0.05) damage = 0;

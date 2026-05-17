@@ -143,7 +143,7 @@ export function buildTurnOrder(playerTeam, enemyTeam) {
 
 export function getEffectiveRange(unit, turnCount) {
   let range = unit.attackRange;
-  if (turnCount === 0 && unit.talentData?.firstTurnRangeBonus) {
+  if (turnCount < 2 && unit.talentData?.firstTurnRangeBonus) {
     range += unit.talentData.firstTurnRangeBonus;
   }
   return range;

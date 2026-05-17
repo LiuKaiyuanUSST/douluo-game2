@@ -11,6 +11,7 @@ import { attachMouseHandler, attachKeyboardHandler } from './engine/eventHandler
 import { BattleSystem } from './engine/battle.js';
 import { calcDerivedStats } from './engine/battleUtils.js';
 import { randomSkillFromAffinity, SKILL_POOL, getSkillById } from './engine/skills.js';
+import { applyTalent } from './engine/talents.js';
 
 const SPEED_DELAY = { fast: 0, medium: 500, slow: 1000 };
 
@@ -225,9 +226,10 @@ document.getElementById('test-battle-btn').addEventListener('click', async () =>
 
     // 随机名字池
     const namePool = ['小明', '小红', '小刚', '阿强', '大壮', '翠花', '铁柱', '狗蛋', '建国', '秀英'];
-    const allWuhunNames = Object.keys(app.wuhunDatabase);
+    // 只从 hero 标签的武魂中随机
+    const heroWuhunNames = Object.keys(app.wuhunDatabase).filter(name => app.wuhunDatabase[name].category === 'hero');
     const shuffledNames = [...namePool].sort(() => Math.random() - 0.5);
-    const shuffledWuhun = [...allWuhunNames].sort(() => Math.random() - 0.5);
+    const shuffledWuhun = [...heroWuhunNames].sort(() => Math.random() - 0.5);
 
     // 从skills.js获取随机技能函数
     function pickSkillFromAffinity(aff) {
@@ -297,19 +299,24 @@ document.getElementById('test-battle-btn').addEventListener('click', async () =>
         if (unit) enemyUnits.push(unit);
     }
 
-    app.party = playerUnits.map((u, idx) => ({
-        id: 'test_' + idx,
-        name: u.name,
-        wuhun: u.wuhun,
-        level: u.level,
-        skills: u.skills,
-        exp: { '烈焰':0, '苍木':0, '蛊毒':0, '巨兽':0, '雷霆':0, '沧澜':0, '天工':0 },
-        color: u.color,
-        hp: u.hp,
-        maxHp: u.hp,
-        alive: true,
-        chosenAffinity: u.chosenAffinity
-    }));
+    app.party = playerUnits.map((u, idx) => {
+        const member = {
+            id: 'test_' + idx,
+            name: u.name,
+            wuhun: u.wuhun,
+            level: u.level,
+            skills: u.skills,
+            exp: { '烈焰':0, '苍木':0, '蛊毒':0, '巨兽':0, '雷霆':0, '沧澜':0, '天工':0 },
+            color: u.color,
+            hp: u.hp,
+            maxHp: u.hp,
+            alive: true,
+            chosenAffinity: u.chosenAffinity
+        };
+        // 应用天赋以便角色面板正确显示
+        applyTalent(member);
+        return member;
+    });
     app.player = { ...app.party[0], gold: 0, id: app.party[0].id };
     app.battle = new BattleSystem(playerUnits, enemyUnits);
     app.state = 'BATTLE';

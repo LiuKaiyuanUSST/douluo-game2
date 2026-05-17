@@ -63,7 +63,7 @@ export function calcDerivedStats(baseForce, baseSpeed, baseIntel, levelDiff = 0)
   };
 }
 
-// 重新计算单位衍生属性（不改变生命值、最大生命）
+// 重新计算单位衍生属性（不改变当前生命值，但更新最大生命值）
 export function recalcDerivedStats(unit) {
   const currentForce = (unit.force || 0) + (unit.powerBonus || 0);
   const currentSpeed = (unit.speed || 0) + (unit.speedBonus || 0);
@@ -71,6 +71,9 @@ export function recalcDerivedStats(unit) {
 
   const attackStat = currentForce * 1.5 + currentSpeed * 0.5;
   const defenseStat = currentIntel * 1.5 + currentForce * 0.5;
+
+  // 更新最大生命值（基于当前力量）
+  unit.maxHp = currentForce + 3;
 
   // 攻击距离基础
   let baseRange;

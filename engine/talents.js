@@ -10,7 +10,7 @@ export const TALENT_MAP = {
   },
   '柔骨兔': {
     name: '柔骨迅击',
-    desc: '首回合攻击距离+2。',
+    desc: '前两回合攻击距离+2。',
     onBattleStart(unit) {
       unit.talentData = { ...unit.talentData, firstTurnRangeBonus: 2 };
     }
@@ -40,7 +40,7 @@ export const TALENT_MAP = {
 
   '蓝银草': {
     name: '蓝银领域',
-    desc: '首回合使用缠绕或复生时可额外指定1名目标（无距离限制）。',
+    desc: '使用缠绕时无距离限制。首回合使用缠绕可额外缠绕1名目标（只缠绕不普攻）。',
     onBattleStart(unit) {
       unit.talentData = { ...unit.talentData, extraBindAndRebornTarget: true };
     }
@@ -63,9 +63,9 @@ export const TALENT_MAP = {
   },
   '治愈权杖': {
     name: '治愈祈愿',
-    desc: '前三回合释放治疗类魂技时，对每个目标以50%概率额外回复1点生命。',
+    desc: '前三回合释放治疗类魂技时，对每个目标以50%概率额外回复2点生命。',
     onBattleStart(unit) {
-      unit.talentData = { ...unit.talentData, healExtraChance: 0.5, healBonusTurns: 3 };
+      unit.talentData = { ...unit.talentData, healExtraChance: 0.5, healExtraAmount: 2, healBonusTurns: 3 };
     }
   },
   '碧磷蛇皇': {
@@ -101,9 +101,9 @@ export const TALENT_MAP = {
   },
   '七杀剑': {
     name: '七杀锋芒',
-    desc: '攻击命中时以50%概率额外增加1点伤害。',
+    desc: '攻击命中时以50%概率额外增加2点伤害。',
     onAttack(attacker, defender, dmgInfo) {
-      if (Math.random() < 0.5) dmgInfo.bonusDamage = (dmgInfo.bonusDamage || 0) + 1;
+      if (Math.random() < 0.5) dmgInfo.bonusDamage = (dmgInfo.bonusDamage || 0) + 2;
     }
   },
   '昊天锤': {
@@ -123,12 +123,12 @@ export const TALENT_MAP = {
   },
   '香肠': {
     name: '香肠滋补',
-    desc: '前三回合释放治疗类魂技时额外指定1名目标，并对每个目标以50%概率额外回复1点魂力。',
+    desc: '前三回合释放治疗类魂技时额外指定1名目标，并对每个目标额外回复1点魂力。',
     onBattleStart(unit) {
       unit.talentData = {
         ...unit.talentData,
         extraHealTarget: true,
-        healSPChance: 0.5,
+        healSPChance: 1.0,
         healBonusTurns: 3
       };
     }

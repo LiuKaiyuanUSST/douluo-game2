@@ -1,11 +1,11 @@
 // engine/maze.js
 export class MazeManager {
-    constructor(size) {
+    constructor(size, options = {}) {
         this.size = size;
-        this.px = 0;
-        this.py = 0;
+        this.px = options.startX || 0;
+        this.py = options.startY || 0;
         this.explored = Array(size).fill().map(() => Array(size).fill(false));
-        this.explored[0][0] = true;
+        this.explored[this.py][this.px] = true;
 
         // 墙壁数据：wallRight[y][x] 表示 (x,y) 右侧有墙（x < size-1）
         // wallDown[y][x] 表示 (x,y) 下方有墙（y < size-1）
@@ -16,12 +16,36 @@ export class MazeManager {
         this.isHuntingForest = false;      // 是否为猎魂森林模式
         this.bossPositions = [];           // 7个boss的位置 [{x, y}]
         this.bossDefeated = [];            // 每个boss是否已被击败
-        this.startPosition = { x: 0, y: 0 }; // 起点位置（标2的位置）
+        this.startPosition = { x: options.startX || 0, y: options.startY || 0 }; // 起点位置
         this.bossCells = new Set();        // 所有boss格坐标的字符串集合 "x,y"
+
+        // 新增：特殊迷宫属性
+        if (options.blockedCells) {
+            this.blockedCells = new Set(options.blockedCells.map(([x, y]) => `${x},${y}`));
+        } else {
+            this.blockedCells = new Set();
+        }
+        this.endX = options.endX !== undefined ? options.endX : size - 1;
+        this.endY = options.endY !== undefined ? options.endY : size - 1;
+        this._isCustomMaze = options.isCustomMaze || false;
+        this._customMazeName = options.customMazeName || '';
+
+        // 预先设置指定墙壁（在随机生成之前）
+        if (options.preSetWalls) {
+            for (const wall of options.preSetWalls) {
+                const { x, y, dir } = wall;
+                if (dir === 'right' && x < size - 1) this.wallRight[y][x] = true;
+                else if (dir === 'left' && x > 0) this.wallRight[y][x-1] = true;
+                else if (dir === 'down' && y < size - 1) this.wallDown[y][x] = true;
+                else if (dir === 'up' && y > 0) this.wallDown[y-1][x] = true;
+            }
+        }
 
         // 生成迷宫墙壁
         this.generateWalls();
+
     }
+
 
     // ---------- 设置猎魂森林模式 ----------
     setupHuntingForest() {
@@ -86,14 +110,24 @@ export class MazeManager {
         this.generateWalls();
     }
 
-    // ---------- 连通性检测 Q 函数 ----------
+    // ---------- 连通性检测 Q 函数（支持自定义起点和堵墙） ----------
     canReachAll() {
         const size = this.size;
         const mark = Array(size).fill().map(() => Array(size).fill(0));
-        const startX = 0, startY = 0;
+        
+        // 预标记堵墙格子为已访问（忽略它们）
+        for (const key of this.blockedCells) {
+            const [bx, by] = key.split(',').map(Number);
+            if (bx >= 0 && bx < size && by >= 0 && by < size) {
+                mark[by][bx] = 1;
+            }
+        }
+        
+        const startX = this.startPosition?.x ?? 0;
+        const startY = this.startPosition?.y ?? 0;
         mark[startY][startX] = 2;
 
-        let nonZeroCount = 1;
+        let nonZeroCount = 1 + this.blockedCells.size;
         let prevCount = 0;
 
         while (nonZeroCount > prevCount) {
@@ -153,6 +187,7 @@ export class MazeManager {
         return true;
     }
 
+
     // ---------- 猎魂森林专用连通性检测 ----------
     // 检查从起点到每个boss是否都能到达，且不经过其他boss格
     canReachAllBosses() {
@@ -193,7 +228,7 @@ export class MazeManager {
         return false;
     }
 
-    // 获取四个方向中可通过的邻居
+    // 获取四个方向中可通过的邻居（考虑堵墙）
     getPassableNeighbors(x, y) {
         const result = [];
         const size = this.size;
@@ -209,13 +244,30 @@ export class MazeManager {
         if (x < size-1 && !this.wallRight[y][x]) {
             result.push([x+1, y]);
         }
-        return result;
+        // 过滤掉被阻挡的格子
+        return result.filter(([nx, ny]) => !this.blockedCells.has(`${nx},${ny}`));
     }
 
-    // ---------- 墙壁生成算法 ----------
+    // 检查某个格子是否可通行（未被阻挡）
+    isPassable(x, y) {
+        if (x < 0 || x >= this.size || y < 0 || y >= this.size) return false;
+        return !this.blockedCells.has(`${x},${y}`);
+    }
+
+
+    // ---------- 墙壁生成算法（支持堵墙） ----------
     generateWalls() {
         const size = this.size;
         const W = Array(size).fill().map(() => Array(size).fill(0));
+        
+        // 预先标记堵墙格子为已处理（跳过它们）
+        for (const key of this.blockedCells) {
+            const [bx, by] = key.split(',').map(Number);
+            if (bx >= 0 && bx < size && by >= 0 && by < size) {
+                W[by][bx] = 1;
+            }
+        }
+        
         let failedCount = 0;
 
         while (true) {
@@ -282,11 +334,14 @@ export class MazeManager {
         }
     }
 
-    // ---------- 玩家移动 ----------
+
+    // ---------- 玩家移动（支持堵墙） ----------
     canMove(dx, dy) {
         const nx = this.px + dx;
         const ny = this.py + dy;
         if (nx < 0 || nx >= this.size || ny < 0 || ny >= this.size) return false;
+        // 检查目标格子是否被阻挡
+        if (this.blockedCells.has(`${nx},${ny}`)) return false;
         if (dx === -1 && this.wallRight[this.py][this.px-1]) return false;
         if (dx === 1 && this.wallRight[this.py][this.px]) return false;
         if (dy === -1 && this.wallDown[this.py-1][this.px]) return false;
@@ -323,11 +378,16 @@ export class MazeManager {
     }
 
     isBossCell() {
+        if (this._isCustomMaze) {
+            // 自定义迷宫，终点由 endX/endY 指定
+            return this.px === this.endX && this.py === this.endY;
+        }
         if (this.isHuntingForest) {
             return this.bossCells.has(`${this.px},${this.py}`);
         }
         return this.px === this.size - 1 && this.py === this.size - 1;
     }
+
 
     // 获取当前格子的boss信息
     getCurrentBossInfo() {

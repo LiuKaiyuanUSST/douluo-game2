@@ -267,9 +267,16 @@ export function attachMouseHandler() {
     }
 
     if (app.state === 'MAZE' && app.maze) {
-      const cellSize = 80, offset = 100;
+      const cellSize = app.maze.size >= 9 ? 55 : (app.maze.size >= 8 ? 60 : 80);
+      const offset = app.maze.size >= 9 ? 152 : (app.maze.size >= 8 ? 50 : 100);
+      const offsetY = app.maze.size >= 9 ? 80 : offset;
+
+
+
       const gx = Math.floor((mx - offset) / cellSize);
-      const gy = Math.floor((my - offset) / cellSize);
+      const gy = Math.floor((my - offsetY) / cellSize);
+
+
       if (gx >= 0 && gx < app.maze.size && gy >= 0 && gy < app.maze.size) {
         const dx = gx - app.maze.px;
         const dy = gy - app.maze.py;
