@@ -34,8 +34,20 @@ export function goToTown(resetPos = true) {
         return;
     }
 
+    // 马红俊剧情完成后回城时弹出新伙伴选择
+    if (app.mhjStoryCompleted && !app.mhjNewPartnerChosen) {
+        showMhjNewPartnerChoice();
+        return;
+    }
+
+    // 七怪跑步第一次非通关回城时弹出提示（仅当从迷宫中途回城，不是通关后回城）
+    if (app.currentLevel === 4 && !app.qiGuaiFirstReturnHintShown && !app.qiGuaiMazeCompleted) {
+        showQiGuaiFirstReturnHint();
+        return;
+    }
 
     const hasDead = app.party.some(m => m.alive === false);
+
     if (app.showAffinityHint) {
         setMoveTip("敌人为巨兽系，请在角色界面切换唐三为蛊毒系以克制对手");
         app.lastMoveWasAffinityHint = true;
@@ -84,10 +96,18 @@ export function tryMoveTown(dx, dy) {
                 setMoveTip("💡 你的角色还没有任何魂技！请前往猎魂森林猎取魂环获取魂技！");
                 return false;
             }
+            openLevelSelect();
         }
-        openLevelSelect();
+        // 史莱克村战斗塔直接进入"七怪跑步"迷宫
+        else if (app.currentTown === 'shrek_village') {
+            startLevel(4);
+        }
+        else {
+            openLevelSelect();
+        }
         return false;
     }
+
     if (targetType === 5) {
         // 进入猎魂森林
         startHuntingForest();
@@ -104,11 +124,17 @@ export function tryMoveTown(dx, dy) {
             showZwjRegistrationDialog();
             return false;
         }
+        // 在史莱克学院门口，必须通关战斗塔才能进入史莱克学院
+        if (app.currentTown === 'shrek' && targetType === 3 && !app.shrekBattleTowerCleared) {
+            setMoveTip("💡 请先通关战斗塔才能进入史莱克学院！");
+            return false;
+        }
         app.currentTown = exitInfo.targetTown;
         app.townPlayerPos = { ...exitInfo.targetPos };
         // 进入新主城，播放主城背景音乐
         playCityMusic();
         setMoveTip(`前往 ${app.townMaps[app.currentTown].name}`);
+
 
         return true;
     }
@@ -141,7 +167,10 @@ export function tryMoveTown(dx, dy) {
             t.hp = Math.min(t.maxHp, t.hp + 1);
             setMoveTip(`${t.name} 恢复1点生命，当前 ${t.hp}/${t.maxHp}`);
         } else {
-            const townLevelMap = { noting: [0], suotuo: [1], shrek: [2] };
+    const townLevelMap = { noting: [0], suotuo: [1], shrek: [2], shrek_academy: [3], shrek_village: [4] };
+
+
+
             const currentLevelIndices = townLevelMap[app.currentTown] || [];
             let allCleared = true;
             for (const levelIdx of currentLevelIndices) {
@@ -175,8 +204,11 @@ export function openShop() {
 
 export function openLevelSelect() {
     if (app.levelSelectDiv) return;
-    const townLevelMap = { noting: [0], suotuo: [1], shrek: [2] };
+    const townLevelMap = { noting: [0], suotuo: [1], shrek: [2], shrek_academy: [3], shrek_village: [4] };
+
+
     const allowed = townLevelMap[app.currentTown] || [];
+
     const available = app.unlockedLevels.filter(idx => allowed.includes(idx));
     if (available.length === 0) { setMoveTip("当前区域暂无可用关卡"); return; }
     const div = document.createElement('div');
@@ -202,6 +234,48 @@ export function openLevelSelect() {
     app.levelSelectDiv = div;
 }
 
+function setupQiGuaiRunningMaze(stage) {
+    // 七怪跑步：9x9自定义迷宫
+    // 起点 (0,0), 终点 (4,0) 第一行第五格
+    // 中央3x3挖空: (3,3)~(5,5)
+    // 第4列1-3行挖空: (3,0),(3,1),(3,2)
+    const blockedCells = [];
+    // 中央3x3
+    for (let y = 3; y <= 5; y++) {
+        for (let x = 3; x <= 5; x++) {
+            blockedCells.push([x, y]);
+        }
+    }
+    // 第4列1-3行
+    for (let y = 0; y <= 2; y++) {
+        blockedCells.push([3, y]);
+    }
+    
+    // 预先设置挖空区域四周的所有墙壁（在随机生成之前）
+    // 对每个挖空格子，将其四周的4堵墙全部设为true
+    const preSetWalls = [];
+    for (const [bx, by] of blockedCells) {
+        preSetWalls.push({ x: bx, y: by, dir: 'right' });
+        preSetWalls.push({ x: bx, y: by, dir: 'left' });
+        preSetWalls.push({ x: bx, y: by, dir: 'down' });
+        preSetWalls.push({ x: bx, y: by, dir: 'up' });
+    }
+    
+    app.maze = new MazeManager(stage.size, {
+        startX: 0,
+        startY: 0,
+        endX: 4,
+        endY: 0,
+        blockedCells: blockedCells,
+        preSetWalls: preSetWalls,
+        isCustomMaze: true,
+        customMazeName: '七怪跑步'
+    });
+}
+
+
+
+
 export function startLevel(levelIdx) {
     // 离开主城进入迷宫，停止主城音乐，播放战斗副本音乐
     stopCityMusic();
@@ -210,8 +284,16 @@ export function startLevel(levelIdx) {
     const stage = app.config.stages.levels[levelIdx];
     if (!stage) return;
     app.currentLevel = levelIdx; app.currentBossPhase = 0;
-    app.maze = new MazeManager(stage.size);
+    
+    // 第5关（七怪跑步）使用自定义迷宫
+    if (levelIdx === 4) {
+        setupQiGuaiRunningMaze(stage);
+    } else {
+        app.maze = new MazeManager(stage.size);
+    }
+    
     app.state = 'MAZE';
+
 
     app.battleTargeting = false; app.battleEnemyTurnDone = false; app.showResurrectionHint = false;
     // 第一次进入关卡时弹出大师武魂克制说明
@@ -226,7 +308,18 @@ export function startLevel(levelIdx) {
         showSecondLevelHintDialog();
         return;
     }
+    // 七怪跑步：第一次进入时播放弗兰德训话剧情 + 伙伴选择
+    // 如果玩家已有5个或以上角色（唐三+小舞+3个史莱克伙伴），说明已经触发过，不再重复触发
+    if (levelIdx === 4 && !app.qiGuaiFlenderSpeechDone && app.party.length < 5) {
+        app.qiGuaiFlenderSpeechDone = true;
+        startDialogue('flender_speech', 'chapter5_qiGuai.txt', () => {
+            // 弗兰德训话结束后，弹出大师伙伴选择
+            showQiGuaiPartnerChoice();
+        });
+        return;
+    }
     setMoveTip(`进入 ${stage.name}，移动到三角形标记 Boss 格`);
+
 }
 
 export function tryMoveMaze(dx, dy) {
@@ -257,23 +350,150 @@ export function tryMoveMaze(dx, dy) {
         return true;
     }
     
+    // 七怪跑步自定义迷宫：触发剧情事件 + 随机小怪
+    if (app.maze._isCustomMaze && app.currentLevel === 4) {
+        const px = app.maze.px;
+        const py = app.maze.py;
+        // 首次进入第4列（x=3）时触发抱怨剧情
+        if (!app.qiGuaiComplainDone && px === 3) {
+            app.qiGuaiComplainDone = true;
+            startDialogue('complain', 'chapter5_qiGuai.txt', () => {
+                setMoveTip("继续前进...");
+            });
+            return true;
+        }
+        // 首次进入前三行（y=0,1,2）且第5-9列（x=4~8）时触发互相帮助剧情
+        if (!app.qiGuaiHelpDone && py >= 0 && py <= 2 && px >= 4 && px <= 8) {
+            app.qiGuaiHelpDone = true;
+            startDialogue('help_each_other', 'chapter5_qiGuai.txt', () => {
+                setMoveTip("继续前进...");
+            });
+            return true;
+        }
+        // 非Boss格随机遭遇小怪（50%概率）
+        if (!app.maze.isBossCell() && Math.random() < 0.5) {
+            // 十年魂兽池
+            const decadeBeasts = [
+                { name: '孤竹', wuhun: '孤竹', level: 1, skills: [], chosenAffinity: '苍木', subAffinity: '苍木', color: '#27ae60' },
+                { name: '闪电兔', wuhun: '闪电兔', level: 1, skills: [], chosenAffinity: '雷霆', subAffinity: '雷霆', color: '#f1c40f' },
+                { name: '尖尾雨燕', wuhun: '尖尾雨燕', level: 1, skills: [], chosenAffinity: '沧澜', subAffinity: '沧澜', color: '#3498db' },
+                { name: '斑斓猫', wuhun: '斑斓猫', level: 1, skills: [], chosenAffinity: '烈焰', subAffinity: '烈焰', color: '#e74c3c' },
+                { name: '断肠草', wuhun: '断肠草', level: 1, skills: [], chosenAffinity: '蛊毒', subAffinity: '蛊毒', color: '#8e44ad' },
+                { name: '大角羊', wuhun: '大角羊', level: 1, skills: [], chosenAffinity: '巨兽', subAffinity: '巨兽', color: '#d35400' },
+                { name: '锄头', wuhun: '锄头', level: 1, skills: [], chosenAffinity: '天工', subAffinity: '天工', color: '#7f8c8d' }
+            ];
+            // 随机选3个
+            const shuffled = [...decadeBeasts].sort(() => Math.random() - 0.5);
+            const enemies = shuffled.slice(0, 3);
+            // 随机阵型
+            const formations = ['front-front-front', 'front-front-back', 'front-back-back'];
+            const formation = formations[Math.floor(Math.random() * formations.length)];
+            // 进入战斗
+            stopCityMusic();
+            const players = buildUnitsFromParty(1);
+            app.battle = new BattleSystem(players, enemies, {
+                playerFormation: app.selectedFormation,
+                enemyFormation: formation
+            });
+            app.state = 'BATTLE'; app.battleTargeting = false; app.battleEnemyTurnDone = false;
+            setMoveTip("⚔️ 遭遇十年魂兽！");
+            return true;
+        }
+    }
+    
     // 普通迷宫逻辑
     if (app.maze.isBossCell()) {
+
+
         const stage = app.config.stages.levels[app.currentLevel];
-        if (stage.bosses && stage.bosses.length) startBossFight(stage.bosses[0]);
-    } else if (Math.random() < 0.2) {
-        const count = (app.currentLevel === 1) ? 2 : (app.currentLevel === 2) ? 3 : 1;
-        const enemyId = (app.currentLevel === 0) ? 'student' : (app.currentLevel === 2) ? 'beast_outskirt' : 'beast';
-        const enemies = [];
-        for (let i = 0; i < count; i++) {
-            const e = buildEnemyFromMonster(enemyId, 1, true);
-            if (e) enemies.push(e);
+        if (stage.bosses && stage.bosses.length) {
+            const bossDef = stage.bosses[app.currentBossPhase] || stage.bosses[0];
+            // 第2关（戴沐白）：进Boss格先播放剧情，再开始Boss战（仅第一次进入时播放）
+            if (app.currentLevel === 1 && app.currentBossPhase === 0) {
+                startDialogue('before_boss_dmb', 'chapter2_dmb.txt', () => {
+                    startBossFight(bossDef);
+                });
+            }
+            // 第4关（马红俊）：进Boss格先播放剧情，再开始Boss战
+            else if (app.currentLevel === 3) {
+                startDialogue('village_walk', 'chapter4_mhj.txt', () => {
+                    startDialogue('separate', 'chapter4_mhj.txt', () => {
+                        startDialogue('meet_mhj', 'chapter4_mhj.txt', () => {
+                            startDialogue('boss_mhj', 'chapter4_mhj.txt', () => {
+                                startBossFight(bossDef);
+                            });
+                        });
+                    });
+                });
+            }
+            // 第5关（七怪跑步）：到达终点播放结束剧情
+            else if (app.currentLevel === 4) {
+                app.qiGuaiMazeCompleted = true;
+                startDialogue('after_battle_summary', 'chapter5_qiGuai.txt', () => {
+                    setMoveTip("🏁 七怪跑步完成！");
+                    // 解锁下一关
+                    const next = app.currentLevel + 1;
+                    if (next < app.config.stages.levels.length && !app.unlockedLevels.includes(next)) {
+                        app.unlockedLevels.push(next);
+                        app.unlockedLevels.sort((a,b)=>a-b);
+                    }
+                    // 返回主城
+                    goToTown();
+                });
+            }
+
+            else {
+                startBossFight(bossDef);
+            }
         }
-        if (!enemies.length) {
-            enemies.push({
-                name:'野怪', wuhun:'豹子', level:1, skills:[],
-                chosenAffinity:'巨兽', subAffinity:'雷霆', color:'#e74c3c'
-            });
+    } else if (!app.maze._isCustomMaze && Math.random() < 0.2) {
+
+
+        let enemies = [];
+        // 邪火凤凰关卡（关卡索引3）：小怪改为火蜥蜴（2级灼烧）、斑斓猫（1级）、闪电兔（1级），全部以烈焰系出战
+        if (app.currentLevel === 3) {
+            enemies = [
+                {
+                    name: '火蜥蜴',
+                    wuhun: '火蜥蜴',
+                    level: 2,
+                    skills: ['灼烧'],
+                    chosenAffinity: '烈焰',
+                    subAffinity: '巨兽',
+                    color: '#e67e22'
+                },
+                {
+                    name: '斑斓猫',
+                    wuhun: '斑斓猫',
+                    level: 1,
+                    skills: [],
+                    chosenAffinity: '烈焰',
+                    subAffinity: '蛊毒',
+                    color: '#e74c3c'
+                },
+                {
+                    name: '闪电兔',
+                    wuhun: '闪电兔',
+                    level: 1,
+                    skills: [],
+                    chosenAffinity: '烈焰',
+                    subAffinity: '烈焰',
+                    color: '#f39c12'
+                }
+            ];
+        } else {
+            const count = (app.currentLevel === 1) ? 2 : (app.currentLevel === 2) ? 3 : 1;
+            const enemyId = (app.currentLevel === 0) ? 'student' : (app.currentLevel === 2) ? 'beast_outskirt' : 'beast';
+            for (let i = 0; i < count; i++) {
+                const e = buildEnemyFromMonster(enemyId, 1, true);
+                if (e) enemies.push(e);
+            }
+            if (!enemies.length) {
+                enemies.push({
+                    name:'野怪', wuhun:'豹子', level:1, skills:[],
+                    chosenAffinity:'巨兽', subAffinity:'雷霆', color:'#e74c3c'
+                });
+            }
         }
         // 进入战斗，停止主城音乐
         stopCityMusic();
@@ -355,9 +575,14 @@ export function registerShowAffinityGuideDialog(fn) { showAffinityGuideDialog = 
 export function registerShowSecondLevelHintDialog(fn) { showSecondLevelHintDialog = fn; }
 export function registerShowShrekAcademyMasterDialog(fn) { showShrekAcademyMasterDialog = fn; }
 export function registerShowFirstForestReturnDialog(fn) { showFirstForestReturnDialog = fn; }
+export function registerShowMhjNewPartnerChoice(fn) { showMhjNewPartnerChoice = fn; }
+export function registerShowQiGuaiPartnerChoice(fn) { showQiGuaiPartnerChoice = fn; }
+export function registerShowQiGuaiFirstReturnHint(fn) { showQiGuaiFirstReturnHint = fn; }
 export function registerBuildEnemyFromMonster(fn) { buildEnemyFromMonster = fn; }
+
 export function registerBuildUnitsFromParty(fn) { buildUnitsFromParty = fn; }
 export function registerStartBossFight(fn) { startBossFight = fn; }
+export function registerStartDialogue(fn) { startDialogue = fn; }
 
 let showMasterWuhunChoice = function() { console.warn('showMasterWuhunChoice not registered'); };
 let showXiaoWuWuhunChoice = function() { console.warn('showXiaoWuWuhunChoice not registered'); };
@@ -367,9 +592,14 @@ let showAffinityGuideDialog = function() { console.warn('showAffinityGuideDialog
 let showSecondLevelHintDialog = function() { console.warn('showSecondLevelHintDialog not registered'); };
 let showShrekAcademyMasterDialog = function() { console.warn('showShrekAcademyMasterDialog not registered'); };
 let showFirstForestReturnDialog = function() { console.warn('showFirstForestReturnDialog not registered'); };
+let showMhjNewPartnerChoice = function() { console.warn('showMhjNewPartnerChoice not registered'); };
+let showQiGuaiPartnerChoice = function() { console.warn('showQiGuaiPartnerChoice not registered'); };
+let showQiGuaiFirstReturnHint = function() { console.warn('showQiGuaiFirstReturnHint not registered'); };
 let buildEnemyFromMonster = function() { console.warn('buildEnemyFromMonster not registered'); };
+
 let buildUnitsFromParty = function() { console.warn('buildUnitsFromParty not registered'); };
 let startBossFight = function() { console.warn('startBossFight not registered'); };
+let startDialogue = function() { console.warn('startDialogue not registered'); };
 
 // Import BattleSystem for maze encounters
 import { BattleSystem } from './battle.js';
