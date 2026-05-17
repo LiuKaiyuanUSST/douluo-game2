@@ -60,10 +60,11 @@ export function addMark(unit, type, duration = 1, extra = {}, battle = null) {
     logPrefix(`${unit.name}兽王姿态，免疫控制！`);
   }
   else if (type === 'shield') {
-    // 只添加标记，不直接修改防御属性，伤害结算时再计算
-    unit.marks.push({ type: 'shield' });
-    logPrefix(`${unit.name}肉盾加身，防御上升！`);
+    // 肉盾：每回合抵挡1点伤害，每回合只触发一次
+    unit.marks.push({ type: 'shield', usedThisTurn: false });
+    logPrefix(`${unit.name}肉盾加身，每回合可抵挡1点伤害！`);
   }
+
   else if (type === 'power_up') {
     unit.powerBonus += 2;
     unit.marks.push({ type: 'power_up' });
@@ -101,7 +102,22 @@ export function hasMark(unit, markType) {
   return unit.marks.some(m => m.type === markType);
 }
 
+/**
+ * 重置所有肉盾标记的 usedThisTurn 状态（每回合开始时调用）
+ */
+export function resetShieldUsedThisTurn(battle) {
+  const allUnits = [...battle.playerTeam, ...battle.enemyTeam];
+  allUnits.forEach(unit => {
+    unit.marks.forEach(m => {
+      if (m.type === 'shield') {
+        m.usedThisTurn = false;
+      }
+    });
+  });
+}
+
 export function applyStartTurnEffects(unit, battle) {
+
   unit.marks = unit.marks.filter(m => {
     if (m.type === 'poison' || m.type === 'burn') {
       if (Math.random() < 0.5) {

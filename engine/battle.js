@@ -2,7 +2,8 @@ import { calcDerivedStats, STRONG_AGAINST } from './battleUtils.js';
 import { getSkillById } from './skills.js';
 import { applyTalent } from './talents.js';
 import { initUnit, assignFormation, buildTurnOrder, getEffectiveRange, checkAndAdvanceLines } from './battleInit.js';
-import { addMark, removeMark, hasMark, applyStartTurnEffects, applyEndTurnEffects } from './battleMark.js';
+import { addMark, removeMark, hasMark, applyStartTurnEffects, applyEndTurnEffects, resetShieldUsedThisTurn } from './battleMark.js';
+
 import { resolveAttack, inRange } from './battleAttack.js';
 import { executeSkill } from './battleSkill.js';
 import { app } from './gameState.js';
@@ -74,8 +75,10 @@ export class BattleSystem {
     this.currentTurnIndex = 0;
     this.turnCount++;
     this.effectsAppliedThisRound.clear();
+    resetShieldUsedThisTurn(this);
     app.battleLog.push(`== 第 ${this.turnCount} 回合 ==`);
     return this.getCurrentActor();
+
   }
 
   advanceTurn() {
@@ -88,9 +91,11 @@ export class BattleSystem {
       this.currentTurnIndex = 0;
       this.turnCount++;
       this.effectsAppliedThisRound.clear();
+      resetShieldUsedThisTurn(this);
       app.battleLog.push(`== 第 ${this.turnCount} 回合 ==`);
     }
     this._checkVictory();
+
   }
 
   _checkVictory() {

@@ -135,6 +135,7 @@ const TOWN_NAMES = {
   'noting': '诺丁城',
   'shrek': '史莱克学院门口',
   'shrek_academy': '史莱克学院',
+  'shrek_village': '史莱克村',
   'suotuo': '索托城'
 };
 
@@ -197,9 +198,20 @@ export function saveGame(slot) {
     secondLevelEntered: app.secondLevelEntered,
     pendingXiaoWuChoice: app.pendingXiaoWuChoice,
     showAffinityHint: app.showAffinityHint,
-    shrekBattleTowerCleared: app.shrekBattleTowerCleared
+    shrekBattleTowerCleared: app.shrekBattleTowerCleared,
+    mhjStoryCompleted: app.mhjStoryCompleted,
+    mhjNewPartnerChosen: app.mhjNewPartnerChosen,
+    shrekAcademyFirstMove: app.shrekAcademyFirstMove,
+    firstForestReturnDialogShown: app.firstForestReturnDialogShown,
+    qiGuaiFlenderSpeechDone: app.qiGuaiFlenderSpeechDone,
+    qiGuaiComplainDone: app.qiGuaiComplainDone,
+    qiGuaiHelpDone: app.qiGuaiHelpDone,
+    qiGuaiPartnerChosen: app.qiGuaiPartnerChosen,
+    qiGuaiFirstReturnHintShown: app.qiGuaiFirstReturnHintShown,
+    qiGuaiMazeCompleted: app.qiGuaiMazeCompleted
 
   };
+
   try {
     localStorage.setItem(getSaveKey(slot), JSON.stringify(saveData));
     setMoveTip(`💾 已保存到存档位 ${slot}`);
@@ -272,9 +284,20 @@ export function loadGame(slot) {
     app.pendingXiaoWuChoice = data.pendingXiaoWuChoice || false;
     app.showAffinityHint = data.showAffinityHint || false;
     app.shrekBattleTowerCleared = data.shrekBattleTowerCleared || false;
+    app.mhjStoryCompleted = data.mhjStoryCompleted || false;
+    app.mhjNewPartnerChosen = data.mhjNewPartnerChosen || false;
+    app.shrekAcademyFirstMove = data.shrekAcademyFirstMove || false;
+    app.firstForestReturnDialogShown = data.firstForestReturnDialogShown || false;
+    app.qiGuaiFlenderSpeechDone = data.qiGuaiFlenderSpeechDone || false;
+    app.qiGuaiComplainDone = data.qiGuaiComplainDone || false;
+    app.qiGuaiHelpDone = data.qiGuaiHelpDone || false;
+    app.qiGuaiPartnerChosen = data.qiGuaiPartnerChosen || false;
+    app.qiGuaiFirstReturnHintShown = data.qiGuaiFirstReturnHintShown || false;
+    app.qiGuaiMazeCompleted = data.qiGuaiMazeCompleted || false;
 
     // 存档迁移：补充旧存档中缺少的新版本标记（如新关卡相关的标记等）
     migrateSaveData(data);
+
 
     app.state = 'TOWN';
 

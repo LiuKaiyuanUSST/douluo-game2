@@ -2,6 +2,7 @@ import { app } from './gameState.js';
 import { useBackpackItem, goToTown } from './gameLogic.js';
 import { setMoveTip, saveGame, loadGame, getSaveSlotInfo } from './utilsCore.js';
 import { toggleCharacterPanel, toggleTeamPanel } from './uiCharacterTeam.js';
+import { toggleHelpPanel } from './uiHelp.js';
 
 // ---------- 按钮行 ----------
 export function createButtonRow() {
@@ -237,8 +238,8 @@ function updateSaveSlots() {
     document.querySelectorAll('.save-slot-btn').forEach(btn => {
         btn.onclick = () => {
             const slot = parseInt(btn.dataset.slot);
-            saveGame(slot);
-            updateSaveSlots();
+            // 弹出确认对话框
+            showSaveConfirmDialog(slot);
         };
     });
 
@@ -249,6 +250,85 @@ function updateSaveSlots() {
             const success = loadGame(slot);
             if (success) toggleSavePanel(false);
         };
+    });
+}
+
+// ---------- 保存确认对话框 ----------
+function showSaveConfirmDialog(slot) {
+    // 如果已存在则移除
+    const existing = document.getElementById('save-confirm-dialog');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'save-confirm-dialog';
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.6);
+        z-index: 4000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+    `;
+
+    const dialog = document.createElement('div');
+    dialog.style.cssText = `
+        background: rgba(30,30,40,0.95);
+        color: white;
+        border: 2px solid #888;
+        border-radius: 12px;
+        padding: 30px 40px;
+        text-align: center;
+        min-width: 320px;
+        box-shadow: 0 0 30px rgba(0,0,0,0.5);
+    `;
+    dialog.innerHTML = `
+        <div style="font-size: 48px; margin-bottom: 10px;">💾</div>
+        <div style="font-size: 20px; margin-bottom: 20px; line-height: 1.5;">
+            确认保存到存档位 ${slot} 吗？<br>
+            <span style="font-size: 14px; color: #aaa;">这会覆盖之前的存档</span>
+        </div>
+        <div style="display: flex; gap: 16px; justify-content: center;">
+            <button id="confirm-save-yes" style="
+                padding: 10px 30px;
+                background: #2ecc71;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 18px;
+                font-family: inherit;
+            ">确认</button>
+            <button id="confirm-save-no" style="
+                padding: 10px 30px;
+                background: #e74c3c;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 18px;
+                font-family: inherit;
+            ">取消</button>
+        </div>
+    `;
+
+    overlay.appendChild(dialog);
+    document.body.appendChild(overlay);
+
+    document.getElementById('confirm-save-yes').addEventListener('click', () => {
+        saveGame(slot);
+        updateSaveSlots();
+        overlay.remove();
+    });
+
+    document.getElementById('confirm-save-no').addEventListener('click', () => {
+        overlay.remove();
+    });
+
+    // 点击遮罩层也关闭
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) overlay.remove();
     });
 }
 
@@ -345,103 +425,5 @@ export function toggleBackpack(show = null) {
     }
 }
 
-// ---------- 帮助面板 ----------
-let currentHelpTab = 'battle';
 
-function createHelpPanel() {
-    if (document.getElementById('help-panel')) return;
-    const panel = document.createElement('div');
-    panel.id = 'help-panel';
-    panel.style.cssText = `
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 700px;
-        max-height: 80vh;
-        background: rgba(0,0,0,0.95);
-        color: #eee;
-        border: 2px solid #888;
-        border-radius: 12px;
-        z-index: 3000;
-        display: none;
-        font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
-        line-height: 1.6;
-        flex-direction: column;
-    `;
-    // 固定头部：标题行 + 标签行
-    panel.innerHTML = `
-        <div style="flex-shrink:0; padding:20px 30px 0 30px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #555; padding-bottom:10px;">
-                <h2 style="margin:0; color:#ffcc88;">📖 帮助</h2>
-                <button id="close-help" style="background:#666; color:white; border:none; padding:5px 15px; border-radius:6px; cursor:pointer; font-size:16px;">✕ 关闭</button>
-            </div>
-            <div style="display:flex; gap:10px; margin:12px 0 0 0; padding-bottom:10px; border-bottom:1px solid #444;">
-                <button id="help-tab-battle" class="help-tab-btn" data-tab="battle" style="flex:1; padding:8px 0; background:#5a7a8f; color:white; border:none; border-radius:6px; cursor:pointer; font-size:15px; font-weight:bold;">🗡️ 战斗</button>
-                <button id="help-tab-wuhun" class="help-tab-btn" data-tab="wuhun" style="flex:1; padding:8px 0; background:#4a6a7f; color:white; border:none; border-radius:6px; cursor:pointer; font-size:15px;">🌀 武魂</button>
-                <button id="help-tab-skill" class="help-tab-btn" data-tab="skill" style="flex:1; padding:8px 0; background:#4a6a7f; color:white; border:none; border-radius:6px; cursor:pointer; font-size:15px;">⚡ 魂技</button>
-                <button id="help-tab-level" class="help-tab-btn" data-tab="level" style="flex:1; padding:8px 0; background:#4a6a7f; color:white; border:none; border-radius:6px; cursor:pointer; font-size:15px;">⬆️ 等级</button>
-            </div>
-        </div>
-        <div id="help-content" style="flex:1; overflow-y:auto; white-space:pre-wrap; font-size:15px; color:#ddd; padding:15px 30px 20px 30px;">
-            <p style="text-align:center; color:#888;">加载中…</p>
-        </div>
-    `;
-    document.body.appendChild(panel);
 
-    document.getElementById('close-help').addEventListener('click', () => toggleHelpPanel(false));
-
-    // 标签切换事件
-    document.querySelectorAll('.help-tab-btn').forEach(btn => {
-        btn.addEventListener('click', async () => {
-            const tab = btn.dataset.tab;
-            if (tab === currentHelpTab) return;
-            currentHelpTab = tab;
-            // 更新按钮高亮
-            document.querySelectorAll('.help-tab-btn').forEach(b => {
-                b.style.background = '#4a6a7f';
-                b.style.fontWeight = 'normal';
-            });
-            btn.style.background = '#5a7a8f';
-            btn.style.fontWeight = 'bold';
-            // 加载对应内容
-            const fileName = `help_${tab}.txt`;
-            const contentDiv = document.getElementById('help-content');
-            contentDiv.textContent = '加载中…';
-            try {
-                const response = await fetch(`./dialogues/${fileName}`);
-                if (!response.ok) throw new Error(`无法加载帮助文件: ${fileName}`);
-                const text = await response.text();
-                contentDiv.textContent = text;
-            } catch (e) {
-                contentDiv.innerHTML = `<p style="color:#e74c3c;">加载失败: ${e.message}</p>`;
-            }
-        });
-    });
-}
-
-export async function toggleHelpPanel(show = null) {
-    if (app.dialogActive) return;
-    createHelpPanel();
-    const panel = document.getElementById('help-panel');
-    if (!panel) return;
-    if (show === false || (panel.style.display !== 'none' && show !== true)) {
-        panel.style.display = 'none';
-    } else {
-        panel.style.display = 'flex';
-        // 默认加载战斗帮助
-        if (currentHelpTab === 'battle') {
-            const contentDiv = document.getElementById('help-content');
-            if (contentDiv && contentDiv.textContent === '加载中…') {
-                try {
-                    const response = await fetch('./dialogues/help_battle.txt');
-                    if (!response.ok) throw new Error('无法加载帮助文件');
-                    const text = await response.text();
-                    contentDiv.textContent = text;
-                } catch (e) {
-                    contentDiv.innerHTML = `<p style="color:#e74c3c;">加载失败: ${e.message}</p>`;
-                }
-            }
-        }
-    }
-}

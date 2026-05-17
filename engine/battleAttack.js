@@ -26,17 +26,22 @@ export function resolveAttack(attacker, defender, battle, isNormalAttack = false
   // 基础伤害骰（属性加成已反映在 damageMin/Max 中）
   let baseDamage = attacker.damageMin + Math.floor(Math.random() * (attacker.damageMax - attacker.damageMin + 1));
 
-  // 计算防御减伤（临时考虑肉盾标记）
+  // 计算防御减伤
   let defenseType = defender.defenseType || 0;
-  if (defender.marks && defender.marks.some(m => m.type === 'shield')) {
-    // 肉盾：防御档位+1，上限3
-    defenseType = Math.min(3, defenseType + 1);
-  }
-
   let reduction = 0;
   if (defenseType === 1) reduction = Math.random() < 0.5 ? 1 : 0;
   else if (defenseType === 2) reduction = 1;
   else if (defenseType === 3) reduction = 1 + (Math.random() < 0.5 ? 1 : 0);
+
+  // 肉盾：每回合抵挡1点伤害，每回合只触发一次
+  if (defender.marks) {
+    const shieldMark = defender.marks.find(m => m.type === 'shield');
+    if (shieldMark && !shieldMark.usedThisTurn) {
+      reduction += 1;
+      shieldMark.usedThisTurn = true;
+    }
+  }
+
 
   // 克制增伤
   let bonus = 0;

@@ -24,7 +24,8 @@ export const SKILL_POOL = {
     ],
     '巨兽': [
         { id: '兽王', name: '兽王', cost: 2, type: 'beast_king', target: 'self', baseProb: 1.0, desc: '100%自身免疫控制（本场）' },
-        { id: '肉盾', name: '肉盾', cost: 1, type: 'shield', target: 'self', baseProb: 1.0, desc: '100%自身防御档位+1（本场，不可叠加）' },
+        { id: '肉盾', name: '肉盾', cost: 1, type: 'shield', target: 'self', baseProb: 1.0, desc: '100%为自身添加肉盾标记，每回合抵挡1点伤害（本场，不可叠加）' },
+
         { id: '蛮力', name: '蛮力', cost: 1, type: 'brute', target: 'enemy', baseProb: 1.0, desc: '普攻并100%额外+1伤害' }
     ],
     '蛊毒': [

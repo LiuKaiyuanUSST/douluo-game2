@@ -161,7 +161,10 @@ export function drawMaze() {
   ctx.font = "bold 14px 'Segoe UI'";
   ctx.fillText(`🗺️ ${stageName}`, 80, 40);
   ctx.font = "14px 'Segoe UI'";
-  ctx.fillText(`生命: ${hpText}`, 140, 70);
+  ctx.fillText(`生命: ${hpText}`, 240, 70);
+
+
+
   ctx.fillText(`金魂币: ${player.gold}`, 60, 95);
 
   // 猎魂森林额外信息

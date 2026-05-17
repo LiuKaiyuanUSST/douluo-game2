@@ -129,7 +129,13 @@ export function tryMoveTown(dx, dy) {
             setMoveTip("💡 请先通关战斗塔才能进入史莱克学院！");
             return false;
         }
+        // 在史莱克学院，必须击败邪火凤凰（马红俊）才能进入下一张地图
+        if (app.currentTown === 'shrek_academy' && targetType === 3 && !app.mhjStoryCompleted) {
+            setMoveTip("💡 请先击败邪火凤凰马红俊才能进入下一张地图！");
+            return false;
+        }
         app.currentTown = exitInfo.targetTown;
+
         app.townPlayerPos = { ...exitInfo.targetPos };
         // 进入新主城，播放主城背景音乐
         playCityMusic();
