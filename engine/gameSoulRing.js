@@ -175,6 +175,7 @@ function showSoulRingComplete() {
     const selectedChar = app._soulRingChar;
     const bossInfo = app._soulRingBoss;
     const chosenAffinity = app._beastForestChosenAffinity || (bossInfo ? bossInfo.affinity : null);
+    const isSecondSoulRing = app._isSecondSoulRing || false;
     
     if (!selectedChar || !bossInfo) return;
     
@@ -206,6 +207,25 @@ function showSoulRingComplete() {
     if (!selectedChar.soulRings) selectedChar.soulRings = [];
     selectedChar.soulRings.push(soulRingInfo);
     
+    // 第二魂环附加：等级处理
+    let levelUpMessage = '';
+    if (isSecondSoulRing) {
+        if (selectedChar.level < 2) {
+            // 1级角色吸取第二魂环后提升至2级
+            selectedChar.level = 2;
+            // 同步唐三的 app.player 引用
+            if (selectedChar.id === 'ts' && app.player) {
+                app.player.level = 2;
+            }
+            levelUpMessage = `<div style="font-size:16px; margin-top:10px; color:#2ecc71;">${selectedChar.name} 提升至 <strong>2级</strong>！</div>`;
+        } else {
+            // 2级以上角色等级不变
+            levelUpMessage = `<div style="font-size:16px; margin-top:10px; color:#aaa;">${selectedChar.name} 等级不变（当前 ${selectedChar.level}级）</div>`;
+        }
+        // 清除标记
+        app._isSecondSoulRing = false;
+    }
+    
     // 显示恭喜对话框
     app.dialogActive = true;
     
@@ -232,6 +252,7 @@ function showSoulRingComplete() {
         <div style="font-size:20px; line-height:1.6; margin-bottom:20px;">
             恭喜${selectedChar.name}成功吸收${bossInfo.name}魂环，魂技为 <strong style="color:#f39c12;">${randomSkill}</strong>。
         </div>
+        ${levelUpMessage}
         <button id="soul-ring-complete-btn" style="
             display:block; margin:15px auto; padding:12px 40px;
             background:#2ecc71; color:white; border:none; border-radius:8px;
@@ -253,6 +274,7 @@ function showSoulRingComplete() {
         markBossDefeatedAndReturn(bossInfo);
     });
 }
+
 
 function closeSoulRingMaze() {
     // 恢复之前保存的猎魂森林迷宫

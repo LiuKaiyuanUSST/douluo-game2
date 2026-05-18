@@ -40,13 +40,14 @@ export function executeSkill(actor, skillId, target, battle) {
         } else {
           message += ' 缠绕技能失败。';
         }
-        // 蓝银领域天赋：首回合额外缠绕1名目标（只缠绕不普攻）
+        // 蓝银领域天赋：首回合额外缠绕1名目标（只缠绕不普攻，独立结算概率）
         if (battle.turnCount === 0 && actor.talentData?.extraBindAndRebornTarget) {
           const opposing = getOpposingTeam();
           const others = opposing.filter(e => e.alive && e !== targetUnit);
           if (others.length > 0) {
             const extra = others[Math.floor(Math.random() * others.length)];
-            if (Math.random() < bindProb) {
+            const extraBindProb = getActualProb(skill.affinity, actor.affinityUsed, actor.mainAffinity, actor.subAffinity, skill.baseProb);
+            if (Math.random() < extraBindProb) {
               if (battle.addMark(extra, 'bind', 1, {}, battle)) {
                 message += ` ${extra.name}缠绕成功！`;
               } else {
@@ -66,7 +67,9 @@ export function executeSkill(actor, skillId, target, battle) {
       const unit = getTargetBySideIndex(...unpack(target));
       if (unit && unit.alive) {
         const healProb = getActualProb(skill.affinity, actor.affinityUsed, actor.mainAffinity, actor.subAffinity, skill.baseProb);
+        const healBonusTurns = actor.talentData?.healBonusTurns || 3;
         message = `${actorPrefix}${actorName} 使用【复生】→ ${unit.name}`;
+        // 主目标治疗
         if (Math.random() < healProb) {
           unit.hp = Math.min(unit.maxHp, unit.hp + 1);
           message += ' 回复1点生命！';
@@ -77,6 +80,55 @@ export function executeSkill(actor, skillId, target, battle) {
           message += ' 获得复生！';
         } else {
           message += ' 已有复生，不再施加。';
+        }
+        // 治愈祈愿天赋：前三回合对主目标以50%概率额外回复2点生命（独立于前置治疗，不论是否成功）
+        if (actor.talentData?.healExtraChance && battle.turnCount < healBonusTurns) {
+          if (Math.random() < actor.talentData.healExtraChance) {
+            const extraAmount = actor.talentData.healExtraAmount || 1;
+            unit.hp = Math.min(unit.maxHp, unit.hp + extraAmount);
+            message += ` ${unit.name}额外回复${extraAmount}HP！`;
+          }
+        }
+        // 香肠滋补天赋：前三回合对主目标回复1点魂力
+        if (actor.talentData?.healSPChance && battle.turnCount < healBonusTurns) {
+          if (Math.random() < actor.talentData.healSPChance) {
+            unit.spirit = Math.min(unit.maxSpirit, unit.spirit + 1);
+            message += ` ${unit.name}回复1SP！`;
+          }
+        }
+        // 九心海棠/香肠天赋：前三回合额外指定1名目标
+        if (actor.talentData?.extraHealTarget && battle.turnCount < healBonusTurns) {
+          const ownTeam = actor.side === 'player' ? battle.playerTeam : battle.enemyTeam;
+          const otherTargets = ownTeam.filter(u => u.alive && u !== unit);
+          if (otherTargets.length > 0) {
+            const extra = otherTargets[Math.floor(Math.random() * otherTargets.length)];
+            // 额外目标独立结算50%概率回复1HP（独立计算概率）
+            const extraHealProb = getActualProb(skill.affinity, actor.affinityUsed, actor.mainAffinity, actor.subAffinity, skill.baseProb);
+            if (Math.random() < extraHealProb) {
+              extra.hp = Math.min(extra.maxHp, extra.hp + 1);
+              message += ` 额外治疗了${extra.name}，回复1点生命！`;
+            }
+            if (battle.addMark(extra, 'reborn', 1, {}, battle)) {
+              message += ` ${extra.name}获得复生！`;
+            } else {
+              message += ` ${extra.name}已有复生，不再施加。`;
+            }
+            // 治愈祈愿天赋：前三回合对额外目标以50%概率额外回复2点生命（独立于前置治疗，不论是否成功）
+            if (actor.talentData?.healExtraChance && battle.turnCount < healBonusTurns) {
+              if (Math.random() < actor.talentData.healExtraChance) {
+                const extraAmount = actor.talentData.healExtraAmount || 1;
+                extra.hp = Math.min(extra.maxHp, extra.hp + extraAmount);
+                message += ` ${extra.name}额外回复${extraAmount}HP！`;
+              }
+            }
+            // 香肠滋补天赋：前三回合对额外目标回复1点魂力
+            if (actor.talentData?.healSPChance && battle.turnCount < healBonusTurns) {
+              if (Math.random() < actor.talentData.healSPChance) {
+                extra.spirit = Math.min(extra.maxSpirit, extra.spirit + 1);
+                message += ` ${extra.name}回复1SP！`;
+              }
+            }
+          }
         }
       } else {
         message = `${actorPrefix}${actorName} 使用【复生】，目标无效。`;
@@ -247,57 +299,55 @@ export function executeSkill(actor, skillId, target, battle) {
       if (unit && unit.alive) {
         const dmgResult = resolveAttack(actor, unit, battle);
         message = `${actorPrefix}${actorName} 使用【扩散】！` + dmgResult.message;
+        // 对全场所有角色100%概率附加中毒标记
+        const allUnits = [...battle.playerTeam, ...battle.enemyTeam].filter(e => e.alive);
         const poisonProb = getActualProb(skill.affinity, actor.affinityUsed, actor.mainAffinity, actor.subAffinity, skill.baseProb);
-        // 主目标按概率附加中毒
-        if (Math.random() < poisonProb) {
-          if (battle.addMark(unit, 'poison', 1, {}, battle)) {
-            message += ' 主目标中毒！';
-          } else {
-            message += ' 主目标已中毒。';
-          }
-        } else {
-          message += ' 主目标抵御了中毒。';
-        }
-        const opposing = getOpposingTeam();
-        const others = [...opposing].filter(e => e.alive && e !== unit).sort(() => Math.random() - 0.5).slice(0, 2);
-        if (others.length > 0) {
-          others.forEach(e => {
-            if (Math.random() < poisonProb) {
-              if (battle.addMark(e, 'poison', 1, {}, battle)) {
-                message += ` ${e.name}中毒！`;
-              } else {
-                message += ` ${e.name}已中毒。`;
-              }
+        allUnits.forEach(e => {
+          if (Math.random() < poisonProb) {
+            if (battle.addMark(e, 'poison', 1, {}, battle)) {
+              message += ` ${e.name}中毒！`;
             } else {
-              message += ` ${e.name}抵御了中毒。`;
+              message += ` ${e.name}已中毒。`;
             }
-          });
-        } else {
-          message += ' 无其他目标可扩散。';
-        }
+          } else {
+            message += ` ${e.name}抵御了中毒。`;
+          }
+        });
+        // 对己方所有中毒角色100%附加激发标记（智力+3，本场战斗）
+        const ownTeam = actor.side === 'player' ? battle.playerTeam : battle.enemyTeam;
+        const exciteProb = getActualProb(skill.affinity, actor.affinityUsed, actor.mainAffinity, actor.subAffinity, skill.baseProb);
+        ownTeam.filter(e => e.alive && battle.hasMark(e, 'poison')).forEach(e => {
+          if (Math.random() < exciteProb) {
+            if (battle.addMark(e, 'excite', 1, {}, battle)) {
+              message += ` ${e.name}获得激发！`;
+            } else {
+              message += ` ${e.name}已有激发标记。`;
+            }
+          } else {
+            message += ` ${e.name}激发失败。`;
+          }
+        });
       } else {
         message = `${actorPrefix}${actorName} 使用【扩散】，目标无效。`;
       }
       break;
     }
     case 'cure_poison': {
-      const unit = getTargetBySideIndex(...unpack(target));
-      if (unit && unit.alive) {
-        message = `${actorPrefix}${actorName} 使用【驱毒】→ ${unit.name}`;
-        const cureProb = getActualProb(skill.affinity, actor.affinityUsed, actor.mainAffinity, actor.subAffinity, skill.baseProb);
+      message = `${actorPrefix}${actorName} 使用【驱毒】！`;
+      const cureProb = getActualProb(skill.affinity, actor.affinityUsed, actor.mainAffinity, actor.subAffinity, skill.baseProb);
+      const ownTeam = actor.side === 'player' ? battle.playerTeam : battle.enemyTeam;
+      ownTeam.filter(e => e.alive).forEach(e => {
         if (Math.random() < cureProb) {
-          if (battle.hasMark(unit, 'poison')) {
-            battle.removeMark(unit, 'poison');
-            message += ' 驱散了中毒标记！';
+          if (battle.hasMark(e, 'poison')) {
+            battle.removeMark(e, 'poison');
+            message += ` ${e.name}驱毒成功！`;
           } else {
-            message += ' 目标没有中毒标记。';
+            message += ` ${e.name}没有中毒标记。`;
           }
         } else {
-          message += ' 驱毒技能失败。';
+          message += ` ${e.name}驱毒失败。`;
         }
-      } else {
-        message = `${actorPrefix}${actorName} 使用【驱毒】，目标无效。`;
-      }
+      });
       break;
     }
 
@@ -305,24 +355,44 @@ export function executeSkill(actor, skillId, target, battle) {
       const unit = getTargetBySideIndex(...unpack(target));
       if (unit && unit.alive) {
         const healProb = getActualProb(skill.affinity, actor.affinityUsed, actor.mainAffinity, actor.subAffinity, skill.baseProb);
+        const healBonusTurns = actor.talentData?.healBonusTurns || 3;
         message = `${actorPrefix}${actorName} 使用【治疗】→ ${unit.name}`;
+        // 主目标治疗
         if (Math.random() < healProb) {
           unit.hp = Math.min(unit.maxHp, unit.hp + 2);
           message += '，回复2点HP！';
         } else {
           message += '，治疗失败。';
         }
-        if (actor.talentData?.extraHealTarget && battle.turnCount < (actor.talentData.healBonusTurns || 3)) {
+        // 治愈祈愿天赋：前三回合对主目标以50%概率额外回复2点生命（独立于前置治疗，不论是否成功）
+        if (actor.talentData?.healExtraChance && battle.turnCount < healBonusTurns) {
+          if (Math.random() < actor.talentData.healExtraChance) {
+            const extraAmount = actor.talentData.healExtraAmount || 1;
+            unit.hp = Math.min(unit.maxHp, unit.hp + extraAmount);
+            message += ` ${unit.name}额外回复${extraAmount}HP！`;
+          }
+        }
+        // 香肠滋补天赋：前三回合对主目标回复1点魂力
+        if (actor.talentData?.healSPChance && battle.turnCount < healBonusTurns) {
+          if (Math.random() < actor.talentData.healSPChance) {
+            unit.spirit = Math.min(unit.maxSpirit, unit.spirit + 1);
+            message += ` ${unit.name}回复1SP！`;
+          }
+        }
+        // 九心海棠/香肠天赋：前三回合额外指定1名目标
+        if (actor.talentData?.extraHealTarget && battle.turnCount < healBonusTurns) {
           const ownTeam = actor.side === 'player' ? battle.playerTeam : battle.enemyTeam;
           const otherTargets = ownTeam.filter(u => u.alive && u !== unit);
           if (otherTargets.length > 0) {
             const extra = otherTargets[Math.floor(Math.random() * otherTargets.length)];
-            if (Math.random() < healProb) {
+            // 额外目标独立结算50%概率回复2HP（独立计算概率）
+            const extraHealProb = getActualProb(skill.affinity, actor.affinityUsed, actor.mainAffinity, actor.subAffinity, skill.baseProb);
+            if (Math.random() < extraHealProb) {
               extra.hp = Math.min(extra.maxHp, extra.hp + 2);
               message += ` 额外治疗了${extra.name}，回复2点HP！`;
             }
-            // 治愈祈愿天赋：前三回合对额外目标以50%概率额外回复2点生命
-            if (actor.talentData?.healExtraChance && battle.turnCount < (actor.talentData.healBonusTurns || 3)) {
+            // 治愈祈愿天赋：前三回合对额外目标以50%概率额外回复2点生命（独立于前置治疗，不论是否成功）
+            if (actor.talentData?.healExtraChance && battle.turnCount < healBonusTurns) {
               if (Math.random() < actor.talentData.healExtraChance) {
                 const extraAmount = actor.talentData.healExtraAmount || 1;
                 extra.hp = Math.min(extra.maxHp, extra.hp + extraAmount);
@@ -330,27 +400,12 @@ export function executeSkill(actor, skillId, target, battle) {
               }
             }
             // 香肠滋补天赋：前三回合对额外目标回复1点魂力
-            if (actor.talentData?.healSPChance && battle.turnCount < (actor.talentData.healBonusTurns || 3)) {
+            if (actor.talentData?.healSPChance && battle.turnCount < healBonusTurns) {
               if (Math.random() < actor.talentData.healSPChance) {
                 extra.spirit = Math.min(extra.maxSpirit, extra.spirit + 1);
                 message += ` ${extra.name}回复1SP！`;
               }
             }
-            // 香肠滋补天赋：前三回合对主目标回复1点魂力
-            if (actor.talentData?.healSPChance && battle.turnCount < (actor.talentData.healBonusTurns || 3)) {
-              if (Math.random() < actor.talentData.healSPChance) {
-                unit.spirit = Math.min(unit.maxSpirit, unit.spirit + 1);
-                message += ` ${unit.name}回复1SP！`;
-              }
-            }
-          }
-        }
-        // 治愈祈愿天赋：前三回合对主目标以50%概率额外回复2点生命
-        if (actor.talentData?.healExtraChance && battle.turnCount < (actor.talentData.healBonusTurns || 3)) {
-          if (Math.random() < actor.talentData.healExtraChance) {
-            const extraAmount = actor.talentData.healExtraAmount || 1;
-            unit.hp = Math.min(unit.maxHp, unit.hp + extraAmount);
-            message += ` ${unit.name}额外回复${extraAmount}HP！`;
           }
         }
       } else {
@@ -401,20 +456,23 @@ export function executeSkill(actor, skillId, target, battle) {
     case 'heal_all': {
       message = `${actorPrefix}${actorName} 使用【痊愈】！`;
       const ownTeam = actor.side === 'player' ? battle.playerTeam : battle.enemyTeam;
-      const healProb = getActualProb(skill.affinity, actor.affinityUsed, actor.mainAffinity, actor.subAffinity, skill.baseProb);
       const healBonusTurns = actor.talentData?.healBonusTurns || 3;
       let anyHealed = false;
       ownTeam.forEach(u => {
-        if (u.alive && Math.random() < healProb) {
-          u.hp = Math.min(u.maxHp, u.hp + 1);
-          message += ` ${u.name}回复1HP！`;
-          anyHealed = true;
-          // 治愈祈愿天赋：前三回合对每个目标以50%概率额外回复2点生命
+        if (u.alive) {
+          // 痊愈：对每个目标独立结算50%概率回复1HP（每个目标独立计算概率）
+          const healProb = getActualProb(skill.affinity, actor.affinityUsed, actor.mainAffinity, actor.subAffinity, skill.baseProb);
+          if (Math.random() < healProb) {
+            u.hp = Math.min(u.maxHp, u.hp + 1);
+            message += ` ${u.name}回复1HP！`;
+            anyHealed = true;
+          }
+          // 治愈祈愿天赋：前三回合对每个目标以50%概率额外回复2点生命（独立于前置治疗，不论是否成功）
           if (actor.talentData?.healExtraChance && battle.turnCount < healBonusTurns) {
             if (Math.random() < actor.talentData.healExtraChance) {
               const extraAmount = actor.talentData.healExtraAmount || 1;
               u.hp = Math.min(u.maxHp, u.hp + extraAmount);
-              message += ` (额外+${extraAmount})`;
+              message += ` ${u.name}额外回复${extraAmount}HP！`;
             }
           }
           // 香肠滋补天赋：前三回合对每个目标以50%概率额外回复1点魂力
@@ -435,7 +493,6 @@ export function executeSkill(actor, skillId, target, battle) {
       const opposing = getOpposingTeam();
       const enemiesInRange = opposing.filter(e => e.alive && inRange(battle, actor, e));
       const targets = enemiesInRange.sort(() => Math.random() - 0.5).slice(0, 2);
-      const delayProb = getActualProb(skill.affinity, actor.affinityUsed, actor.mainAffinity, actor.subAffinity, skill.baseProb);
       if (targets.length === 0) {
         message += ' 攻击范围内无敌人。';
       } else {
@@ -443,8 +500,9 @@ export function executeSkill(actor, skillId, target, battle) {
         const mainTarget = targets[0];
         const dmgResult = resolveAttack(actor, mainTarget, battle);
         message += dmgResult.message;
-        // 再为攻击范围内最多2名敌人附加迟滞标记
+        // 再为攻击范围内最多2名敌人附加迟滞标记（每个目标独立结算概率）
         targets.forEach(e => {
+          const delayProb = getActualProb(skill.affinity, actor.affinityUsed, actor.mainAffinity, actor.subAffinity, skill.baseProb);
           if (Math.random() < delayProb) {
             if (battle.addMark(e, 'delay', 1, {}, battle)) {
               message += ` ${e.name}被迟滞！`;
@@ -461,22 +519,21 @@ export function executeSkill(actor, skillId, target, battle) {
 
     case 'cleanse': {
       message = `${actorPrefix}${actorName} 使用【净化】！`;
-      const cleanseProb = getActualProb(skill.affinity, actor.affinityUsed, actor.mainAffinity, actor.subAffinity, skill.baseProb);
-      if (Math.random() < cleanseProb) {
-        const ownTeam = actor.side === 'player' ? battle.playerTeam : battle.enemyTeam;
-        let anyCleansed = false;
-        ownTeam.forEach(u => {
+      const ownTeam = actor.side === 'player' ? battle.playerTeam : battle.enemyTeam;
+      let anyCleansed = false;
+      ownTeam.forEach(u => {
+        // 每个目标独立结算净化概率
+        const cleanseProb = getActualProb(skill.affinity, actor.affinityUsed, actor.mainAffinity, actor.subAffinity, skill.baseProb);
+        if (Math.random() < cleanseProb) {
           const before = u.marks.length;
           u.marks = u.marks.filter(m => !['bind', 'lock', 'poison', 'burn', 'smoke', 'delay'].includes(m.type));
           if (u.marks.length < before) anyCleansed = true;
-        });
-        if (anyCleansed) {
-          message += ' 清除所有负面状态！';
-        } else {
-          message += ' 无负面状态可清除。';
         }
+      });
+      if (anyCleansed) {
+        message += ' 清除部分负面状态！';
       } else {
-        message += ' 净化技能失败。';
+        message += ' 无负面状态可清除。';
       }
       break;
     }
@@ -509,11 +566,12 @@ export function executeSkill(actor, skillId, target, battle) {
       if (unit && unit.alive) {
         const dmgResult = resolveAttack(actor, unit, battle);
         message = `${actorPrefix}${actorName} 使用【爆裂】！` + dmgResult.message;
-        const burnProb = getActualProb(skill.affinity, actor.affinityUsed, actor.mainAffinity, actor.subAffinity, skill.baseProb);
         const opposing = getOpposingTeam();
         const others = [...opposing].filter(e => e.alive && e !== unit).sort(() => Math.random() - 0.5).slice(0, 2);
         if (others.length > 0) {
           others.forEach(e => {
+            // 每个额外目标独立结算概率
+            const burnProb = getActualProb(skill.affinity, actor.affinityUsed, actor.mainAffinity, actor.subAffinity, skill.baseProb);
             if (Math.random() < burnProb) {
               if (battle.addMark(e, 'burn', 1, {}, battle)) {
                 message += ` ${e.name}燃烧！`;
@@ -544,11 +602,12 @@ export function executeSkill(actor, skillId, target, battle) {
         const opposing = getOpposingTeam();
         const enemiesInRange = opposing.filter(e => e.alive && inRange(battle, actor, e));
         const targets = enemiesInRange.sort(() => Math.random() - 0.5).slice(0, 2);
-        const smokeProb = getActualProb(skill.affinity, actor.affinityUsed, actor.mainAffinity, actor.subAffinity, skill.baseProb);
         if (targets.length === 0) {
           message += ' 攻击范围内无其他敌人可附加烟雾。';
         } else {
           targets.forEach(e => {
+            // 每个目标独立结算概率
+            const smokeProb = getActualProb(skill.affinity, actor.affinityUsed, actor.mainAffinity, actor.subAffinity, skill.baseProb);
             if (Math.random() < smokeProb) {
               if (battle.addMark(e, 'smoke', 1, {}, battle)) {
                 message += ` ${e.name}被烟雾笼罩！`;

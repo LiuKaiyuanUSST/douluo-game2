@@ -30,8 +30,8 @@ export const SKILL_POOL = {
     ],
     '蛊毒': [
         { id: '中毒', name: '中毒', cost: 2, type: 'poison', target: 'enemy', baseProb: 1.0, desc: '普攻并100%为目标附加中毒（每回合50%掉1HP，累计2次后移除）' },
-        { id: '扩散', name: '扩散', cost: 3, type: 'spread_poison', target: 'random_enemy', baseProb: 1.0, desc: '普攻攻击1名敌人并100%附加中毒，然后100%为随机2名其他敌人附加中毒标记（共3名敌人）' },
-        { id: '驱毒', name: '驱毒', cost: 2, type: 'cure_poison', target: 'ally', baseProb: 1.0, desc: '100%驱散我方一人中毒标记' }
+        { id: '扩散', name: '扩散', cost: 2, type: 'spread_poison', target: 'random_enemy', baseProb: 1.0, desc: '普攻+对全场所有角色100%概率附加中毒标记，对己方所有中毒角色100%附加激发标记（智力+3，本场战斗）' },
+        { id: '驱毒', name: '驱毒', cost: 2, type: 'cure_poison', target: 'all_ally', baseProb: 1.0, desc: '100%驱散我方所有角色中毒标记（每个角色独立结算概率）' }
     ],
     '天工': [
         { id: '治疗', name: '治疗', cost: 2, type: 'heal', target: 'ally', baseProb: 0.5, desc: '50%回复2点HP' },

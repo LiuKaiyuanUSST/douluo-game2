@@ -80,8 +80,31 @@ export function tryMoveTown(dx, dy) {
         return false;
     }
 
+    // 史莱克村通关后第一次进入史莱克学院时触发大师来访剧情
+    if (app.currentTown === 'shrek_academy' && app.qiGuaiMazeCompleted && !app.masterArrivesDialogShown) {
+        app.masterArrivesDialogShown = true;
+        // 大师来访剧情中弗兰德提到"那帮孩子全都突破二十级了"，所以将唐三等级提升至2级
+        const ts = app.party.find(m => m.id === 'ts');
+        if (ts) {
+            ts.level = 2;
+            // 同步 app.player 引用
+            if (app.player && app.player.id === 'ts') {
+                app.player.level = 2;
+            }
+        }
+        startDialogue('master_arrives', 'chapter6_master.txt', () => {
+            // 大师来访剧情结束后，弹出第二魂环引导对话框
+            showMasterSecondSoulRingDialog();
+        });
+        return false;
+    }
+
+
+
     // 在史莱克学院地图移动时触发大师对话（猎魂森林引导）
-    if (app.currentTown === 'shrek_academy' && !app.shrekAcademyFirstMove) {
+    // 如果大师来访剧情已触发过，则跳过此引导（说明玩家已通关七怪跑步，不需要再引导猎魂森林）
+    if (app.currentTown === 'shrek_academy' && !app.shrekAcademyFirstMove && !app.masterArrivesDialogShown) {
+
         showShrekAcademyMasterDialog();
         return false;
     }
@@ -113,6 +136,23 @@ export function tryMoveTown(dx, dy) {
         startHuntingForest();
         return false;
     }
+    if (targetType === 6 && app.qiGuaiMazeCompleted) {
+        // 进入高级圈养森林（通关七怪跑步/史莱克村副本后开放）
+        // 需要提交皇家试炼令
+        showRoyalTrialTokenDialog(
+            () => {
+                // 提交成功，进入高级圈养森林
+                startAdvancedHuntingForest();
+            },
+            () => {
+                // 放弃进入，停留在原地
+                setMoveTip("💡 前往商店购买皇家试炼令，即可进入高级圈养森林！");
+
+            }
+        );
+        return false;
+    }
+
     if (targetType === 3 || targetType === 4) {
         const exitInfo = townData.exits[targetType];
         if (!exitInfo) return false;
@@ -189,7 +229,11 @@ export function tryMoveTown(dx, dy) {
                 }
             }
             if (allCleared) {
-                setMoveTip("请前往下一关地图");
+                if (app.currentTown === 'shrek_village') {
+                    setMoveTip("请返回史莱克学院");
+                } else {
+                    setMoveTip("请前往下一关地图");
+                }
             } else {
                 setMoveTip("请前往战斗塔推进剧情");
             }
@@ -545,6 +589,23 @@ export function startHuntingForest() {
     setMoveTip("🌲 欢迎来到圈养森林！请探索并找到你需要的魂兽");
 }
 
+// 进入高级圈养森林
+export function startAdvancedHuntingForest() {
+    stopCityMusic();
+    playFightMusic();
+
+    app.currentLevel = -2; // 特殊标记为高级圈养森林
+    app.maze = new MazeManager(5);
+    app.maze.setupAdvancedHuntingForest();
+    app.state = 'MAZE';
+
+    app.battleTargeting = false;
+    app.battleEnemyTurnDone = false;
+    app.showResurrectionHint = false;
+
+    setMoveTip("🌲 欢迎来到高级圈养森林！这里的魂兽更加强大！");
+}
+
 // 构建猎魂森林boss敌人
 function buildHuntingForestBoss(bossInfo) {
     // 根据系别确定武魂和技能
@@ -584,6 +645,9 @@ export function registerShowFirstForestReturnDialog(fn) { showFirstForestReturnD
 export function registerShowMhjNewPartnerChoice(fn) { showMhjNewPartnerChoice = fn; }
 export function registerShowQiGuaiPartnerChoice(fn) { showQiGuaiPartnerChoice = fn; }
 export function registerShowQiGuaiFirstReturnHint(fn) { showQiGuaiFirstReturnHint = fn; }
+export function registerShowMasterSecondSoulRingDialog(fn) { showMasterSecondSoulRingDialog = fn; }
+export function registerShowRoyalTrialTokenDialog(fn) { showRoyalTrialTokenDialog = fn; }
+
 export function registerBuildEnemyFromMonster(fn) { buildEnemyFromMonster = fn; }
 
 export function registerBuildUnitsFromParty(fn) { buildUnitsFromParty = fn; }
@@ -601,7 +665,10 @@ let showFirstForestReturnDialog = function() { console.warn('showFirstForestRetu
 let showMhjNewPartnerChoice = function() { console.warn('showMhjNewPartnerChoice not registered'); };
 let showQiGuaiPartnerChoice = function() { console.warn('showQiGuaiPartnerChoice not registered'); };
 let showQiGuaiFirstReturnHint = function() { console.warn('showQiGuaiFirstReturnHint not registered'); };
+let showMasterSecondSoulRingDialog = function() { console.warn('showMasterSecondSoulRingDialog not registered'); };
+let showRoyalTrialTokenDialog = function() { console.warn('showRoyalTrialTokenDialog not registered'); };
 let buildEnemyFromMonster = function() { console.warn('buildEnemyFromMonster not registered'); };
+
 
 let buildUnitsFromParty = function() { console.warn('buildUnitsFromParty not registered'); };
 let startBossFight = function() { console.warn('startBossFight not registered'); };

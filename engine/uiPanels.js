@@ -180,7 +180,8 @@ function createSavePanel() {
             // 重置游戏状态（不清除存档）
             app.party = [];
             app.player = null;
-            app.inventory = { jiupin: 0 };
+            app.inventory = { jiupin: 0, royalTrialToken: 0 };
+
             app.currentLevel = null;
             app.unlockedLevels = [];
             app.currentTown = 'noting';
@@ -384,6 +385,9 @@ function updateBackpackList() {
     }
     if (app.inventory.wanghun > 0) {
         items.push({ name: '忘魂草', count: app.inventory.wanghun, type: 'wanghun' });
+    }
+    if (app.inventory.royalTrialToken > 0) {
+        items.push({ name: '皇家试炼令', count: app.inventory.royalTrialToken, type: 'royalTrialToken' });
     }
     if (items.length === 0) {
         list.innerHTML = '<p style="text-align:center;">背包空空如也</p>';

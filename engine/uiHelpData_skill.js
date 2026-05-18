@@ -106,8 +106,8 @@ export default {
                   <th style="padding:10px 12px; border-radius:0 8px 0 0;">效果</th>
                 </tr>
                 <tr style="background:rgba(255,255,255,0.03);"><td style="padding:10px 12px; font-weight:bold;">中毒</td><td style="padding:10px 12px; text-align:center;">2SP</td><td style="padding:10px 12px;">普攻并100%为目标附加中毒（每回合50%掉1HP，累计2次后移除）</td></tr>
-                <tr style="background:rgba(255,255,255,0.06);"><td style="padding:10px 12px; font-weight:bold;">扩散</td><td style="padding:10px 12px; text-align:center;">3SP</td><td style="padding:10px 12px;">普攻攻击1名敌人并100%附加中毒，然后100%为随机2名其他敌人附加中毒标记（共3名）</td></tr>
-                <tr style="background:rgba(255,255,255,0.03);"><td style="padding:10px 12px; border-radius:0 0 0 8px; font-weight:bold;">驱毒</td><td style="padding:10px 12px; text-align:center;">2SP</td><td style="padding:10px 12px; border-radius:0 0 8px 0;">100%驱散我方一人中毒标记</td></tr>
+                <tr style="background:rgba(255,255,255,0.06);"><td style="padding:10px 12px; font-weight:bold;">扩散</td><td style="padding:10px 12px; text-align:center;">2SP</td><td style="padding:10px 12px;">普攻+对全场所有角色100%概率附加中毒标记，对己方所有中毒角色100%附加激发标记（智力+3，本场战斗）</td></tr>
+                <tr style="background:rgba(255,255,255,0.03);"><td style="padding:10px 12px; border-radius:0 0 0 8px; font-weight:bold;">驱毒</td><td style="padding:10px 12px; text-align:center;">2SP</td><td style="padding:10px 12px; border-radius:0 0 8px 0;">100%驱散我方所有角色中毒标记（每个角色独立结算概率）</td></tr>
               </table>
             `
           },
@@ -245,7 +245,8 @@ export default {
             <tr style="background:rgba(255,255,255,0.06);"><td style="padding:6px 10px; font-weight:bold;">肉盾</td><td style="padding:6px 10px;">每回合抵挡1点伤害（本场，不可叠加）</td></tr>
             <tr style="background:rgba(255,255,255,0.03);"><td style="padding:6px 10px; font-weight:bold;">巨力</td><td style="padding:6px 10px;">力量+2（本场）</td></tr>
             <tr style="background:rgba(255,255,255,0.06);"><td style="padding:6px 10px; font-weight:bold;">极速</td><td style="padding:6px 10px;">速度+2（本场）</td></tr>
-            <tr style="background:rgba(255,255,255,0.03);"><td style="padding:6px 10px; border-radius:0 0 0 8px; font-weight:bold;">迟滞</td><td style="padding:6px 10px; border-radius:0 0 8px 0;">速度-2（本场）</td></tr>
+            <tr style="background:rgba(255,255,255,0.03);"><td style="padding:6px 10px; font-weight:bold;">迟滞</td><td style="padding:6px 10px;">速度-2（本场）</td></tr>
+            <tr style="background:rgba(255,255,255,0.06);"><td style="padding:6px 10px; border-radius:0 0 0 8px; font-weight:bold;">激发</td><td style="padding:6px 10px; border-radius:0 0 8px 0;">智力+3（本场），简称"激"</td></tr>
           </table>
         `
       }

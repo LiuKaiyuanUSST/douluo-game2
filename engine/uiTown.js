@@ -1,5 +1,27 @@
 import { app } from './gameState.js';
 
+function getExitLabel(type) {
+  const townData = app.townMaps[app.currentTown];
+  if (!townData || !townData.exits) return null;
+  const exitInfo = townData.exits[type];
+  if (!exitInfo) return null;
+  const targetTownData = app.townMaps[exitInfo.targetTown];
+  if (targetTownData) return targetTownData.name;
+  return null;
+}
+
+function drawExitLabel(ctx, label, cx, cy, cellW, cellH) {
+  // 长名称折行显示："索托玫瑰酒店" 显示为 "索托"换行"玫瑰酒店"
+  if (label.length >= 6) {
+    // 第一行短一些（约1/3），第二行长一些（约2/3）
+    const firstLen = Math.floor(label.length / 3);
+    ctx.fillText(label.substring(0, firstLen), cx, cy - 10);
+    ctx.fillText(label.substring(firstLen), cx, cy + 10);
+  } else {
+    ctx.fillText(label, cx, cy);
+  }
+}
+
 export function drawTown() {
   const { ctx, canvas, townMaps, currentTown, townPlayerPos, player } = app;
   const townData = townMaps[currentTown];
@@ -17,6 +39,7 @@ export function drawTown() {
       if (type === 2) color = "#e67e22";
       if (type === 3 || type === 4) color = "#8e44ad";
       if (type === 5) color = "#2ecc71";
+      if (type === 6 && app.qiGuaiMazeCompleted) color = "#e67e22";
       ctx.fillStyle = color;
       ctx.fillRect(offsetX + x*cellW, offsetY + y*cellH, cellW-2, cellH-2);
       ctx.strokeStyle = "#222";
@@ -29,9 +52,16 @@ export function drawTown() {
       const cy = offsetY + y * cellH + cellH / 2;
       if (type === 1) ctx.fillText("商店", cx, cy);
       if (type === 2) ctx.fillText("战斗塔", cx, cy);
-      if (type === 3) ctx.fillText("下一关", cx, cy);
-      if (type === 4) ctx.fillText("上一关", cx, cy);
+      if (type === 3) {
+        const label = getExitLabel(3);
+        drawExitLabel(ctx, label || "下一关", cx, cy, cellW, cellH);
+      }
+      if (type === 4) {
+        const label = getExitLabel(4);
+        drawExitLabel(ctx, label || "上一关", cx, cy, cellW, cellH);
+      }
       if (type === 5) ctx.fillText("圈养森林", cx, cy);
+      if (type === 6 && app.qiGuaiMazeCompleted) ctx.fillText("高级圈养森林", cx, cy);
     }
   }
   ctx.textAlign = "start";

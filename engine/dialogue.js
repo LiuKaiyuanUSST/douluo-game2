@@ -256,7 +256,9 @@ export class DialogueEngine {
             zzq: '朱竹清',
             mhj: '马红俊',
             ask: '奥斯卡',
-            girl: '女孩'
+            girl: '女孩',
+            master: '大师',
+            guard: '门卫'
         };
         return map[roleId] || roleId;
     }

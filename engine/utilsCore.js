@@ -133,7 +133,7 @@ function getDefaultColor(wuhunName) {
 
 const TOWN_NAMES = {
   'noting': '诺丁城',
-  'shrek': '史莱克学院门口',
+  'shrek': '学院大门',
   'shrek_academy': '史莱克学院',
   'shrek_village': '史莱克村',
   'suotuo': '索托城'
@@ -208,7 +208,10 @@ export function saveGame(slot) {
     qiGuaiHelpDone: app.qiGuaiHelpDone,
     qiGuaiPartnerChosen: app.qiGuaiPartnerChosen,
     qiGuaiFirstReturnHintShown: app.qiGuaiFirstReturnHintShown,
-    qiGuaiMazeCompleted: app.qiGuaiMazeCompleted
+    qiGuaiMazeCompleted: app.qiGuaiMazeCompleted,
+    masterArrivesDialogShown: app.masterArrivesDialogShown,
+    masterSecondSoulRingDialogShown: app.masterSecondSoulRingDialogShown,
+    royalTrialTokenDialogShown: app.royalTrialTokenDialogShown
 
   };
 
@@ -294,9 +297,13 @@ export function loadGame(slot) {
     app.qiGuaiPartnerChosen = data.qiGuaiPartnerChosen || false;
     app.qiGuaiFirstReturnHintShown = data.qiGuaiFirstReturnHintShown || false;
     app.qiGuaiMazeCompleted = data.qiGuaiMazeCompleted || false;
+    app.masterArrivesDialogShown = data.masterArrivesDialogShown || false;
+    app.masterSecondSoulRingDialogShown = data.masterSecondSoulRingDialogShown || false;
+    app.royalTrialTokenDialogShown = data.royalTrialTokenDialogShown || false;
 
     // 存档迁移：补充旧存档中缺少的新版本标记（如新关卡相关的标记等）
     migrateSaveData(data);
+
 
 
     app.state = 'TOWN';
@@ -349,10 +356,15 @@ const SAVE_FLAGS_DEFAULTS = {
     qiGuaiHelpDone: false,                // 七怪跑步互相帮助
     qiGuaiPartnerChosen: false,           // 七怪跑步伙伴选择
     qiGuaiFirstReturnHintShown: false,    // 七怪跑步第一次回城提示
+    qiGuaiMazeCompleted: false,           // 七怪跑步迷宫通关
+    masterArrivesDialogShown: false,      // 大师来访剧情
+    masterSecondSoulRingDialogShown: false, // 大师第二魂环引导
+    royalTrialTokenDialogShown: false,    // 皇家试炼令对话框
     firstTownReturnWithDead: false,
 
     showResurrectionHint: false,
     lastMoveWasAffinityHint: false,
+
 };
 
 function migrateSaveData(data) {

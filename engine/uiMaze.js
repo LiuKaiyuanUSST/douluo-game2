@@ -19,9 +19,10 @@ export function drawMaze() {
     return;
   }
   
-  const stageName = maze.isHuntingForest ? "🌲 圈养森林" : 
+  const stageName = maze.isAdvancedHuntingForest ? "🌲 高级圈养森林" : 
+    (maze.isHuntingForest ? "🌲 圈养森林" : 
     (maze._isCustomMaze ? maze._customMazeName : 
-    (app.config.stages.levels[app.currentLevel]?.name || "未知关卡"));
+    (app.config.stages.levels[app.currentLevel]?.name || "未知关卡")));
 
   // 绘制背景
   ctx.fillStyle = "#1a1a2e";

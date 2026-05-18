@@ -55,7 +55,10 @@ import {
     registerShowMhjNewPartnerChoice as _registerShowMhjNewPartnerChoice,
     registerShowQiGuaiPartnerChoice as _registerShowQiGuaiPartnerChoice,
     registerShowQiGuaiFirstReturnHint as _registerShowQiGuaiFirstReturnHint,
+    registerShowMasterSecondSoulRingDialog as _registerShowMasterSecondSoulRingDialog,
+    registerShowRoyalTrialTokenDialog as _registerShowRoyalTrialTokenDialog,
     registerBuildEnemyFromMonster as _registerBuildEnemyFromMonster,
+
 
     registerBuildUnitsFromParty as _registerBuildUnitsFromParty,
     registerStartBossFight as _registerStartBossFight,
@@ -77,10 +80,13 @@ import {
     showMhjNewPartnerChoice as _showMhjNewPartnerChoice,
     showQiGuaiPartnerChoice as _showQiGuaiPartnerChoice,
     showQiGuaiFirstReturnHint as _showQiGuaiFirstReturnHint,
+    showMasterSecondSoulRingDialog as _showMasterSecondSoulRingDialog,
+    showRoyalTrialTokenDialog as _showRoyalTrialTokenDialog,
     registerStartDialogue as _registerStartDialogueForDialogs,
 
     registerGoToTown as _registerGoToTownForDialogs
 } from './gameDialogs.js';
+
 
 
 // ========== 跨模块依赖注册 ==========
@@ -103,7 +109,10 @@ _registerShowFirstForestReturnDialog(_showFirstForestReturnDialog);
 _registerShowMhjNewPartnerChoice(_showMhjNewPartnerChoice);
 _registerShowQiGuaiPartnerChoice(_showQiGuaiPartnerChoice);
 _registerShowQiGuaiFirstReturnHint(_showQiGuaiFirstReturnHint);
+_registerShowMasterSecondSoulRingDialog(_showMasterSecondSoulRingDialog);
+_registerShowRoyalTrialTokenDialog(_showRoyalTrialTokenDialog);
 _registerBuildEnemyFromMonster(_buildEnemyFromMonster);
+
 
 
 _registerBuildUnitsFromParty(_buildUnitsFromParty);
@@ -156,7 +165,10 @@ export const registerShowShrekPartnerChoice = _registerShowShrekPartnerChoice;
 export const registerShowZwjRegistrationDialog = _registerShowZwjRegistrationDialog;
 export const registerShowAffinityGuideDialog = _registerShowAffinityGuideDialog;
 export const registerShowSecondLevelHintDialog = _registerShowSecondLevelHintDialog;
+export const registerShowMasterSecondSoulRingDialog = _registerShowMasterSecondSoulRingDialog;
+export const registerShowRoyalTrialTokenDialog = _registerShowRoyalTrialTokenDialog;
 export const registerBuildEnemyFromMonster = _registerBuildEnemyFromMonster;
+
 export const registerBuildUnitsFromParty = _registerBuildUnitsFromParty;
 export const registerStartBossFight = _registerStartBossFight;
 
@@ -173,7 +185,10 @@ export const showFirstForestReturnDialog = _showFirstForestReturnDialog;
 export const showMhjNewPartnerChoice = _showMhjNewPartnerChoice;
 export const showQiGuaiPartnerChoice = _showQiGuaiPartnerChoice;
 export const showQiGuaiFirstReturnHint = _showQiGuaiFirstReturnHint;
+export const showMasterSecondSoulRingDialog = _showMasterSecondSoulRingDialog;
+export const showRoyalTrialTokenDialog = _showRoyalTrialTokenDialog;
 export const registerStartDialogue = _registerStartDialogueForDialogs;
+
 
 
 export const registerGoToTownForDialogs = _registerGoToTownForDialogs;

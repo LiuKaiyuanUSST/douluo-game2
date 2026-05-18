@@ -14,6 +14,7 @@ export class MazeManager {
 
         // 猎魂森林相关属性
         this.isHuntingForest = false;      // 是否为猎魂森林模式
+        this.isAdvancedHuntingForest = false; // 是否为高级圈养森林模式
         this.bossPositions = [];           // 7个boss的位置 [{x, y}]
         this.bossDefeated = [];            // 每个boss是否已被击败
         this.startPosition = { x: options.startX || 0, y: options.startY || 0 }; // 起点位置
@@ -46,6 +47,61 @@ export class MazeManager {
 
     }
 
+
+    // ---------- 设置猎魂森林模式（高级圈养森林） ----------
+    setupAdvancedHuntingForest() {
+        this.isHuntingForest = true;
+        this.isAdvancedHuntingForest = true;
+
+        // 与圈养森林相同的地图布局
+        const layout = [
+            [2, 0, 1, 0, 1],
+            [0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 1],
+            [0, 0, 0, 0, 0],
+            [1, 0, 1, 0, 1]
+        ];
+
+        const bossPositions = [];
+        for (let y = 0; y < this.size; y++) {
+            for (let x = 0; x < this.size; x++) {
+                if (layout[y][x] === 1) {
+                    bossPositions.push({ x, y });
+                    this.bossCells.add(`${x},${y}`);
+                } else if (layout[y][x] === 2) {
+                    this.startPosition = { x, y };
+                }
+            }
+        }
+
+        // 7个高级魂兽（2级）
+        const soulBeasts = [
+            { name: '五百年鬼藤', affinity: '苍木', desc: '五百年藤蔓，绞杀致命', color: '#27ae60' },
+            { name: '五百年幽冥狼', affinity: '雷霆', desc: '五百年幽狼，疾风绝影', color: '#3498db' },
+            { name: '五百年海蝰蛇', affinity: '沧澜', desc: '五百年海蛇，翻波搅浪', color: '#1abc9c' },
+            { name: '五百年火蜥蜴', affinity: '烈焰', desc: '五百年火蜥，焚天灼地', color: '#e74c3c' },
+            { name: '五百年曼陀罗蛇', affinity: '蛊毒', desc: '五百年蛇皇，一吻封喉', color: '#8e44ad' },
+            { name: '五百年蛮牛', affinity: '巨兽', desc: '五百年蛮牛，裂地碎岩', color: '#f39c12' },
+            { name: '五百年板斧', affinity: '天工', desc: '五百年板斧，劈山断岳', color: '#e67e22' }
+        ];
+
+        const shuffled = [...soulBeasts].sort(() => Math.random() - 0.5);
+        this.bossPositions = bossPositions.map((pos, i) => ({
+            ...pos,
+            ...shuffled[i],
+            defeated: false
+        }));
+        this.bossDefeated = bossPositions.map(() => false);
+
+        this.px = this.startPosition.x;
+        this.py = this.startPosition.y;
+        this.explored = Array(this.size).fill().map(() => Array(this.size).fill(false));
+        this.explored[this.py][this.px] = true;
+
+        this.wallRight = Array(this.size).fill().map(() => Array(this.size).fill(false));
+        this.wallDown = Array(this.size).fill().map(() => Array(this.size).fill(false));
+        this.generateWalls();
+    }
 
     // ---------- 设置猎魂森林模式 ----------
     setupHuntingForest() {

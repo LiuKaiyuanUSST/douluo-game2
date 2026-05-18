@@ -5,7 +5,7 @@ const MARK_CN = {
   poison: '毒', burn: '燃', bind: '缠', lock: '锁',
   reborn: '生', beast_king: '王', shield: '盾',
   power_up: '力', speed_up: '速', smoke: '烟',
-  delay: '迟'
+  delay: '迟', excite: '激'
 };
 
 export function drawBattle() {

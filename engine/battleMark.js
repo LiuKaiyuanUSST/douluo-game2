@@ -15,7 +15,7 @@ export function addMark(unit, type, duration = 1, extra = {}, battle = null) {
   } : () => {};
 
   // 检查重复标记（除极少数可叠加的标记外，多数标记不可重复）
-  if (['poison','burn','bind','lock','reborn','power_up','speed_up','smoke','beast_king','shield','delay'].includes(type)) {
+  if (['poison','burn','bind','lock','reborn','power_up','speed_up','smoke','beast_king','shield','delay','excite'].includes(type)) {
     if (unit.marks.some(m => m.type === type)) {
       if (battle) {
         const msg = `${unit.name}已有${type}标记，不再施加。`;
@@ -83,6 +83,12 @@ export function addMark(unit, type, duration = 1, extra = {}, battle = null) {
     logPrefix(`${unit.name}被迟滞，速度-2！`);
     recalcDerivedStats(unit);
   }
+  else if (type === 'excite') {
+    unit.intelligenceBonus += 3;
+    unit.marks.push({ type: 'excite' });
+    logPrefix(`${unit.name}获得激发，智力+3！`);
+    recalcDerivedStats(unit);
+  }
   return true;
 }
 
@@ -91,6 +97,12 @@ export function removeMark(unit, markType) {
   if (markType === 'smoke') {
     if (unit.marks.some(m => m.type === 'smoke')) {
       unit.intelligenceBonus += 2;
+    }
+  }
+  // 移除激发标记时恢复智力
+  if (markType === 'excite') {
+    if (unit.marks.some(m => m.type === 'excite')) {
+      unit.intelligenceBonus -= 3;
     }
   }
   // 肉盾标记移除不需要特殊操作，因为防御是实时计算的

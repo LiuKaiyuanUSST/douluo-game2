@@ -17,7 +17,7 @@ export let app = {
   maze: null,
   battle: null,
   player: null,               // 玩家快捷引用（主角唐三）
-  inventory: { jiupin: 0 },
+  inventory: { jiupin: 0, royalTrialToken: 0 },
   party: [],                  // 角色数组，每个角色对象结构见下
   activeTeam: [null, null, null],
   selectedFormation: 'front-front-front',
@@ -35,18 +35,18 @@ export let app = {
     },
     shrek: {
       map: [ [4,0,0,0,2], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [1,0,0,0,3] ],
-      name: '史莱克学院门口',
+      name: '学院大门',
       exits: { 3: { targetTown: 'shrek_academy', targetPos: {x:0,y:0} }, 4: { targetTown: 'suotuo', targetPos: {x:0,y:0} } }
     },
     shrek_academy: {
-      map: [ [4,0,0,0,2], [0,0,0,0,0], [0,5,0,0,0], [0,0,0,0,0], [1,0,0,0,3] ],
+      map: [ [4,0,0,0,2], [0,0,0,0,0], [0,5,0,6,0], [0,0,0,0,0], [1,0,0,0,3] ],
       name: '史莱克学院',
       exits: { 3: { targetTown: 'shrek_village', targetPos: {x:0,y:0} }, 4: { targetTown: 'shrek', targetPos: {x:4,y:4} } }
     },
     shrek_village: {
       map: [ [4,0,0,0,2], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [1,0,0,0,0] ],
       name: '史莱克村',
-      exits: { 4: { targetTown: 'shrek_academy', targetPos: {x:3,y:0} } }
+      exits: { 4: { targetTown: 'shrek_academy', targetPos: {x:4,y:4} } }
     }
 
 
@@ -88,6 +88,10 @@ export let app = {
   qiGuaiPartnerChosen: false,       // 七怪跑步伙伴选择是否已完成
   qiGuaiFirstReturnHintShown: false,// 七怪跑步第一次非通关回城提示是否已显示
   qiGuaiMazeCompleted: false,       // 七怪跑步迷宫是否已通关完成
+  masterArrivesDialogShown: false,  // 大师来访剧情是否已触发（史莱克村通关后第一次进入史莱克学院时触发）
+  masterSecondSoulRingDialogShown: false,  // 大师第二魂环引导对话框是否已显示
+  royalTrialTokenDialogShown: false,       // 皇家试炼令对话框是否已显示（防止重复触发）
+
 
 
 
