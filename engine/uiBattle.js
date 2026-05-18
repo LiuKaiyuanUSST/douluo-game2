@@ -323,12 +323,20 @@ export function drawBattle() {
       ctx.fillStyle = "rgba(0,0,0,0.7)";
       ctx.fillRect(0, canvas.height - 80, canvas.width, 80);
       
+      // 自动按钮（F键功能）
+      ctx.fillStyle = "#2ecc71";
+      ctx.fillRect(10, btnY, 80, 40);
+      ctx.fillStyle = "white";
+      ctx.textAlign = "center";
+      ctx.font = "bold 18px Arial";
+      ctx.fillText("自动(F)", 50, btnY + 28);
+
       ctx.fillStyle = "#3498db";
       ctx.fillRect(100, btnY, 90, 40);
       ctx.fillStyle = "white";
       ctx.textAlign = "center";
       ctx.font = "bold 18px Arial";
-      ctx.fillText("普攻(F)", 145, btnY + 28);
+      ctx.fillText("普攻", 145, btnY + 28);
       
       const skills = battle.getAvailableSkills(currentActor).filter(s => s.id !== 'normal');
       let skillBtnX = 200;
@@ -346,9 +354,11 @@ export function drawBattle() {
         skillBtnX += 100;
       }
       app.battleButtons = [
+        { x: 10, y: btnY, w: 80, h: 40, action: 'auto' },
         { x: 100, y: btnY, w: 90, h: 40, action: 'normal' },
         ...skillBtns
       ];
+
 
       const skillInfoX = 610, skillInfoY = btnY, skillInfoW = 80, skillInfoH = 30;
       ctx.fillStyle = "#8e44ad";

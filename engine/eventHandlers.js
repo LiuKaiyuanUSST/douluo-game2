@@ -97,7 +97,8 @@ function showSkillInfoPanel() {
           probStr = ` [实际${Math.round(actualProb * 100)}%]`;
         }
       }
-      const desc = isNormal ? '基本攻击（按F键快速攻击随机目标）' : (s.desc || '');
+      const desc = isNormal ? '基本攻击（按F键或点自动按钮快速攻击随机目标）' : (s.desc || '');
+
       html += `<tr style="border-bottom:1px solid #333;">
         <td style="color:${s.disabled ? '#888' : '#fff'}; padding-right:10px;">${name}</td>
         <td style="text-align:center; padding-right:10px; color:#ffcc88;">${affinityName}</td>
@@ -282,7 +283,20 @@ export function attachMouseHandler() {
 
       for (let btn of app.battleButtons) {
         if (mx >= btn.x && mx <= btn.x+btn.w && my >= btn.y && my <= btn.y+btn.h) {
-          if (btn.action === 'normal') {
+          if (btn.action === 'auto') {
+            // 自动攻击（等效F键）
+            const valid = battle.getValidTargets(actor);
+            if (valid.length > 0) {
+              const idx = valid[Math.floor(Math.random() * valid.length)];
+              performAttack(idx);
+              app.applyDelay = true;
+            } else {
+              setMoveTip("攻击距离不足，已跳过");
+              skipPlayerTurn();
+              app.applyDelay = true;
+            }
+            return;
+          } else if (btn.action === 'normal') {
             if (battle.getValidTargets(actor).length === 0) {
               setMoveTip("攻击距离不足，请跳过");
               return;
@@ -293,6 +307,7 @@ export function attachMouseHandler() {
             setMoveTip("⚔️ 选择攻击目标");
             return;
           } else if (btn.action === 'skill') {
+
             if (btn.disabled) return;
             const skill = btn.skill;
             if (skill.target === 'self' || skill.target === 'all_ally') {
