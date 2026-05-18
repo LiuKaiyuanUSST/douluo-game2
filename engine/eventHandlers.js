@@ -114,7 +114,70 @@ function showSkillInfoPanel() {
 }
 
 export function attachMouseHandler() {
+  // ---------- Touch swipe support for tablets ----------
+  let touchStartX = 0, touchStartY = 0;
+  let touchStartTime = 0;
+
+  app.canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+    touchStartTime = Date.now();
+  }, { passive: false });
+
+  app.canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault(); // prevent page scrolling
+  }, { passive: false });
+
+  app.canvas.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    if (app.dialogActive) return;
+
+    const endX = e.changedTouches[0].clientX;
+    const endY = e.changedTouches[0].clientY;
+    const deltaX = touchStartX - endX;
+    const deltaY = touchStartY - endY;
+    const dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+    if (dist < 30) {
+
+      // Short tap - forward as a click for buttons/battle targets
+      const clickEvent = new MouseEvent('click', {
+        clientX: touchStartX,
+        clientY: touchStartY,
+        bubbles: true,
+        cancelable: true
+      });
+      app.canvas.dispatchEvent(clickEvent);
+      return;
+    }
+
+    // Swipe detected - use for directional movement (equivalent to WASD/Arrow keys)
+    if (app.state === 'TOWN' && !app.levelSelectDiv) {
+      let dx = 0, dy = 0;
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        // Horizontal swipe
+        dx = deltaX > 0 ? -1 : 1;
+      } else {
+        // Vertical swipe
+        dy = deltaY > 0 ? -1 : 1;
+      }
+      tryMoveTown(dx, dy);
+    } else if (app.state === 'MAZE') {
+      let dx = 0, dy = 0;
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        dx = deltaX > 0 ? -1 : 1;
+      } else {
+        dy = deltaY > 0 ? -1 : 1;
+      }
+      tryMoveMaze(dx, dy);
+    }
+  }, { passive: false });
+
+  // ---------- Mouse click handler ----------
   app.canvas.addEventListener('click', (e) => {
+
     if (app.dialogActive) return;
     const rect = app.canvas.getBoundingClientRect();
     const scaleX = app.canvas.width / rect.width;
