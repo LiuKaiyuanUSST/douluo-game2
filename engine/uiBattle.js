@@ -377,4 +377,4 @@ export function drawBattle() {
     app.battleSkillInfoBtn = null;
   }
   ctx.textAlign = "start";
-}
+} 

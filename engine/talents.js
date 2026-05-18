@@ -156,4 +156,4 @@ export function applyTalent(unit) {
       talent.onBattleStart(unit);
     }
   }
-}
+} 

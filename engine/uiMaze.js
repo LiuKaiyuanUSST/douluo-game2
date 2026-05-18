@@ -309,3 +309,4 @@ function drawSoulRingMaze(ctx, maze, cellSize, offset) {
   ctx.textAlign = "center";
   ctx.fillText(tipText, app.canvas.width / 2, app.canvas.height - 30);
 }
+ 

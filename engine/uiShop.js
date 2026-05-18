@@ -38,4 +38,4 @@ export function drawShop() {
   ctx.fillStyle = "white";
   ctx.fillText("返回主城", 30, canvas.height-30);
   app.shopBackBtn = { x: 20, y: canvas.height-60, w: 100, h: 40 };
-}
+} 

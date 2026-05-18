@@ -294,3 +294,4 @@ gameLogic.js → registerShowMasterWuhunChoice(fn) → gameTown.js 通过注册�
 7. 全部收集完成后，从6个技能中随机选择一个作为魂技
 8. 在角色界面添加魂环信息行
 9. 返回圈养森林地图，删除已击败的魂兽
+ 

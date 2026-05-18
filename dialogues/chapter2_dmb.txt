@@ -48,4 +48,4 @@
 [give name="exp_str" amount="10"]
 [give name="exp_spd" amount="10"]
 
-[speaker name="narrator"]戴沐白虽然没加入队伍，但唐三和小舞获得了前往史莱克学院的引荐！
+[speaker name="narrator"]戴沐白虽然没加入队伍，但唐三和小舞获得了前往史莱克学院的引荐！ 

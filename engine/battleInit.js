@@ -158,4 +158,4 @@ export function checkAndAdvanceLines(battle) {
     battle.enemyTeam.forEach(u => { if (u.alive && u.gridCol === 0) u.gridCol = 1; });
     battle.log = "敌方阵线前移！";
   }
-}
+} 

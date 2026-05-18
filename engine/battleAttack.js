@@ -89,4 +89,4 @@ export function resolveAttack(attacker, defender, battle, isNormalAttack = false
   }
 
   return { damage, message: msg };
-}
+} 

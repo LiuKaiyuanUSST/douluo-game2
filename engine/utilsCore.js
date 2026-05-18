@@ -385,3 +385,4 @@ function migrateSaveData(data) {
         if (app.currentLevel > maxLevelIdx) app.currentLevel = 0;
     }
 }
+ 

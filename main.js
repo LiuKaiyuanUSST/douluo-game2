@@ -392,4 +392,4 @@ function gameLoop() {
         console.error('gameLoop error:', e);
         requestAnimationFrame(gameLoop);
     }
-}
+} 

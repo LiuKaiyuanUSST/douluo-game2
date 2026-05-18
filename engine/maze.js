@@ -465,3 +465,4 @@ export class MazeManager {
         return this.bossPositions.every(b => b.defeated);
     }
 }
+ 

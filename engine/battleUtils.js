@@ -105,3 +105,4 @@ export function recalcDerivedStats(unit) {
   else if (defenseStat >= 4) unit.defenseType = 1;
   else unit.defenseType = 0;
 }
+ 

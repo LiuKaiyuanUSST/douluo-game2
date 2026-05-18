@@ -386,4 +386,4 @@ export class BattleSystem {
       this.setLog(this.log + ' 战斗短暂交锋后，对方停了下来。');
     }
   }
-}
+} 

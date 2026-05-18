@@ -676,3 +676,4 @@ let startDialogue = function() { console.warn('startDialogue not registered'); }
 
 // Import BattleSystem for maze encounters
 import { BattleSystem } from './battle.js';
+ 

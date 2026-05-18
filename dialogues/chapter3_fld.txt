@@ -107,3 +107,4 @@
 
 [event name="chapter_end"]
 [speaker name="narrator"]第三章「开学考试」通关完成！你已成功通过史莱克学院的入学考试。
+ 

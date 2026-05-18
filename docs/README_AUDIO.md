@@ -104,3 +104,4 @@
 - 初始音量设为 `targetVolume * 0.3`
 - 使用 `requestAnimationFrame` 在 2 秒内线性过渡到 `targetVolume`
 - 例如目标音量为 0.25，则从 0.075 开始，2 秒后达到 0.25
+ 

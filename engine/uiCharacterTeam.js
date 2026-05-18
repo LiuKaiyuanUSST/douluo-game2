@@ -379,3 +379,4 @@ export function toggleTeamPanel(show = null) {
         panel.style.display = 'block';
     }
 }
+ 

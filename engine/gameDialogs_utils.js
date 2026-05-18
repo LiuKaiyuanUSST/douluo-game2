@@ -118,3 +118,4 @@ export function closeDialog(container) {
         container.parentNode.removeChild(container);
     }
 }
+ 

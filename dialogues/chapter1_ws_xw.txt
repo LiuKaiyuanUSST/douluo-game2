@@ -147,4 +147,4 @@
 [give name="exp_str" amount="5"]
 [give name="exp_spd" amount="5"]
 
-[speaker name="narrator"]【小舞加入了队伍！】
+[speaker name="narrator"]【小舞加入了队伍！】 

@@ -300,3 +300,4 @@ function markBossDefeatedAndReturn(bossInfo) {
     app._beastForestChosenAffinity = null;
     setMoveTip("🌲 猎魂森林 - 继续探索");
 }
+ 

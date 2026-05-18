@@ -184,3 +184,4 @@ export function toggleHelpPanel(show = null) {
     panel.style.display = 'block';
   }
 }
+ 

@@ -192,3 +192,4 @@ export const registerStartDialogue = _registerStartDialogueForDialogs;
 
 
 export const registerGoToTownForDialogs = _registerGoToTownForDialogs;
+ 

@@ -206,3 +206,4 @@ if (app.currentTown === 'shrek_village') {
   setMoveTip("请前往下一关地图");
 }
 ```
+ 

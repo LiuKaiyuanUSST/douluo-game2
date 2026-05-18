@@ -549,3 +549,4 @@ let goToTown = function(resetPos = true) {
 let startLevel = function(levelIdx) {
     console.warn('startLevel not yet registered');
 };
+ 

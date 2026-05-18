@@ -117,3 +117,4 @@ export function initApp() {
   app.canvas = document.getElementById('gameCanvas');
   app.ctx = app.canvas.getContext('2d');
 }
+ 

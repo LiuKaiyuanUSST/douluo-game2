@@ -68,3 +68,4 @@
 | `bosses[].lose` | 是否允许失败（true=剧情杀） |
 | `bosses[].finalReward` | 最终奖励（"chapter_end"） |
 | `bosses[].oneTurnTrigger` | 是否一回合后自动结束 |
+ 

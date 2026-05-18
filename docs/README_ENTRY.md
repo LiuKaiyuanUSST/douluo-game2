@@ -52,3 +52,4 @@ main.js
 ## package.json
 
 NW.js 配置文件，设置窗口标题、尺寸，以及 `--allow-file-access-from-files` 参数以允许本地文件访问。
+ 

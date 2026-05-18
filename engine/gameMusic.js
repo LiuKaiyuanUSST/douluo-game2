@@ -178,3 +178,4 @@ export function endStoryMusicTransition(onComplete) {
     _bgBeforeStory = null;
     if (onComplete) onComplete();
 }
+ 

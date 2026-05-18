@@ -631,4 +631,4 @@ export function executeSkill(actor, skillId, target, battle) {
   battle.playerActed = true;
   battle.advanceTurn();
   return { message };
-}
+} 

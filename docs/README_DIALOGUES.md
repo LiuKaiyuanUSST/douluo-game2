@@ -42,3 +42,4 @@ main.js → startDialogue('intro', 'intro.txt', callback)
         → 用户选择 → handleOption() → 跳转到对应分支
         → 事件结束 → endEvent() → 执行回调
 ```
+ 
