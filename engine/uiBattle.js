@@ -441,17 +441,22 @@ export function drawBattle() {
         ctx.fillText("⚔️ 选择攻击目标", centerX, btnY + 27);
       }
       ctx.fillStyle = "#e74c3c";
-      const cancelX = 10, cancelY = canvas.height - 75;
-      ctx.fillRect(cancelX, cancelY, 60, 30);
+      const cancelX = 10, cancelY = btnY;
+      ctx.fillRect(cancelX, cancelY, 60, 40);
       ctx.fillStyle = "white";
-      ctx.fillText("取消", cancelX + 30, cancelY + 20);
-      app.battleNormalCancelBtn = { x: cancelX, y: cancelY, w: 60, h: 30 };
+      ctx.textAlign = "center";
+      ctx.font = "18px Arial";
+      ctx.fillText("取消", cancelX + 30, cancelY + 28);
+      app.battleNormalCancelBtn = { x: cancelX, y: cancelY, w: 60, h: 40 };
       app.battleSkillCancelBtn = app.battleNormalCancelBtn;
       ctx.fillStyle = "#888";
       ctx.fillRect(720, btnY, 60, 40);
       ctx.fillStyle = "white";
-      ctx.fillText("跳过", 750, btnY + 27);
+      ctx.textAlign = "center";
+      ctx.font = "18px Arial";
+      ctx.fillText("跳过", 750, btnY + 28);
       app.battleSkipBtn = { x: 720, y: btnY, w: 60, h: 40 };
+
       app.battleButtons = [];
       app.battleSkillInfoBtn = null;
     } else {
