@@ -108,6 +108,8 @@ export let app = {
   battleCandidateSlots: null,
   applyDelay: false,
   battleLogBtn: null,
+  battlePanelToggleBtn: null,
+  battlePanelMode: 'simple',
   showBattleLog: false,
   battleLog: [],
   lastMoveWasAffinityHint: false,

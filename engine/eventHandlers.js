@@ -207,6 +207,13 @@ export function attachMouseHandler() {
         return;
       }
 
+      if (app.battlePanelToggleBtn && mx >= app.battlePanelToggleBtn.x && mx <= app.battlePanelToggleBtn.x+app.battlePanelToggleBtn.w &&
+          my >= app.battlePanelToggleBtn.y && my <= app.battlePanelToggleBtn.y+app.battlePanelToggleBtn.h) {
+        app.battlePanelMode = app.battlePanelMode === 'simple' ? 'detail' : 'simple';
+        setMoveTip(app.battlePanelMode === 'simple' ? '切换到简洁信息面板' : '切换到详细信息面板');
+        return;
+      }
+
       if (app.battleSkillInfoBtn && mx >= app.battleSkillInfoBtn.x && mx <= app.battleSkillInfoBtn.x+app.battleSkillInfoBtn.w &&
           my >= app.battleSkillInfoBtn.y && my <= app.battleSkillInfoBtn.y+app.battleSkillInfoBtn.h) {
         showSkillInfoPanel();
