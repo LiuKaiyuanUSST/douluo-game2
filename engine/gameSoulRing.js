@@ -99,7 +99,7 @@ function showSoulRingHint(selectedChar, bossInfo) {
         width: 500px;
         background: rgba(0, 0, 0, 0.95);
         color: white;
-        font-family: 'Segoe UI', sans-serif;
+        font-family: 'Segoe UI';
         padding: 30px 40px;
         box-sizing: border-box;
         z-index: 2100;
@@ -115,7 +115,7 @@ function showSoulRingHint(selectedChar, bossInfo) {
         <button id="soul-ring-hint-btn" style="
             display:block; margin:15px auto; padding:12px 40px;
             background:#2ecc71; color:white; border:none; border-radius:8px;
-            cursor:pointer; font-size:20px; font-weight:bold;
+            cursor:pointer; font-size:20px; 
         ">开始引导</button>
     `;
     document.body.appendChild(hintContainer);
@@ -239,7 +239,7 @@ function showSoulRingComplete() {
         width: 500px;
         background: rgba(0, 0, 0, 0.95);
         color: white;
-        font-family: 'Segoe UI', sans-serif;
+        font-family: 'Segoe UI';
         padding: 30px 40px;
         box-sizing: border-box;
         z-index: 2200;
@@ -256,7 +256,7 @@ function showSoulRingComplete() {
         <button id="soul-ring-complete-btn" style="
             display:block; margin:15px auto; padding:12px 40px;
             background:#2ecc71; color:white; border:none; border-radius:8px;
-            cursor:pointer; font-size:20px; font-weight:bold;
+            cursor:pointer; font-size:20px; 
         ">确认</button>
     `;
     document.body.appendChild(container);

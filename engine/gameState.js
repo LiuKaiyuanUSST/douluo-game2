@@ -35,7 +35,7 @@ export let app = {
     },
     shrek: {
       map: [ [4,0,0,0,2], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [1,0,0,0,3] ],
-      name: '学院大门',
+      name: '史莱克大门',
       exits: { 3: { targetTown: 'shrek_academy', targetPos: {x:0,y:0} }, 4: { targetTown: 'suotuo', targetPos: {x:0,y:0} } }
     },
     shrek_academy: {

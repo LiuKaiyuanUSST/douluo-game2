@@ -17,7 +17,7 @@ export function createMessageBar() {
     padding: 8px;
     background: rgba(0,0,0,0.7);
     color: #ffcc88;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Segoe UI';
     font-size: 24px;
     text-align: center;
     border-radius: 5px;

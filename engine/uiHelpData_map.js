@@ -10,23 +10,23 @@ export default {
           </div>
           <div style="display:flex; flex-direction:column; gap:8px; margin:16px 0;">
             <div style="background:linear-gradient(135deg,#1b3d2d,#0f2a1a); border-radius:10px; padding:12px 16px; border:1px solid #2ecc7144;">
-              <div style="font-weight:bold; color:#2ecc71;">第1关 · 星斗森林外围</div>
+              <div style=" color:#2ecc71;">第1关 · 星斗森林外围</div>
               <div style="font-size:13px; color:#aaa;">初始关卡，熟悉战斗系统</div>
             </div>
             <div style="background:linear-gradient(135deg,#1b3d2d,#0f2a1a); border-radius:10px; padding:12px 16px; border:1px solid #2ecc7144;">
-              <div style="font-weight:bold; color:#2ecc71;">第2关 · 星斗森林深处</div>
+              <div style=" color:#2ecc71;">第2关 · 星斗森林深处</div>
               <div style="font-size:13px; color:#aaa;">遭遇更强魂兽</div>
             </div>
             <div style="background:linear-gradient(135deg,#1b3d2d,#0f2a1a); border-radius:10px; padding:12px 16px; border:1px solid #2ecc7144;">
-              <div style="font-weight:bold; color:#2ecc71;">第3关 · 落日森林</div>
+              <div style=" color:#2ecc71;">第3关 · 落日森林</div>
               <div style="font-size:13px; color:#aaa;">多波次战斗</div>
             </div>
             <div style="background:linear-gradient(135deg,#1b3d2d,#0f2a1a); border-radius:10px; padding:12px 16px; border:1px solid #2ecc7144;">
-              <div style="font-weight:bold; color:#2ecc71;">第4关 · 武魂殿外围</div>
+              <div style=" color:#2ecc71;">第4关 · 武魂殿外围</div>
               <div style="font-size:13px; color:#aaa;">遭遇人形敌人</div>
             </div>
             <div style="background:linear-gradient(135deg,#1b3d2d,#0f2a1a); border-radius:10px; padding:12px 16px; border:1px solid #2ecc7144;">
-              <div style="font-weight:bold; color:#2ecc71;">第5关 · 武魂殿</div>
+              <div style=" color:#2ecc71;">第5关 · 武魂殿</div>
               <div style="font-size:13px; color:#aaa;">最终关卡，Boss战</div>
             </div>
           </div>

@@ -28,7 +28,7 @@ function createCharacterPanel() {
         border-radius: 12px;
         z-index: 3000;
         display: none;
-        font-family: 'Segoe UI', sans-serif;
+        font-family: 'Segoe UI';
         flex-direction: column;
     `;
     panel.innerHTML = `
@@ -130,7 +130,7 @@ function updateCharacterList() {
                         <span style="color:#e67e22;">天工${member.exp?.['天工'] || 0}</span>
                     </div>
                     <div style="margin-top:8px; padding:6px 0; border-top:1px solid #444; display:flex; align-items:center; gap:12px;">
-                        <span style="font-weight:bold;">出战系别:</span>
+                        <span>出战系别:</span>
                         <span style="background:#3a4a5f; padding:4px 12px; border-radius:6px;">${chosenAff}</span>
                         <button class="change-affinity-btn" data-id="${member.id}" style="background:#8e44ad; color:white; border:none; padding:4px 14px; border-radius:6px; cursor:pointer; font-size:14px;">
                             切换为 ${chosenAff === wuhun.mainAffinity ? wuhun.subAffinity : wuhun.mainAffinity}
@@ -181,7 +181,7 @@ function showSkillInfoPopup(skillId) {
         border-radius: 10px;
         padding: 20px 25px;
         z-index: 5000;
-        font-family: 'Segoe UI', sans-serif;
+        font-family: 'Segoe UI';
         text-align: center;
     `;
     popup.innerHTML = `
@@ -234,7 +234,7 @@ function createTeamPanel() {
         padding: 20px;
         z-index: 3000;
         display: none;
-        font-family: 'Segoe UI', sans-serif;
+        font-family: 'Segoe UI';
     `;
     document.body.appendChild(panel);
 }

@@ -51,7 +51,7 @@ export function showShrekPartnerChoice() {
             ${partners.map((p, idx) => `
                 <button class="partner-choice-btn" data-index="${idx}" style="${DIALOGUE_STYLES.btnOption}"
                     style="border-color:${p.color};" onmouseover="this.style.background='#3a5a6f'" onmouseout="this.style.background='#2a3a4a'">
-                    <div style="font-weight:bold; font-size:18px; color:${p.color};">${p.name}</div>
+                    <div style=" font-size:18px; color:${p.color};">${p.name}</div>
                     <div style="font-size:13px; color:#aaa; margin-top:4px;">
                         武魂：${p.wuhun} | ${p.desc}
                     </div>
@@ -101,7 +101,7 @@ export function showShrekPartnerChoice() {
             optionsHtml += `
                 <button class="partner-wuhun-btn" data-index="${index}" style="${DIALOGUE_STYLES.btnOption}"
                     onmouseover="this.style.background='#3a5a6f'" onmouseout="this.style.background='#2a3a4a'">
-                    <div style="font-weight:bold; font-size:18px;">${opt.name}${recText}</div>
+                    <div style=" font-size:18px;">${opt.name}${recText}</div>
                     <div style="font-size:13px; color:#aaa; margin-top:4px;">
                         主系：${opt.mainAffinity} | 副系：${opt.subAffinity} | 武魂特色：${opt.feature} | 天赋属性：${opt.talentAttr}
                     </div>
@@ -210,7 +210,7 @@ export function showMhjNewPartnerChoice() {
             ${availablePartners.map((p, idx) => `
                 <button class="mhj-partner-choice-btn" data-index="${idx}" style="${DIALOGUE_STYLES.btnOption}"
                     style="border-color:${p.color};" onmouseover="this.style.background='#3a5a6f'" onmouseout="this.style.background='#2a3a4a'">
-                    <div style="font-weight:bold; font-size:18px; color:${p.color};">${p.name}</div>
+                    <div style=" font-size:18px; color:${p.color};">${p.name}</div>
                     <div style="font-size:13px; color:#aaa; margin-top:4px;">
                         武魂：${p.wuhun} | ${p.desc}
                     </div>
@@ -260,7 +260,7 @@ export function showMhjNewPartnerChoice() {
             optionsHtml += `
                 <button class="mhj-partner-wuhun-btn" data-index="${index}" style="${DIALOGUE_STYLES.btnOption}"
                     onmouseover="this.style.background='#3a5a6f'" onmouseout="this.style.background='#2a3a4a'">
-                    <div style="font-weight:bold; font-size:18px;">${opt.name}${recText}</div>
+                    <div style=" font-size:18px;">${opt.name}${recText}</div>
                     <div style="font-size:13px; color:#aaa; margin-top:4px;">
                         主系：${opt.mainAffinity} | 副系：${opt.subAffinity} | 武魂特色：${opt.feature} | 天赋属性：${opt.talentAttr}
                     </div>
@@ -362,7 +362,7 @@ export function showQiGuaiPartnerChoice() {
             ${availablePartners.map((p, idx) => `
                 <button class="qigui-partner-choice-btn" data-index="${idx}" style="${DIALOGUE_STYLES.btnOption}"
                     style="border-color:${p.color};" onmouseover="this.style.background='#3a5a6f'" onmouseout="this.style.background='#2a3a4a'">
-                    <div style="font-weight:bold; font-size:18px; color:${p.color};">${p.name}</div>
+                    <div style=" font-size:18px; color:${p.color};">${p.name}</div>
                     <div style="font-size:13px; color:#aaa; margin-top:4px;">
                         武魂：${p.wuhun} | ${p.desc}
                     </div>
@@ -412,7 +412,7 @@ export function showQiGuaiPartnerChoice() {
             optionsHtml += `
                 <button class="qigui-partner-wuhun-btn" data-index="${index}" style="${DIALOGUE_STYLES.btnOption}"
                     onmouseover="this.style.background='#3a5a6f'" onmouseout="this.style.background='#2a3a4a'">
-                    <div style="font-weight:bold; font-size:18px;">${opt.name}${recText}</div>
+                    <div style=" font-size:18px;">${opt.name}${recText}</div>
                     <div style="font-size:13px; color:#aaa; margin-top:4px;">
                         主系：${opt.mainAffinity} | 副系：${opt.subAffinity} | 武魂特色：${opt.feature} | 天赋属性：${opt.talentAttr}
                     </div>

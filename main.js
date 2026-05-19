@@ -177,7 +177,7 @@ document.getElementById('load-game-btn').addEventListener('click', () => {
         const color = info.exists ? '#2ecc71' : '#666';
         html += `<div style="border:1px solid #555; border-radius:8px; margin:10px 0; padding:12px; background:rgba(255,255,255,0.05);">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                <span style="font-weight:bold; color:${color};">存档位 ${slot}</span>
+                <span style=" color:${color};">存档位 ${slot}</span>
                 <span style="font-size:13px; color:#aaa;">${info.exists ? '有存档' : '空'}</span>
             </div>
             <div style="font-size:14px; color:#ddd; margin-bottom:8px; min-height:20px;">${info.displayName}</div>

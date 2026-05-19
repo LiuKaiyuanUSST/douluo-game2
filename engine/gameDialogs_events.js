@@ -87,7 +87,7 @@ export function showBlackScreen() {
         height: 100%;
         background: #000;
         color: white;
-        font-family: 'Segoe UI', sans-serif;
+        font-family: 'Segoe UI';
         display: flex;
         flex-direction: column;
         justify-content: center;

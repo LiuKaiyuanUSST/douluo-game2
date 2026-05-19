@@ -12,37 +12,37 @@ export default {
           <div style="display:flex; flex-wrap:wrap; gap:10px; margin:16px 0; justify-content:center;">
             <div style="background:linear-gradient(135deg,#e74c3c,#c0392b); border-radius:10px; padding:12px 20px; text-align:center; min-width:100px; box-shadow:0 3px 10px rgba(231,76,60,0.3);">
               <div style="font-size:28px;">🔥</div>
-              <div style="font-weight:bold;">烈焰</div>
+              <div style="">烈焰</div>
               <div style="font-size:12px; opacity:0.8;">火系</div>
             </div>
             <div style="background:linear-gradient(135deg,#27ae60,#1e8449); border-radius:10px; padding:12px 20px; text-align:center; min-width:100px; box-shadow:0 3px 10px rgba(39,174,96,0.3);">
               <div style="font-size:28px;">🌿</div>
-              <div style="font-weight:bold;">苍木</div>
+              <div style="">苍木</div>
               <div style="font-size:12px; opacity:0.8;">木系</div>
             </div>
             <div style="background:linear-gradient(135deg,#8e44ad,#6c3483); border-radius:10px; padding:12px 20px; text-align:center; min-width:100px; box-shadow:0 3px 10px rgba(142,68,173,0.3);">
               <div style="font-size:28px;">☠️</div>
-              <div style="font-weight:bold;">蛊毒</div>
+              <div style="">蛊毒</div>
               <div style="font-size:12px; opacity:0.8;">毒系</div>
             </div>
             <div style="background:linear-gradient(135deg,#d35400,#a04000); border-radius:10px; padding:12px 20px; text-align:center; min-width:100px; box-shadow:0 3px 10px rgba(211,84,0,0.3);">
               <div style="font-size:28px;">🦁</div>
-              <div style="font-weight:bold;">巨兽</div>
+              <div style="">巨兽</div>
               <div style="font-size:12px; opacity:0.8;">兽系</div>
             </div>
             <div style="background:linear-gradient(135deg,#f1c40f,#d4ac0d); border-radius:10px; padding:12px 20px; text-align:center; min-width:100px; box-shadow:0 3px 10px rgba(241,196,15,0.3);">
               <div style="font-size:28px;">⚡</div>
-              <div style="font-weight:bold;">雷霆</div>
+              <div style="">雷霆</div>
               <div style="font-size:12px; opacity:0.8;">雷系</div>
             </div>
             <div style="background:linear-gradient(135deg,#3498db,#2980b9); border-radius:10px; padding:12px 20px; text-align:center; min-width:100px; box-shadow:0 3px 10px rgba(52,152,219,0.3);">
               <div style="font-size:28px;">🌊</div>
-              <div style="font-weight:bold;">沧澜</div>
+              <div style="">沧澜</div>
               <div style="font-size:12px; opacity:0.8;">水系</div>
             </div>
             <div style="background:linear-gradient(135deg,#95a5a6,#7f8c8d); border-radius:10px; padding:12px 20px; text-align:center; min-width:100px; box-shadow:0 3px 10px rgba(149,165,166,0.3);">
               <div style="font-size:28px;">⚙️</div>
-              <div style="font-weight:bold;">天工</div>
+              <div style="">天工</div>
               <div style="font-size:12px; opacity:0.8;">独立体系</div>
             </div>
           </div>
@@ -56,7 +56,7 @@ export default {
             <h3 style="color:#ffcc88; margin:0;">循环克制链</h3>
           </div>
           <div style="background:linear-gradient(135deg,#1a1a2e,#16213e); border-radius:16px; padding:24px; margin:16px 0; border:2px solid #ffcc8844; text-align:center;">
-            <div style="font-size:18px; font-weight:bold; color:#ffcc88; letter-spacing:2px;">
+            <div style="font-size:18px;  color:#ffcc88; letter-spacing:2px;">
               🔥 烈焰 → 🌿 苍木 → ☠️ 蛊毒 → 🦁 巨兽 → ⚡ 雷霆 → 🌊 沧澜 → 🔥 烈焰
             </div>
           </div>
@@ -100,12 +100,12 @@ export default {
           <div style="display:flex; gap:16px; margin:16px 0; flex-wrap:wrap; justify-content:center;">
             <div style="background:linear-gradient(135deg,#2c3e50,#1a252f); border-radius:12px; padding:20px; text-align:center; flex:1; min-width:200px; border:1px solid #95a5a644;">
               <div style="font-size:36px;">🚫</div>
-              <div style="font-weight:bold; margin:8px 0;">不克制任何系</div>
+              <div style=" margin:8px 0;">不克制任何系</div>
               <div style="font-size:13px; color:#aaa;">也不被任何系克制</div>
             </div>
             <div style="background:linear-gradient(135deg,#2c3e50,#1a252f); border-radius:12px; padding:20px; text-align:center; flex:1; min-width:200px; border:1px solid #95a5a644;">
               <div style="font-size:36px;">🍀</div>
-              <div style="font-weight:bold; margin:8px 0;">5% 概率免伤</div>
+              <div style=" margin:8px 0;">5% 概率免伤</div>
               <div style="font-size:13px; color:#aaa;">受到的所有系别伤害</div>
             </div>
           </div>
@@ -126,8 +126,8 @@ export default {
               <th style="padding:10px 12px;">副系魂技</th>
               <th style="padding:10px 12px; border-radius:0 8px 0 0;">其他五系</th>
             </tr>
-            <tr style="background:rgba(255,255,255,0.03);"><td style="padding:8px 12px; text-align:center; font-weight:bold; color:#2ecc71;">主系出战</td><td style="padding:8px 12px; text-align:center;">100%</td><td style="padding:8px 12px; text-align:center;">80%</td><td style="padding:8px 12px; text-align:center;">50%</td></tr>
-            <tr style="background:rgba(255,255,255,0.06);"><td style="padding:8px 12px; text-align:center; border-radius:0 0 0 8px; font-weight:bold; color:#3498db;">副系出战</td><td style="padding:8px 12px; text-align:center;">80%</td><td style="padding:8px 12px; text-align:center;">80%</td><td style="padding:8px 12px; text-align:center; border-radius:0 0 8px 0;">50%</td></tr>
+            <tr style="background:rgba(255,255,255,0.03);"><td style="padding:8px 12px; text-align:center;  color:#2ecc71;">主系出战</td><td style="padding:8px 12px; text-align:center;">100%</td><td style="padding:8px 12px; text-align:center;">80%</td><td style="padding:8px 12px; text-align:center;">50%</td></tr>
+            <tr style="background:rgba(255,255,255,0.06);"><td style="padding:8px 12px; text-align:center; border-radius:0 0 0 8px;  color:#3498db;">副系出战</td><td style="padding:8px 12px; text-align:center;">80%</td><td style="padding:8px 12px; text-align:center;">80%</td><td style="padding:8px 12px; text-align:center; border-radius:0 0 8px 0;">50%</td></tr>
           </table>
         `
       }

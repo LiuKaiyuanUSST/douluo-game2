@@ -165,7 +165,7 @@ function handleAdvancedForestBattleWin(bossInfo, playerLevel, ts) {
             width: 450px;
             background: rgba(0, 0, 0, 0.95);
             color: white;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI';
             padding: 30px 40px;
             box-sizing: border-box;
             z-index: 2000;
@@ -187,7 +187,7 @@ function handleAdvancedForestBattleWin(bossInfo, playerLevel, ts) {
             <button id="advanced-forest-level-hint-btn" style="
                 display:block; margin:15px auto; padding:12px 40px;
                 background:#2ecc71; color:white; border:none; border-radius:8px;
-                cursor:pointer; font-size:20px; font-weight:bold;
+                cursor:pointer; font-size:20px; 
             ">确认</button>
         `;
         document.body.appendChild(container);
@@ -251,7 +251,7 @@ function showSettlementDialog(bossInfo, playerLevel, eligibleCharacters) {
         width: 500px;
         background: rgba(0, 0, 0, 0.95);
         color: white;
-        font-family: 'Segoe UI', sans-serif;
+        font-family: 'Segoe UI';
         padding: 30px 40px;
         box-sizing: border-box;
         z-index: 2000;
@@ -278,7 +278,7 @@ function showSettlementDialog(bossInfo, playerLevel, eligibleCharacters) {
             <button id="settlement-confirm-btn" style="
                 display:block; margin:15px auto; padding:12px 40px;
                 background:#2ecc71; color:white; border:none; border-radius:8px;
-                cursor:pointer; font-size:20px; font-weight:bold;
+                cursor:pointer; font-size:20px; 
             ">确认</button>
         `;
         document.getElementById('settlement-confirm-btn').addEventListener('click', () => {
@@ -297,7 +297,7 @@ function showSettlementDialog(bossInfo, playerLevel, eligibleCharacters) {
                     cursor:pointer; font-size:16px; text-align:left;
                     transition: background 0.2s;
                 " onmouseover="this.style.background='#3a5a6f'" onmouseout="this.style.background='#2a3a4a'">
-                    <div style="font-weight:bold; font-size:18px; color:${char.color || '#4a90e2'};">${char.name} · ${char.wuhun}</div>
+                    <div style=" font-size:18px; color:${char.color || '#4a90e2'};">${char.name} · ${char.wuhun}</div>
                     <div style="font-size:13px; color:#aaa; margin-top:4px;">
                         已有魂技：${skillCount}/${playerLevel}
                     </div>
@@ -363,7 +363,7 @@ function showAdvancedSettlementDialog(bossInfo, playerLevel, eligibleCharacters)
         width: 500px;
         background: rgba(0, 0, 0, 0.95);
         color: white;
-        font-family: 'Segoe UI', sans-serif;
+        font-family: 'Segoe UI';
         padding: 30px 40px;
         box-sizing: border-box;
         z-index: 2000;
@@ -392,7 +392,7 @@ function showAdvancedSettlementDialog(bossInfo, playerLevel, eligibleCharacters)
             <button id="advanced-settlement-confirm-btn" style="
                 display:block; margin:15px auto; padding:12px 40px;
                 background:#2ecc71; color:white; border:none; border-radius:8px;
-                cursor:pointer; font-size:20px; font-weight:bold;
+                cursor:pointer; font-size:20px; 
             ">确认</button>
         `;
         document.getElementById('advanced-settlement-confirm-btn').addEventListener('click', () => {
@@ -411,7 +411,7 @@ function showAdvancedSettlementDialog(bossInfo, playerLevel, eligibleCharacters)
                     cursor:pointer; font-size:16px; text-align:left;
                     transition: background 0.2s;
                 " onmouseover="this.style.background='#3a5a6f'" onmouseout="this.style.background='#2a3a4a'">
-                    <div style="font-weight:bold; font-size:18px; color:${char.color || '#4a90e2'};">${char.name} · ${char.wuhun}</div>
+                    <div style=" font-size:18px; color:${char.color || '#4a90e2'};">${char.name} · ${char.wuhun}</div>
                     <div style="font-size:13px; color:#aaa; margin-top:4px;">
                         等级：${char.level} | 已有魂技：${skillCount}/2
                     </div>

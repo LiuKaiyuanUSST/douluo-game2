@@ -375,7 +375,7 @@ function showForgetSkillDialog(eligible) {
         width: 400px;
         background: rgba(0, 0, 0, 0.95);
         color: white;
-        font-family: 'Segoe UI', sans-serif;
+        font-family: 'Segoe UI';
         padding: 30px 40px;
         box-sizing: border-box;
         z-index: 3000;
@@ -408,7 +408,7 @@ function showForgetSkillDialog(eligible) {
         `;
         const skillName = char.skills && char.skills.length > 0 ? char.skills[0] : '未知';
         btn.innerHTML = `
-            <div style="font-weight:bold; font-size:18px; color:${char.color || '#4a90e2'};">${char.name} · ${char.wuhun}</div>
+            <div style=" font-size:18px; color:${char.color || '#4a90e2'};">${char.name} · ${char.wuhun}</div>
             <div style="font-size:13px; color:#aaa; margin-top:4px;">
                 第一魂技：${skillName}
             </div>
@@ -439,7 +439,7 @@ function showForgetConfirmDialog(char, skillName, parentContainer) {
         width: 380px;
         background: rgba(0, 0, 0, 0.95);
         color: white;
-        font-family: 'Segoe UI', sans-serif;
+        font-family: 'Segoe UI';
         padding: 30px 35px;
         box-sizing: border-box;
         z-index: 3100;
@@ -457,7 +457,7 @@ function showForgetConfirmDialog(char, skillName, parentContainer) {
             <button id="forget-confirm-yes" style="
                 padding:10px 30px;
                 background:#e74c3c; color:white; border:none; border-radius:8px;
-                cursor:pointer; font-size:16px; font-weight:bold;
+                cursor:pointer; font-size:16px; 
             ">确认遗忘</button>
             <button id="forget-confirm-no" style="
                 padding:10px 30px;
@@ -506,7 +506,7 @@ function showBattleLossHint() {
         width: 420px;
         background: rgba(0, 0, 0, 0.95);
         color: white;
-        font-family: 'Segoe UI', sans-serif;
+        font-family: 'Segoe UI';
         padding: 30px 35px;
         box-sizing: border-box;
         z-index: 3100;
@@ -524,7 +524,7 @@ function showBattleLossHint() {
         <button id="battle-loss-ok-btn" style="
             padding:10px 40px;
             background:#2ecc71; color:white; border:none; border-radius:8px;
-            cursor:pointer; font-size:16px; font-weight:bold;
+            cursor:pointer; font-size:16px; 
         ">知道了</button>
     `;
     document.body.appendChild(hintContainer);

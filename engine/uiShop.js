@@ -6,7 +6,7 @@ export function drawShop() {
   ctx.fillStyle = "#2c3e2f";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "white";
-  ctx.font = "bold 18px 'Segoe UI'";
+  ctx.font = "18px 'Segoe UI'";
   ctx.fillText("🏪 商店", 20, 40);
   ctx.font = "16px monospace";
   ctx.fillStyle = "#ddd";

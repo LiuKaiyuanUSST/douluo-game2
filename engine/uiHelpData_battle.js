@@ -13,17 +13,17 @@ export default {
           <div style="display:flex; gap:16px; margin:20px 0; flex-wrap:wrap; justify-content:center;">
             <div style="background:linear-gradient(135deg,#e74c3c,#c0392b); border-radius:12px; padding:16px 24px; text-align:center; min-width:120px; box-shadow:0 4px 15px rgba(231,76,60,0.3);">
               <div style="font-size:32px;">💪</div>
-              <div style="font-size:20px; font-weight:bold; margin:4px 0;">力量</div>
+              <div style="font-size:20px; margin:4px 0;">力量</div>
               <div style="font-size:13px; opacity:0.8;">决定生命与攻击</div>
             </div>
             <div style="background:linear-gradient(135deg,#3498db,#2980b9); border-radius:12px; padding:16px 24px; text-align:center; min-width:120px; box-shadow:0 4px 15px rgba(52,152,219,0.3);">
               <div style="font-size:32px;">💨</div>
-              <div style="font-size:20px; font-weight:bold; margin:4px 0;">速度</div>
+              <div style="font-size:20px; margin:4px 0;">速度</div>
               <div style="font-size:13px; opacity:0.8;">决定距离与顺序</div>
             </div>
             <div style="background:linear-gradient(135deg,#2ecc71,#27ae60); border-radius:12px; padding:16px 24px; text-align:center; min-width:120px; box-shadow:0 4px 15px rgba(46,204,113,0.3);">
               <div style="font-size:32px;">🧠</div>
-              <div style="font-size:20px; font-weight:bold; margin:4px 0;">智力</div>
+              <div style="font-size:20px; margin:4px 0;">智力</div>
               <div style="font-size:13px; opacity:0.8;">决定防御与魂力</div>
             </div>
           </div>
@@ -40,7 +40,7 @@ export default {
                 <h3 style="color:#ff6b6b; margin:0;">生命值</h3>
               </div>
               <div style="background:linear-gradient(135deg,#2d1b1b,#1a0f0f); border-radius:12px; padding:20px; margin:16px 0; border:1px solid #e74c3c44;">
-                <div style="font-size:28px; text-align:center; color:#ff6b6b; font-weight:bold;">生命 = 力量 + 3</div>
+                <div style="font-size:28px; text-align:center; color:#ff6b6b;">生命 = 力量 + 3</div>
                 <p style="text-align:center; color:#aaa; margin-top:8px;">完全由力量单属性决定</p>
               </div>
               <div style="background:rgba(231,76,60,0.1); border-left:4px solid #e74c3c; padding:12px 16px; border-radius:0 8px 8px 0; margin-top:12px;">
@@ -56,7 +56,7 @@ export default {
                 <h3 style="color:#e74c3c; margin:0;">攻击力</h3>
               </div>
               <div style="background:linear-gradient(135deg,#2d1b1b,#1a0f0f); border-radius:12px; padding:20px; margin:16px 0; border:1px solid #e74c3c44;">
-                <div style="font-size:20px; text-align:center; color:#ff8a80; font-weight:bold;">攻击能力值 = 力量 × 1.5 + 速度 × 0.5</div>
+                <div style="font-size:20px; text-align:center; color:#ff8a80;">攻击能力值 = 力量 × 1.5 + 速度 × 0.5</div>
               </div>
               <table style="width:100%; border-collapse:collapse; margin:16px 0; font-size:14px;">
                 <tr style="background:linear-gradient(90deg,#e74c3c,#c0392b); color:white;">
@@ -84,7 +84,7 @@ export default {
                 <h3 style="color:#3498db; margin:0;">防御力</h3>
               </div>
               <div style="background:linear-gradient(135deg,#1b2d3d,#0f1a2a); border-radius:12px; padding:20px; margin:16px 0; border:1px solid #3498db44;">
-                <div style="font-size:20px; text-align:center; color:#64b5f6; font-weight:bold;">防御能力值 = 智力 × 1.5 + 力量 × 0.5</div>
+                <div style="font-size:20px; text-align:center; color:#64b5f6; ">防御能力值 = 智力 × 1.5 + 力量 × 0.5</div>
               </div>
               <table style="width:100%; border-collapse:collapse; margin:16px 0; font-size:14px;">
                 <tr style="background:linear-gradient(90deg,#3498db,#2980b9); color:white;">
@@ -110,7 +110,7 @@ export default {
                 <h3 style="color:#9b59b6; margin:0;">闪避</h3>
               </div>
               <div style="background:linear-gradient(135deg,#2d1b3d,#1a0f2a); border-radius:12px; padding:20px; margin:16px 0; border:1px solid #9b59b644;">
-                <div style="font-size:20px; text-align:center; color:#ce93d8; font-weight:bold;">灵巧 = 智力 + 速度</div>
+                <div style="font-size:20px; text-align:center; color:#ce93d8; ">灵巧 = 智力 + 速度</div>
                 <div style="font-size:16px; text-align:center; color:#aaa; margin-top:8px;">灵巧差值 = 防守方灵巧 - 攻击方灵巧</div>
               </div>
               <table style="width:100%; border-collapse:collapse; margin:16px 0; font-size:14px;">

@@ -22,7 +22,7 @@ export function showAffinityGuideDialog() {
                 唐三，在进入战斗之前，我要告诉你一个重要的知识——<strong style="color:#f39c12;">武魂系别克制</strong>。
             </div>
             <div style="font-size:16px; line-height:1.8; ${DIALOGUE_STYLES.infoBox}">
-                <div style="text-align:center; font-weight:bold; margin-bottom:10px; color:#ffcc88;">🔥 克制循环 🔥</div>
+                <div style="text-align:center;  margin-bottom:10px; color:#ffcc88;">🔥 克制循环 🔥</div>
                 <div style="text-align:center; font-size:15px; line-height:2;">
                     <span style="color:#e74c3c;">烈焰</span> → <span style="color:#27ae60;">苍木</span> → <span style="color:#8e44ad;">蛊毒</span> → <span style="color:#f39c12;">巨兽</span> → <span style="color:#3498db;">雷霆</span> → <span style="color:#1abc9c;">沧澜</span> → <span style="color:#e74c3c;">烈焰</span>
                 </div>
@@ -349,7 +349,7 @@ export function showRoyalTrialTokenDialog(onSubmit, onCancel) {
                 <button id="royal-trial-token-submit-btn" style="
                     padding:12px 30px;
                     background:#2ecc71; color:white; border:none; border-radius:8px;
-                    cursor:pointer; font-size:18px; font-weight:bold;
+                    cursor:pointer; font-size:18px; 
                 ">✅ 提交试炼令</button>
                 <button id="royal-trial-token-cancel-btn" style="
                     padding:12px 30px;

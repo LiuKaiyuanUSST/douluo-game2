@@ -27,7 +27,7 @@ export function showMasterWuhunChoice() {
             <button id="master-accept-btn" style="
                 display:block; margin:15px auto; padding:12px 40px;
                 background:#e67e22; color:white; border:none; border-radius:8px;
-                cursor:pointer; font-size:20px; font-weight:bold;
+                cursor:pointer; font-size:20px; 
             ">我愿意</button>
         `;
         document.getElementById('master-accept-btn').addEventListener('click', () => {
@@ -80,7 +80,7 @@ export function showMasterWuhunChoice() {
             optionsHtml += `
                 <button class="wuhun-choice-btn" data-index="${index}" style="${DIALOGUE_STYLES.btnOption}"
                     onmouseover="this.style.background='#3a5a6f'" onmouseout="this.style.background='#2a3a4a'">
-                    <div style="font-weight:bold; font-size:18px;">${opt.name}${recText}</div>
+                    <div style=" font-size:18px;">${opt.name}${recText}</div>
                     <div style="font-size:13px; color:#aaa; margin-top:4px;">
                         主系：${opt.mainAffinity} | 副系：${opt.subAffinity} | 武魂特色：${opt.feature} | 天赋属性：${opt.talentAttr}
                     </div>
@@ -212,7 +212,7 @@ export function showXiaoWuWuhunChoice() {
             optionsHtml += `
                 <button class="xw-wuhun-choice-btn" data-index="${index}" style="${DIALOGUE_STYLES.btnOption}"
                     onmouseover="this.style.background='#3a5a6f'" onmouseout="this.style.background='#2a3a4a'">
-                    <div style="font-weight:bold; font-size:18px;">${opt.name}${recText}</div>
+                    <div style=" font-size:18px;">${opt.name}${recText}</div>
                     <div style="font-size:13px; color:#aaa; margin-top:4px;">
                         主系：${opt.mainAffinity} | 副系：${opt.subAffinity} | 武魂特色：${opt.feature} | 天赋属性：${opt.talentAttr}
                     </div>

@@ -28,14 +28,14 @@ export function createSaveButton(buttonRow) {
     btn.id = 'save-btn';
     btn.innerHTML = '💾 存档';
     btn.style.cssText = `
-        padding: 10px 20px;
+        padding: 10px 22px;
         background: #4a6a7f;
         color: white;
         border: 2px solid #6a8a9f;
         border-radius: 12px;
         cursor: pointer;
-        font-size: 18px;
-        font-family: 'Segoe UI', sans-serif;
+        font-size: 22px;
+        font-family: 'Segoe UI';
         user-select: none;
     `;
     btn.addEventListener('click', () => toggleSavePanel());
@@ -48,14 +48,14 @@ export function createReturnToTownButton(buttonRow) {
     btn.id = 'return-town-btn';
     btn.innerHTML = '🏠 主城';
     btn.style.cssText = `
-        padding: 10px 20px;
+        padding: 10px 22px;
         background: #4a6a7f;
         color: white;
         border: 2px solid #6a8a9f;
         border-radius: 12px;
         cursor: pointer;
-        font-size: 18px;
-        font-family: 'Segoe UI', sans-serif;
+        font-size: 22px;
+        font-family: 'Segoe UI';
         user-select: none;
     `;
     btn.addEventListener('click', () => {
@@ -72,14 +72,14 @@ export function createBackpackButton(buttonRow) {
     btn.id = 'backpack-btn';
     btn.innerHTML = '🎒 背包';
     btn.style.cssText = `
-        padding: 10px 20px;
+        padding: 10px 22px;
         background: #4a6a7f;
         color: white;
         border: 2px solid #6a8a9f;
         border-radius: 12px;
         cursor: pointer;
-        font-size: 18px;
-        font-family: 'Segoe UI', sans-serif;
+        font-size: 22px;
+        font-family: 'Segoe UI';
         user-select: none;
     `;
     btn.addEventListener('click', () => toggleBackpack());
@@ -92,14 +92,14 @@ export function createCharacterButton(buttonRow) {
     btn.id = 'character-btn';
     btn.innerHTML = '👥 角色';
     btn.style.cssText = `
-        padding: 10px 20px;
+        padding: 10px 22px;
         background: #4a6a7f;
         color: white;
         border: 2px solid #6a8a9f;
         border-radius: 12px;
         cursor: pointer;
-        font-size: 18px;
-        font-family: 'Segoe UI', sans-serif;
+        font-size: 22px;
+        font-family: 'Segoe UI';
         user-select: none;
     `;
     btn.addEventListener('click', () => toggleCharacterPanel());
@@ -112,14 +112,14 @@ export function createTeamButton(buttonRow) {
     btn.id = 'team-btn';
     btn.innerHTML = '⚔️ 队伍';
     btn.style.cssText = `
-        padding: 10px 20px;
+        padding: 10px 22px;
         background: #4a6a7f;
         color: white;
         border: 2px solid #6a8a9f;
         border-radius: 12px;
         cursor: pointer;
-        font-size: 18px;
-        font-family: 'Segoe UI', sans-serif;
+        font-size: 22px;
+        font-family: 'Segoe UI';
         user-select: none;
     `;
     btn.addEventListener('click', () => toggleTeamPanel());
@@ -132,14 +132,14 @@ export function createHelpButton(buttonRow) {
     btn.id = 'help-btn';
     btn.innerHTML = '❓ 帮助';
     btn.style.cssText = `
-        padding: 10px 20px;
+        padding: 10px 22px;
         background: #4a6a7f;
         color: white;
         border: 2px solid #6a8a9f;
         border-radius: 12px;
         cursor: pointer;
-        font-size: 18px;
-        font-family: 'Segoe UI', sans-serif;
+        font-size: 22px;
+        font-family: 'Segoe UI';
         user-select: none;
     `;
     btn.addEventListener('click', () => toggleHelpPanel());
@@ -164,7 +164,7 @@ function createSavePanel() {
         padding: 20px;
         z-index: 3000;
         display: none;
-        font-family: 'Segoe UI', sans-serif;
+        font-family: 'Segoe UI';
         text-align: center;
     `;
     panel.innerHTML = `
@@ -222,7 +222,7 @@ function updateSaveSlots() {
         html += `
             <div style="border:1px solid #555; border-radius:8px; margin:8px 0; padding:10px; background:rgba(255,255,255,0.05);">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                    <span style="font-weight:bold; color:${slotColor};">存档位 ${slot}</span>
+                    <span style=" color:${slotColor};">存档位 ${slot}</span>
                     <span style="font-size:13px; color:#aaa;">${info.exists ? '有存档' : '空'}</span>
                 </div>
                 <div style="font-size:13px; color:#ddd; margin-bottom:8px; min-height:20px; word-break:break-all;">${info.displayName}</div>
@@ -270,7 +270,7 @@ function showSaveConfirmDialog(slot) {
         display: flex;
         justify-content: center;
         align-items: center;
-        font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        font-family: 'Segoe UI';
     `;
 
     const dialog = document.createElement('div');
@@ -363,7 +363,7 @@ export function createBackpackPanel() {
         padding: 20px;
         z-index: 3000;
         display: none;
-        font-family: 'Segoe UI', sans-serif;
+        font-family: 'Segoe UI';
         text-align: center;
     `;
     panel.innerHTML = `

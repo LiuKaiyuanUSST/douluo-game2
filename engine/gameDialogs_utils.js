@@ -43,7 +43,7 @@ export const DIALOGUE_STYLES = {
         max-height: 80vh;
         background: rgba(0, 0, 0, 0.95);
         color: white;
-        font-family: 'Segoe UI', sans-serif;
+        font-family: 'Segoe UI';
         padding: 30px 40px;
         box-sizing: border-box;
         z-index: 2000;
@@ -59,7 +59,7 @@ export const DIALOGUE_STYLES = {
         width: 620px;
         background: rgba(0, 0, 0, 0.95);
         color: white;
-        font-family: 'Segoe UI', sans-serif;
+        font-family: 'Segoe UI';
         padding: 30px 40px;
         box-sizing: border-box;
         z-index: 2000;
@@ -74,7 +74,7 @@ export const DIALOGUE_STYLES = {
         width: 600px;
         background: rgba(0, 0, 0, 0.95);
         color: white;
-        font-family: 'Segoe UI', sans-serif;
+        font-family: 'Segoe UI';
         padding: 30px 40px;
         box-sizing: border-box;
         z-index: 2000;
@@ -85,12 +85,12 @@ export const DIALOGUE_STYLES = {
     btnOrange: `
         display:block; margin:10px auto 0 auto; padding:12px 40px;
         background:#e67e22; color:white; border:none; border-radius:8px;
-        cursor:pointer; font-size:18px; font-weight:bold;
+        cursor:pointer; font-size:18px; 
     `,
     btnGreen: `
         display:block; margin:0 auto; padding:12px 40px;
         background:#2ecc71; color:white; border:none; border-radius:8px;
-        cursor:pointer; font-size:18px; font-weight:bold;
+        cursor:pointer; font-size:18px; 
     `,
     btnOption: `
         display:block; margin:8px 0; padding:12px 15px; width:100%;

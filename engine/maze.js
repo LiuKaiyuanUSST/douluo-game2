@@ -76,13 +76,13 @@ export class MazeManager {
 
         // 7个高级魂兽（2级）
         const soulBeasts = [
-            { name: '五百年鬼藤', affinity: '苍木', desc: '五百年藤蔓，绞杀致命', color: '#27ae60' },
-            { name: '五百年幽冥狼', affinity: '雷霆', desc: '五百年幽狼，疾风绝影', color: '#3498db' },
-            { name: '五百年海蝰蛇', affinity: '沧澜', desc: '五百年海蛇，翻波搅浪', color: '#1abc9c' },
-            { name: '五百年火蜥蜴', affinity: '烈焰', desc: '五百年火蜥，焚天灼地', color: '#e74c3c' },
-            { name: '五百年曼陀罗蛇', affinity: '蛊毒', desc: '五百年蛇皇，一吻封喉', color: '#8e44ad' },
-            { name: '五百年蛮牛', affinity: '巨兽', desc: '五百年蛮牛，裂地碎岩', color: '#f39c12' },
-            { name: '五百年板斧', affinity: '天工', desc: '五百年板斧，劈山断岳', color: '#e67e22' }
+            { name: '鬼藤', affinity: '苍木', desc: '五百年藤蔓，绞杀致命', color: '#27ae60' },
+            { name: '幽冥狼', affinity: '雷霆', desc: '五百年幽狼，疾风绝影', color: '#3498db' },
+            { name: '海蝰蛇', affinity: '沧澜', desc: '五百年海蛇，翻波搅浪', color: '#1abc9c' },
+            { name: '火蜥蜴', affinity: '烈焰', desc: '五百年火蜥，焚天灼地', color: '#e74c3c' },
+            { name: '曼陀罗蛇', affinity: '蛊毒', desc: '五百年蛇皇，一吻封喉', color: '#8e44ad' },
+            { name: '蛮牛', affinity: '巨兽', desc: '五百年蛮牛，裂地碎岩', color: '#f39c12' },
+            { name: '板斧', affinity: '天工', desc: '五百年板斧，劈山断岳', color: '#e67e22' }
         ];
 
         const shuffled = [...soulBeasts].sort(() => Math.random() - 0.5);

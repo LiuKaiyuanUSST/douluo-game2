@@ -82,7 +82,7 @@ export class DialogueEngine {
                 max-height: 70vh;
                 background: rgba(0, 0, 0, 0.9);
                 color: white;
-                font-family: 'Segoe UI', sans-serif;
+                font-family: 'Segoe UI';
                 padding: 30px 40px;
                 box-sizing: border-box;
                 z-index: 2000;

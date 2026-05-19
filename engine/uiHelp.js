@@ -47,7 +47,7 @@ function renderHelpPanel() {
         onmouseout="this.style.transform='';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.3)';"
         onclick="helpNavigate('${key}')">
         <div style="font-size:32px; margin-bottom:6px;">${tab.label.split(' ')[0]}</div>
-        <div style="font-size:16px; font-weight:bold;">${tab.label.split(' ').slice(1).join(' ')}</div>
+        <div style="font-size:16px;">${tab.label.split(' ').slice(1).join(' ')}</div>
       </div>`;
     }
     html += '</div>';
@@ -61,7 +61,7 @@ function renderHelpPanel() {
         onmouseover="this.style.transform='translateY(-2px)';this.style.borderColor='#ffcc88';"
         onmouseout="this.style.transform='';this.style.borderColor='#555';"
         onclick="helpNavigate('${helpState.activeTab}','${key}')">
-        <div style="font-size:16px; font-weight:bold;">${sub.label}</div>
+        <div style="font-size:16px;">${sub.label}</div>
       </div>`;
     }
     html += '</div>';
@@ -82,7 +82,7 @@ function renderHelpPanel() {
           onmouseover="this.style.transform='translateY(-2px)';this.style.borderColor='#ffcc88';"
           onmouseout="this.style.transform='';this.style.borderColor='#555';"
           onclick="helpNavigate('${helpState.activeTab}','${helpState.activeSub}','${key}')">
-          <div style="font-size:14px; font-weight:bold;">${subSub.label}</div>
+          <div style="font-size:14px;">${subSub.label}</div>
         </div>`;
       }
       html += '</div>';
@@ -141,13 +141,13 @@ function createHelpPanel() {
     padding: 0;
     z-index: 3000;
     display: none;
-    font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+    font-family: 'Segoe UI';
     box-shadow: 0 0 40px rgba(0,0,0,0.6);
     overflow: hidden;
   `;
   panel.innerHTML = `
     <div style="display:flex; justify-content:space-between; align-items:center; padding:16px 20px; background:rgba(255,255,255,0.03); border-bottom:1px solid rgba(255,255,255,0.1);">
-      <div style="font-size:20px; font-weight:bold; color:#ffcc88;">📖 游戏帮助</div>
+      <div style="font-size:20px; color:#ffcc88;">📖 游戏帮助</div>
       <div style="display:flex; gap:8px;">
         <button id="help-back-btn" style="background:#555; color:white; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-size:13px; display:none;">← 返回</button>
         <button id="help-close-btn" style="background:#e74c3c; color:white; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-size:13px;">✕ 关闭</button>

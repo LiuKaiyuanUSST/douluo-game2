@@ -26,7 +26,7 @@ export function drawBattle() {
   ctx.strokeStyle = "#555";
   ctx.strokeRect(leftPanelX, leftPanelY, panelW, panelH);
   ctx.fillStyle = "#ffd966";
-  ctx.font = "bold 16px 'Segoe UI'";
+  ctx.font = "16px 'Segoe UI'";
   ctx.fillText("我方", leftPanelX + 10, leftPanelY + 25);
   
   for (let i = 0; i < battle.playerTeam.length; i++) {
@@ -34,7 +34,7 @@ export function drawBattle() {
     const yBase = leftPanelY + 48 + i * 130;
     if (u.alive) {
       ctx.fillStyle = "#ddd";
-      ctx.font = "bold 18px Arial";
+      ctx.font = "18px Arial";
       const displayName = u.wuhun ? `${u.name}·${u.wuhun}` : u.name;
       ctx.fillText(displayName, leftPanelX + 10, yBase);
       ctx.font = "11px Arial";
@@ -48,7 +48,7 @@ export function drawBattle() {
       
       if (u.marks && u.marks.length > 0) {
         const positive = ['reborn', 'beast_king', 'shield', 'power_up', 'speed_up'];
-        ctx.font = "bold 11px Arial";
+        ctx.font = "11px Arial";
         let markX = leftPanelX + 10;
         ctx.fillStyle = "#ddd";
         ctx.fillText('状态: ', markX, yBase + 50);
@@ -67,7 +67,7 @@ export function drawBattle() {
       ctx.fillRect(leftPanelX + 10, yBase + 60, (panelW - 30) * hpPercent, 6);
     } else {
       ctx.fillStyle = "#666";
-      ctx.font = "bold 18px Arial";
+      ctx.font = "18px Arial";
       const displayName = u.wuhun ? `${u.name}·${u.wuhun}` : u.name;
       ctx.fillText(displayName + " (阵亡)", leftPanelX + 10, yBase);
     }
@@ -79,7 +79,7 @@ export function drawBattle() {
   ctx.strokeStyle = "#555";
   ctx.strokeRect(rightPanelX, rightPanelY, panelW, panelH);
   ctx.fillStyle = "#e74c3c";
-  ctx.font = "bold 16px 'Segoe UI'";
+  ctx.font = "16px 'Segoe UI'";
   ctx.fillText("敌方", rightPanelX + 10, rightPanelY + 25);
   
   for (let i = 0; i < battle.enemyTeam.length; i++) {
@@ -87,7 +87,7 @@ export function drawBattle() {
     const yBase = rightPanelY + 48 + i * 130;
     if (u.alive) {
       ctx.fillStyle = "#ddd";
-      ctx.font = "bold 18px Arial";
+      ctx.font = "18px Arial";
       const displayName = u._hideWuhun ? u.name : (u.wuhun ? `${u.name}·${u.wuhun}` : u.name);
       ctx.fillText(displayName, rightPanelX + 10, yBase);
       ctx.font = "11px Arial";
@@ -101,7 +101,7 @@ export function drawBattle() {
       
       if (u.marks && u.marks.length > 0) {
         const positive = ['reborn', 'beast_king', 'shield', 'power_up', 'speed_up'];
-        ctx.font = "bold 11px Arial";
+        ctx.font = "11px Arial";
         let markX = rightPanelX + 10;
         ctx.fillStyle = "#ddd";
         ctx.fillText('状态: ', markX, yBase + 50);
@@ -120,7 +120,7 @@ export function drawBattle() {
       ctx.fillRect(rightPanelX + 10, yBase + 60, (panelW - 30) * hpPercent, 6);
     } else {
       ctx.fillStyle = "#666";
-      ctx.font = "bold 18px Arial";
+      ctx.font = "18px Arial";
       const displayName = u._hideWuhun ? u.name : (u.wuhun ? `${u.name}·${u.wuhun}` : u.name);
       ctx.fillText(displayName + " (阵亡)", rightPanelX + 10, yBase);
     }
@@ -146,7 +146,7 @@ export function drawBattle() {
     ctx.stroke();
     if (u.alive) {
       ctx.fillStyle = "white";
-      ctx.font = "bold 16px Arial";
+      ctx.font = "16px Arial";
       ctx.textAlign = "center";
       const displayName = u.wuhun ? `${u.name}·${u.wuhun}` : u.name;
       ctx.fillText(displayName, x, y + slotRadius + 18);
@@ -168,7 +168,7 @@ export function drawBattle() {
     ctx.stroke();
     if (u.alive) {
       ctx.fillStyle = "white";
-      ctx.font = "bold 16px Arial";
+      ctx.font = "16px Arial";
       ctx.textAlign = "center";
       const displayName = u._hideWuhun ? u.name : (u.wuhun ? `${u.name}·${u.wuhun}` : u.name);
       ctx.fillText(displayName, x, y + slotRadius + 18);
@@ -247,7 +247,7 @@ export function drawBattle() {
     ctx.fillStyle = active ? "#3498db" : "#555";
     ctx.fillRect(bx, by, btnW, btnH);
     ctx.fillStyle = "white";
-    ctx.font = "bold 14px Arial";
+    ctx.font = "14px Arial";
     ctx.textAlign = "center";
     ctx.fillText(labels[i], bx + btnW/2, by + 15);
     app.battleSpeedBtns.push({ x: bx, y: by, w: btnW, h: btnH, speed: speeds[i] });
@@ -262,7 +262,7 @@ export function drawBattle() {
   ctx.strokeStyle = "#aaa";
   ctx.strokeRect(logBtnX, logBtnY, logBtnW, logBtnH);
   ctx.fillStyle = "#2ecc71";
-  ctx.font = "bold 16px Arial";
+  ctx.font = "16px Arial";
   ctx.textAlign = "center";
   ctx.fillText("📋", logBtnX + logBtnW/2, logBtnY + 20);
   ctx.fillStyle = "white";
@@ -298,7 +298,7 @@ export function drawBattle() {
       ctx.fillStyle = "rgba(0,0,0,0.7)";
       ctx.fillRect(0, canvas.height - 80, canvas.width, 80);
       ctx.fillStyle = "#ffcc88";
-      ctx.font = "bold 18px Arial";
+      ctx.font = "18px Arial";
       ctx.textAlign = "center";
       if (battleSkillMode) {
         ctx.fillText("🎯 选择魂技目标", centerX, btnY + 27);
@@ -313,10 +313,10 @@ export function drawBattle() {
       app.battleNormalCancelBtn = { x: cancelX, y: cancelY, w: 60, h: 30 };
       app.battleSkillCancelBtn = app.battleNormalCancelBtn;
       ctx.fillStyle = "#888";
-      ctx.fillRect(700, btnY, 60, 30);
+      ctx.fillRect(720, btnY, 60, 40);
       ctx.fillStyle = "white";
-      ctx.fillText("跳过", 730, btnY + 22);
-      app.battleSkipBtn = { x: 700, y: btnY, w: 60, h: 30 };
+      ctx.fillText("跳过", 750, btnY + 27);
+      app.battleSkipBtn = { x: 720, y: btnY, w: 60, h: 40 };
       app.battleButtons = [];
       app.battleSkillInfoBtn = null;
     } else {
@@ -328,14 +328,14 @@ export function drawBattle() {
       ctx.fillRect(10, btnY, 80, 40);
       ctx.fillStyle = "white";
       ctx.textAlign = "center";
-      ctx.font = "bold 18px Arial";
+      ctx.font = "18px Arial";
       ctx.fillText("自动(F)", 50, btnY + 28);
 
       ctx.fillStyle = "#3498db";
       ctx.fillRect(100, btnY, 90, 40);
       ctx.fillStyle = "white";
       ctx.textAlign = "center";
-      ctx.font = "bold 18px Arial";
+      ctx.font = "18px Arial";
       ctx.fillText("普攻", 145, btnY + 28);
       
       const skills = battle.getAvailableSkills(currentActor).filter(s => s.id !== 'normal');
@@ -345,8 +345,8 @@ export function drawBattle() {
         ctx.fillStyle = skill.disabled ? "#555" : "#e67e22";
         ctx.fillRect(skillBtnX, btnY, 90, 40);
         ctx.fillStyle = "white";
-        ctx.font = "bold 14px Arial";
-        ctx.fillText(`${skill.name}(${skill.actualCost})`, skillBtnX + 45, btnY + 27);
+        ctx.font = "18px Arial";
+        ctx.fillText(`${skill.name}(${skill.actualCost})`, skillBtnX + 45, btnY + 28);
         skillBtns.push({
           x: skillBtnX, y: btnY, w: 90, h: 40,
           action: 'skill', skillId: skill.id, disabled: skill.disabled, skill: skill
@@ -360,22 +360,22 @@ export function drawBattle() {
       ];
 
 
-      const skillInfoX = 610, skillInfoY = btnY, skillInfoW = 80, skillInfoH = 30;
+      const skillInfoX = 630, skillInfoY = btnY, skillInfoW = 80, skillInfoH = 40;
       ctx.fillStyle = "#8e44ad";
       ctx.fillRect(skillInfoX, skillInfoY, skillInfoW, skillInfoH);
       ctx.fillStyle = "white";
-      ctx.font = "bold 14px Arial";
+      ctx.font = "18px Arial";
       ctx.textAlign = "center";
-      ctx.fillText("魂技说明", skillInfoX + skillInfoW/2, skillInfoY + 20);
+      ctx.fillText("魂技说明", skillInfoX + skillInfoW/2, skillInfoY + 28);
       app.battleSkillInfoBtn = { x: skillInfoX, y: skillInfoY, w: skillInfoW, h: skillInfoH };
 
-      const skipX = 700, skipY = btnY, skipW = 60, skipH = 30;
+      const skipX = 720, skipY = btnY, skipW = 60, skipH = 40;
       ctx.fillStyle = "#888";
       ctx.fillRect(skipX, skipY, skipW, skipH);
       ctx.fillStyle = "white";
       ctx.textAlign = "center";
-      ctx.font = "bold 14px Arial";
-      ctx.fillText("跳过", skipX + skipW/2, skipY + 20);
+      ctx.font = "18px Arial";
+      ctx.fillText("跳过", skipX + skipW/2, skipY + 28);
       app.battleSkipBtn = { x: skipX, y: skipY, w: skipW, h: skipH };
     }
   } else {
@@ -387,4 +387,4 @@ export function drawBattle() {
     app.battleSkillInfoBtn = null;
   }
   ctx.textAlign = "start";
-} 
+}

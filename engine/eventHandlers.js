@@ -24,7 +24,7 @@ function showBattleLogPanel() {
     padding: 10px;
     z-index: 5000;
     overflow-y: auto;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Segoe UI';
     font-size: 14px;
     line-height: 1.6;
   `;
@@ -63,14 +63,14 @@ function showSkillInfoPanel() {
     border-radius: 10px;
     padding: 15px;
     z-index: 5001;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Segoe UI';
   `;
 
   let html = `<h3 style="margin-top:0; color:#ffcc88;">⚡ ${actor.name} 的魂技</h3>`;
 
   if (actor.talent && actor.talent.name) {
     html += `<div style="background:#2a2a4a; padding:10px; border-radius:6px; margin-bottom:12px;">
-      <div style="color:#ffcc88; font-weight:bold; font-size:15px;">天赋：${actor.talent.name}</div>`;
+      <div style="color:#ffcc88; font-size:15px;">天赋：${actor.talent.name}</div>`;
     if (actor.talent.desc) {
       html += `<div style="color:#ccc; font-size:13px; margin-top:4px;">${actor.talent.desc}</div>`;
     }
@@ -415,4 +415,3 @@ export function attachKeyboardHandler() {
     }
   });
 }
- 

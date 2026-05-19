@@ -57,7 +57,7 @@ export function drawMaze() {
       if (boss.defeated) {
         // 已击败的boss显示灰色勾
         ctx.fillStyle = "#555";
-        ctx.font = "bold 24px Arial";
+        ctx.font = "24px Arial";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText("✓", bx, by - 5);
@@ -73,7 +73,7 @@ export function drawMaze() {
         ctx.lineTo(bx + 12, by + 8);
         ctx.fill();
         ctx.fillStyle = "white";
-        ctx.font = "bold 16px Arial";
+        ctx.font = "16px Arial";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(boss.name, bx, by + 24);
@@ -86,7 +86,7 @@ export function drawMaze() {
         ctx.lineTo(bx + 12, by + 8);
         ctx.fill();
         ctx.fillStyle = "white";
-        ctx.font = "bold 14px Arial";
+        ctx.font = "14px Arial";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText("?", bx, by + 5);
@@ -110,7 +110,7 @@ export function drawMaze() {
     ctx.lineTo(bossX+12, bossY+8);
     ctx.fill();
     ctx.fillStyle = "white";
-    ctx.font = "bold 14px Arial";
+    ctx.font = "14px Arial";
     ctx.fillText(maze._isCustomMaze ? "终点" : "BOSS", bossX-18, bossY+20);
 
   }
@@ -157,23 +157,22 @@ export function drawMaze() {
 
 
   // 绘制信息（向右偏移避免被覆盖）
-  const hpText = app.party.map(m => `${m.name}: ${m.hp}/${m.maxHp}${m.alive === false ? '(阵亡)' : ''}`).join('  ');
+  const hpText = app.activeTeam.filter(id => id != null).map(id => {
+    const m = app.party.find(p => p.id === id);
+    return m ? `${m.name}: ${m.hp}/${m.maxHp}${m.alive === false ? '(阵亡)' : ''}` : '';
+  }).filter(s => s).join('  ');
   ctx.fillStyle = "white";
-  ctx.font = "bold 14px 'Segoe UI'";
-  ctx.fillText(`🗺️ ${stageName}`, 80, 40);
-  ctx.font = "14px 'Segoe UI'";
-  ctx.fillText(`生命: ${hpText}`, 240, 70);
-
-
-
-  ctx.fillText(`金魂币: ${player.gold}`, 60, 95);
+  ctx.font = "30px 'Segoe UI'";
+  ctx.fillText(`📍 ${stageName}`, 80, 40);
+  ctx.font = "24px 楷体, KaiTi, serif";
+  ctx.fillText(`生命: ${hpText}    金魂币: ${player.gold}`, 400, 80);
 
   // 猎魂森林额外信息
   if (maze.isHuntingForest) {
     const alive = maze.bossPositions.filter(b => !b.defeated).length;
     const total = maze.bossPositions.length;
     ctx.fillStyle = "#f39c12";
-    ctx.font = "bold 14px 'Segoe UI'";
+    ctx.font = "14px 'Segoe UI'";
     ctx.textAlign = "right";
     ctx.fillText(`魂兽剩余: ${alive}/${total}`, app.canvas.width - 20, 40);
     ctx.textAlign = "start";
@@ -264,7 +263,7 @@ function drawSoulRingMaze(ctx, maze, cellSize, offset) {
   
   // 绘制中心魂核文字
   ctx.fillStyle = "#ffd700";
-  ctx.font = "bold 16px 'Segoe UI'";
+  ctx.font = "16px 'Segoe UI'";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText("魂核", offset + center * cellSize + cellSize/2, offset + center * cellSize + cellSize/2);
@@ -292,7 +291,7 @@ function drawSoulRingMaze(ctx, maze, cellSize, offset) {
   const total = maze._soulRingTotal || 3;
   
   ctx.fillStyle = "white";
-  ctx.font = "bold 16px 'Segoe UI'";
+  ctx.font = "16px 'Segoe UI'";
   ctx.textAlign = "start";
   ctx.textBaseline = "top";
   ctx.fillText(`${charName}的身体 ${collected}/${total}`, 20, 20);

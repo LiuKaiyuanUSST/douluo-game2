@@ -12,17 +12,17 @@ export default {
           <div style="display:flex; gap:12px; margin:16px 0; flex-wrap:wrap; justify-content:center;">
             <div style="background:linear-gradient(135deg,#1b3d2d,#0f2a1a); border-radius:10px; padding:14px 20px; text-align:center; min-width:160px; border:1px solid #1abc9c44;">
               <div style="font-size:24px;">⬆️⬆️⬆️</div>
-              <div style="font-weight:bold; margin:4px 0;">前-前-前</div>
+              <div style=" margin:4px 0;">前-前-前</div>
               <div style="font-size:12px; color:#aaa;">全前排</div>
             </div>
             <div style="background:linear-gradient(135deg,#1b3d2d,#0f2a1a); border-radius:10px; padding:14px 20px; text-align:center; min-width:160px; border:1px solid #1abc9c44;">
               <div style="font-size:24px;">⬆️⬆️⬇️</div>
-              <div style="font-weight:bold; margin:4px 0;">前-前-后</div>
+              <div style=" margin:4px 0;">前-前-后</div>
               <div style="font-size:12px; color:#aaa;">两前一后</div>
             </div>
             <div style="background:linear-gradient(135deg,#1b3d2d,#0f2a1a); border-radius:10px; padding:14px 20px; text-align:center; min-width:160px; border:1px solid #1abc9c44;">
               <div style="font-size:24px;">⬆️⬇️⬆️</div>
-              <div style="font-weight:bold; margin:4px 0;">前-后-前</div>
+              <div style=" margin:4px 0;">前-后-前</div>
               <div style="font-size:12px; color:#aaa;">前后前</div>
             </div>
           </div>
@@ -39,12 +39,12 @@ export default {
           <div style="display:flex; gap:16px; margin:16px 0; flex-wrap:wrap; justify-content:center;">
             <div style="background:linear-gradient(135deg,#6c3483,#4a235a); border-radius:12px; padding:16px 24px; text-align:center; min-width:160px; box-shadow:0 4px 15px rgba(108,52,131,0.3);">
               <div style="font-size:36px;">🌿</div>
-              <div style="font-size:18px; font-weight:bold; margin:4px 0;">九品紫芝</div>
+              <div style="font-size:18px;  margin:4px 0;">九品紫芝</div>
               <div style="font-size:13px; opacity:0.8;">使用后全属性 +1</div>
             </div>
             <div style="background:linear-gradient(135deg,#2c3e50,#1a252f); border-radius:12px; padding:16px 24px; text-align:center; min-width:160px; box-shadow:0 4px 15px rgba(44,62,80,0.3);">
               <div style="font-size:36px;">💀</div>
-              <div style="font-size:18px; font-weight:bold; margin:4px 0;">忘魂草</div>
+              <div style="font-size:18px;  margin:4px 0;">忘魂草</div>
               <div style="font-size:13px; opacity:0.8;">使用后重置属性点</div>
             </div>
           </div>

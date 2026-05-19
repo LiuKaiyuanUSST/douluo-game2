@@ -10,13 +10,34 @@ function getExitLabel(type) {
   return null;
 }
 
+// 按名词边界拆分文字为两行
+function splitLabel(label) {
+  // 预定义拆分规则：前部分 / 后部分
+  const splitMap = {
+    '诺丁学院': ['诺丁', '学院'],
+    '史莱克学院': ['史莱克', '学院'],
+    '索托玫瑰酒店': ['索托', '玫瑰酒店'],
+    '高级圈养森林': ['高级', '圈养森林'],
+  };
+  if (splitMap[label]) return splitMap[label];
+  // 默认：前半部分和后半部分均分
+  const mid = Math.ceil(label.length / 2);
+  return [label.substring(0, mid), label.substring(mid)];
+}
+
 function drawExitLabel(ctx, label, cx, cy, cellW, cellH) {
-  // 长名称折行显示："索托玫瑰酒店" 显示为 "索托"换行"玫瑰酒店"
-  if (label.length >= 6) {
-    // 第一行短一些（约1/3），第二行长一些（约2/3）
-    const firstLen = Math.floor(label.length / 3);
-    ctx.fillText(label.substring(0, firstLen), cx, cy - 10);
-    ctx.fillText(label.substring(firstLen), cx, cy + 10);
+  // 3个字换行显示
+  if (label.length === 3) {
+    ctx.fillText(label[0], cx, cy - 16);
+    ctx.fillText(label.substring(1), cx, cy + 16);
+  } else if (label.length >= 4) {
+    const parts = splitLabel(label);
+    if (parts.length === 1) {
+      ctx.fillText(parts[0], cx, cy);
+    } else {
+      ctx.fillText(parts[0], cx, cy - 16);
+      ctx.fillText(parts[1], cx, cy + 16);
+    }
   } else {
     ctx.fillText(label, cx, cy);
   }
@@ -35,17 +56,17 @@ export function drawTown() {
     for (let x = 0; x < 5; x++) {
       const type = map[y][x];
       let color = "#3a5a6f";
-      if (type === 1) color = "#4caf50";
-      if (type === 2) color = "#e67e22";
-      if (type === 3 || type === 4) color = "#8e44ad";
-      if (type === 5) color = "#2ecc71";
-      if (type === 6 && app.qiGuaiMazeCompleted) color = "#e67e22";
+      if (type === 1) color = "#265728";
+      if (type === 2) color = "#733f11";
+      if (type === 3 || type === 4) color = "#472256";
+      if (type === 5) color = "#176638";
+      if (type === 6 && app.qiGuaiMazeCompleted) color = "#80345a";
       ctx.fillStyle = color;
       ctx.fillRect(offsetX + x*cellW, offsetY + y*cellH, cellW-2, cellH-2);
       ctx.strokeStyle = "#222";
       ctx.strokeRect(offsetX + x*cellW, offsetY + y*cellH, cellW, cellH);
       ctx.fillStyle = "white";
-      ctx.font = "bold 18px Arial";
+      ctx.font = "23px Arial";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       const cx = offsetX + x * cellW + cellW / 2;
@@ -61,7 +82,10 @@ export function drawTown() {
         drawExitLabel(ctx, label || "上一关", cx, cy, cellW, cellH);
       }
       if (type === 5) ctx.fillText("圈养森林", cx, cy);
-      if (type === 6 && app.qiGuaiMazeCompleted) ctx.fillText("高级圈养森林", cx, cy);
+      if (type === 6 && app.qiGuaiMazeCompleted) {
+        ctx.fillText("高级", cx, cy - 16);
+        ctx.fillText("圈养森林", cx, cy + 16);
+      }
     }
   }
   ctx.textAlign = "start";
@@ -71,11 +95,13 @@ export function drawTown() {
   ctx.arc(offsetX + townPlayerPos.x*cellW + cellW/2, offsetY + townPlayerPos.y*cellH + cellH/2, 20, 0, 2*Math.PI);
   ctx.fill();
 
-  const hpText = app.party.map(m => `${m.name}: ${m.hp}/${m.maxHp}${m.alive === false ? '(阵亡)' : ''}`).join('  ');
+  const hpText = app.activeTeam.filter(id => id != null).map(id => {
+    const m = app.party.find(p => p.id === id);
+    return m ? `${m.name}: ${m.hp}/${m.maxHp}${m.alive === false ? '(阵亡)' : ''}` : '';
+  }).filter(s => s).join('  ');
   ctx.fillStyle = "white";
-  ctx.font = "bold 14px 'Segoe UI'";
+  ctx.font = "30px 'Segoe UI'";
   ctx.fillText(`📍 ${townData.name}`, 20, 40);
-  ctx.font = "14px 'Segoe UI'";
-  ctx.fillText(`生命: ${hpText}`, 20, 70);
-  ctx.fillText(`金魂币: ${player.gold}`, 20, 95);
+  ctx.font = "24px 楷体, KaiTi, serif";
+  ctx.fillText(`生命: ${hpText}    金魂币: ${player.gold}`, 20, 80);
 } 
