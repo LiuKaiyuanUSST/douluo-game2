@@ -136,12 +136,12 @@ export function handleBeastForestBattleWin() {
         // 高级圈养森林：第二魂环附加逻辑
         handleAdvancedForestBattleWin(bossInfo, playerLevel, ts);
     } else {
-        // 普通圈养森林：原有逻辑
-        // 筛选存活角色：已有技能数 < 主角等级
+        // 普通圈养森林：只能附加第一魂环（0升1）
+        // 筛选存活角色：必须没有魂环（soulRings为空）
         const eligibleCharacters = app.party.filter(m => {
             if (m.alive === false) return false;
-            const skillCount = (m.skills && m.skills.length) || 0;
-            return skillCount < playerLevel;
+            const soulRingCount = (m.soulRings && m.soulRings.length) || 0;
+            return soulRingCount === 0;
         });
         
         // 显示结算对话框

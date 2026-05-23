@@ -85,8 +85,8 @@ function updateCharacterList() {
             html += `
                 <div style="background:#2a2a2a; padding:12px; border-radius:10px;">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <div style="font-size:20px;"><span style="color:${member.color || '#4a90e2'};">●</span> ${member.name} · ${member.wuhun}</div>
-                        <div style="font-size:16px;">Lv.${member.level} ${aliveText}</div>
+                        <div style="font-size:26px;"><span style="color:${member.color || '#4a90e2'};">●</span> ${member.name} · ${member.wuhun}</div>
+                        <div style="font-size:21px;">Lv.${member.level} ${aliveText}</div>
                     </div>
                     <div style="margin-top:6px; display:grid; grid-template-columns: auto auto; gap:4px 20px; font-size:15px;">
                         <div>💪力量: ${wuhun.baseForce}</div>
@@ -104,8 +104,8 @@ function updateCharacterList() {
                         <div>✨ 天赋：${member.talent?.name || '无'} — ${member.talent?.desc || '无'}</div>
                     </div>
                     <div style="margin-top:6px; display:flex; flex-wrap: wrap; gap:4px;">
-                        <span style="color:#aaa;">已学魂技:</span>
-                        ${member.skills.map(s => `<span class="skill-tag" data-skill="${s}" style="background:#4a6a7f; padding:2px 8px; border-radius:4px; cursor:pointer;" title="点击查看详情">${s}</span>`).join('')}
+                        <span style="color:#aaa; font-size:20px;">已学魂技:</span>
+                        ${member.skills.map(s => `<span class="skill-tag" data-skill="${s}" style="background:#4a6a7f; padding:3px 10px; border-radius:4px; cursor:pointer; font-size:20px;" title="点击查看详情">${s}</span>`).join('')}
                     </div>
                     ${member.soulRings && member.soulRings.length > 0 ? `
                     <div style="margin-top:6px; display:flex; flex-direction:column; gap:2px;">
@@ -130,9 +130,9 @@ function updateCharacterList() {
                         <span style="color:#e67e22;">天工${member.exp?.['天工'] || 0}</span>
                     </div>
                     <div style="margin-top:8px; padding:6px 0; border-top:1px solid #444; display:flex; align-items:center; gap:12px;">
-                        <span>出战系别:</span>
-                        <span style="background:#3a4a5f; padding:4px 12px; border-radius:6px;">${chosenAff}</span>
-                        <button class="change-affinity-btn" data-id="${member.id}" style="background:#8e44ad; color:white; border:none; padding:4px 14px; border-radius:6px; cursor:pointer; font-size:14px;">
+                        <span style="font-size:20px;">出战系别:</span>
+                        <span style="background:#3a4a5f; padding:5px 16px; border-radius:6px; font-size:20px;">${chosenAff}</span>
+                        <button class="change-affinity-btn" data-id="${member.id}" style="background:#8e44ad; color:white; border:none; padding:5px 18px; border-radius:6px; cursor:pointer; font-size:18px;">
                             切换为 ${chosenAff === wuhun.mainAffinity ? wuhun.subAffinity : wuhun.mainAffinity}
                         </button>
                     </div>
@@ -225,8 +225,8 @@ function createTeamPanel() {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 700px;
-        max-height: 80vh;
+        width: 760px;
+        max-height: 85vh;
         background: rgba(20,20,20,0.96);
         color: white;
         border: 2px solid gold;
@@ -243,9 +243,11 @@ function renderTeamPanel() {
     const panel = document.getElementById('team-panel');
     if (!panel) return;
 
-    let formHtml = '<div style="margin-bottom:15px;"><strong>阵型：</strong>';
+    let formHtml = '<div style="margin-bottom:20px;"><strong style="font-size:28px;">阵型：</strong>&nbsp;&nbsp;';
     FORMATION_OPTIONS.forEach(opt => {
-        const active = app.selectedFormation === opt.key ? 'style="background:#e67e22;"' : 'style="background:#555;"';
+        const active = app.selectedFormation === opt.key
+            ? 'style="background:#e67e22; font-size:28px; padding:10px 20px; border:2px solid #ffaa00; box-shadow:0 0 8px rgba(230,126,34,0.5);"'
+            : 'style="background:#555; font-size:28px; padding:10px 20px; border:2px solid transparent;"';
         formHtml += `<button class="formation-opt" data-key="${opt.key}" ${active}>${opt.label}</button> `;
     });
     formHtml += '</div>';
@@ -258,12 +260,12 @@ function renderTeamPanel() {
         const color = member ? member.color : '#666';
         slotHtml += `
             <div class="team-slot" data-slot="${i}" style="
-                width:150px; height:100px; border:2px dashed #aaa; border-radius:8px;
+                width:180px; height:120px; border:3px dashed #aaa; border-radius:8px;
                 display:flex; flex-direction:column; align-items:center; justify-content:center;
-                cursor:pointer; background:#1e1e1e;
+                cursor:pointer; background:#1e1e1e; transition: border-color 0.2s;
             ">
-                <div style="font-size:24px; color:${color};">● ${display}</div>
-                <div style="font-size:14px; color:#aaa;">第${i+1}位</div>
+                <div style="font-size:28px; color:${color};">● ${display}</div>
+                <div style="font-size:16px; color:#aaa;">第${i+1}位</div>
             </div>
         `;
     }
@@ -271,9 +273,9 @@ function renderTeamPanel() {
 
     const usedIds = app.activeTeam.filter(id => id !== null);
     // 显示所有角色，但阵亡的标记为不可选
-    let charListHtml = '<div style="max-height:200px; overflow-y:auto; border:1px solid #444; padding:5px;">';
+    let charListHtml = '<div style="max-height:220px; overflow-y:auto; border:1px solid #444; padding:8px; border-radius:6px;">';
     if (app.party.length === 0) {
-        charListHtml += '<p>没有可用的角色</p>';
+        charListHtml += '<p style="font-size:18px;">没有可用的角色</p>';
     } else {
         for (const member of app.party) {
             const isUsed = usedIds.includes(member.id);
@@ -285,12 +287,12 @@ function renderTeamPanel() {
             const hpText = isDead ? '💀 阵亡' : `❤️ ${member.hp}/${member.maxHp}`;
             charListHtml += `
                 <div class="team-char-option" data-id="${member.id}" style="
-                    padding:8px; margin:3px; background:#2a2a2a; border-radius:5px;
-                    ${style}
+                    padding:8px; margin:4px; background:#2a2a2a; border-radius:5px;
+                    ${style} font-size:18px;
                 ">
                     <span style="color:${member.color};">●</span> ${member.name}·${member.wuhun}
                     ${wuhun ? `(Lv.${member.level} 力:${wuhun.baseForce} 速:${wuhun.baseSpeed} 智:${wuhun.baseIntelligence})` : ''}
-                    <span style="float:right; font-size:13px;">${hpText}</span>
+                    <span style="float:right; font-size:15px;">${hpText}</span>
                     ${isUsed ? ' <span style="color:#e74c3c;">(已编入)</span>' : ''}
                     ${isDead ? ' <span style="color:#e74c3c;">(阵亡)</span>' : ''}
                 </div>
@@ -300,14 +302,14 @@ function renderTeamPanel() {
     charListHtml += '</div>';
 
     const html = `
-        <h2 style="margin-top:0;">⚔️ 出战队伍</h2>
+        <h2 style="margin-top:0; font-size:32px;">⚔️ 出战队伍</h2>
         ${formHtml}
         ${slotHtml}
-        <p style="margin:10px 0;">💡 点击上方槽位选中，再点击下方角色来编入。选中槽位高亮。双击槽位清空。</p>
+        <p style="margin:10px 0; font-size:18px;">💡 点击上方槽位选中，再点击下方角色来编入。选中槽位高亮。双击槽位清空。</p>
         ${charListHtml}
-        <div style="margin-top:15px; display:flex; gap:10px;">
-            <button id="save-team-btn" style="background:#2ecc71; color:white; border:none; padding:8px 20px; border-radius:6px; cursor:pointer; flex:1;">保存队伍</button>
-            <button id="close-team-panel" style="background:#666; color:white; border:none; padding:8px 20px; border-radius:6px; cursor:pointer;">关闭</button>
+        <div style="margin-top:15px; display:flex; gap:12px;">
+            <button id="save-team-btn" style="background:#2ecc71; color:white; border:none; padding:12px 24px; border-radius:8px; cursor:pointer; flex:1; font-size:24px; font-weight:bold;">保存队伍</button>
+            <button id="close-team-panel" style="background:#666; color:white; border:none; padding:12px 24px; border-radius:8px; cursor:pointer; font-size:24px; font-weight:bold;">关闭</button>
         </div>
     `;
     panel.innerHTML = html;
@@ -379,4 +381,3 @@ export function toggleTeamPanel(show = null) {
         panel.style.display = 'block';
     }
 }
- 

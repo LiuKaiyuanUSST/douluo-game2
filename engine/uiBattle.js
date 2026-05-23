@@ -1,5 +1,7 @@
 // engine/uiBattle.js
 import { app } from './gameState.js';
+import { drawCommonHeader } from './uiTown.js';
+import { drawBattleField3D, drawBattleTargetingHighlights } from './uiBattle3D.js';
 
 const MARK_CN = {
   poison: '毒', burn: '燃', bind: '缠', lock: '锁',
@@ -132,27 +134,22 @@ function drawSimplePanel(ctx, leftPanelX, leftPanelY, rightPanelX, rightPanelY, 
     const u = battle.playerTeam[i];
     const yBase = leftPanelY + 55 + i * 135;
     if (u.alive) {
-      // 第一行：姓名（白色）
       ctx.fillStyle = "#ddd";
       ctx.font = "24px Arial";
       ctx.fillText(u.name, leftPanelX + 10, yBase);
-      // 第二行：武魂（灰色）
       ctx.fillStyle = "#aaa";
       ctx.font = "24px Arial";
       ctx.fillText(u.wuhun || "无武魂", leftPanelX + 10, yBase + 27);
-      // 第三行：血条（绿色/橙色/红色）
       ctx.fillStyle = "#555";
       ctx.fillRect(leftPanelX + 10, yBase + 44, panelW - 30, 10);
       const hpPercent = u.hp / u.maxHp;
       ctx.fillStyle = hpPercent > 0.5 ? "#4caf50" : (hpPercent > 0.2 ? "#ff9800" : "#e74c3c");
       ctx.fillRect(leftPanelX + 10, yBase + 44, (panelW - 30) * hpPercent, 10);
-      // 第四行：魂力条（蓝色，与血条间隔6px）
       ctx.fillStyle = "#444";
       ctx.fillRect(leftPanelX + 10, yBase + 59, panelW - 30, 8);
       const spPercent = u.spirit / u.maxSpirit;
       ctx.fillStyle = "#3498db";
       ctx.fillRect(leftPanelX + 10, yBase + 59, (panelW - 30) * spPercent, 8);
-      // 第五行：状态标记
       if (u.marks && u.marks.length > 0) {
         const positive = ['reborn', 'beast_king', 'shield', 'power_up', 'speed_up'];
         ctx.font = "16px Arial";
@@ -187,27 +184,22 @@ function drawSimplePanel(ctx, leftPanelX, leftPanelY, rightPanelX, rightPanelY, 
     const u = battle.enemyTeam[i];
     const yBase = rightPanelY + 55 + i * 135;
     if (u.alive) {
-      // 第一行：姓名（白色）
       ctx.fillStyle = "#ddd";
       ctx.font = "24px Arial";
       ctx.fillText(u.name, rightPanelX + 10, yBase);
-      // 第二行：武魂（灰色）
       ctx.fillStyle = "#aaa";
       ctx.font = "24px Arial";
       ctx.fillText(u.wuhun || "无武魂", rightPanelX + 10, yBase + 27);
-      // 第三行：血条（绿色/橙色/红色）
       ctx.fillStyle = "#555";
       ctx.fillRect(rightPanelX + 10, yBase + 44, panelW - 30, 10);
       const hpPercent = u.hp / u.maxHp;
       ctx.fillStyle = hpPercent > 0.5 ? "#4caf50" : (hpPercent > 0.2 ? "#ff9800" : "#e74c3c");
       ctx.fillRect(rightPanelX + 10, yBase + 44, (panelW - 30) * hpPercent, 10);
-      // 第四行：魂力条（蓝色，与血条间隔6px）
       ctx.fillStyle = "#444";
       ctx.fillRect(rightPanelX + 10, yBase + 59, panelW - 30, 8);
       const spPercent = u.spirit / u.maxSpirit;
       ctx.fillStyle = "#3498db";
       ctx.fillRect(rightPanelX + 10, yBase + 59, (panelW - 30) * spPercent, 8);
-      // 第五行：状态标记
       if (u.marks && u.marks.length > 0) {
         const positive = ['reborn', 'beast_king', 'shield', 'power_up', 'speed_up'];
         ctx.font = "16px Arial";
@@ -236,11 +228,16 @@ export function drawBattle() {
   ctx.fillStyle = "#111";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  const leftPanelX = 10, leftPanelY = 80;
-  const rightPanelX = 610, rightPanelY = 80;
-  const panelW = 180, panelH = canvas.height - 100;
+  // ---- 使用统一通用头部 ----
+  drawCommonHeader(`⚔️ 战斗`);
+
+  const leftPanelX = 10, leftPanelY = 100;
+  const rightPanelX = 610, rightPanelY = 100;
+  const panelW = 180, panelH = canvas.height - 120;
   const centerX = 400;
-  const slotRadius = 32;
+
+  // 提前获取当前行动者（在整个函数范围内可用）
+  const currentActor = battle.getCurrentActor();
 
   // 根据模式选择面板样式
   const useSimplePanel = app.battlePanelMode === 'simple';
@@ -250,93 +247,12 @@ export function drawBattle() {
     drawDetailPanel(ctx, leftPanelX, leftPanelY, rightPanelX, rightPanelY, panelW, panelH, battle);
   }
 
-  // ---- 战斗圆环区域（只显示武魂） ----
-  const baseY = [160, 290, 420];
-  app.battlePlayerSlots = [];
-  app.battleEnemySlots = [];
+  // ---- 3D战斗场地（替换原有的圆环区域+波浪线） ----
+  drawBattleField3D();
 
-  for (let i = 0; i < battle.playerTeam.length; i++) {
-    const u = battle.playerTeam[i];
-    const row = u.gridRow;
-    const col = u.gridCol;
-    const x = col === 1 ? centerX - 90 : centerX - 170;
-    const y = baseY[row];
-    app.battlePlayerSlots[i] = { x, y, unit: u, index: i, side: 'player' };
-    ctx.fillStyle = u.alive ? (u.color || "#4a90e2") : "#333";
-    ctx.beginPath();
-    ctx.arc(x, y, slotRadius, 0, 2*Math.PI);
-    ctx.fill();
-    ctx.strokeStyle = "#aaa";
-    ctx.stroke();
-    if (u.alive) {
-      ctx.fillStyle = "white";
-      ctx.font = "20px Arial";
-      ctx.textAlign = "center";
-      ctx.fillText(u.wuhun || u.name, x, y + slotRadius + 22);
-    }
-  }
-
-  for (let i = 0; i < battle.enemyTeam.length; i++) {
-    const u = battle.enemyTeam[i];
-    const row = u.gridRow;
-    const col = u.gridCol;
-    const x = col === 1 ? centerX + 90 : centerX + 170;
-    const y = baseY[row];
-    app.battleEnemySlots[i] = { x, y, unit: u, index: i, side: 'enemy' };
-    ctx.fillStyle = u.alive ? (u.color || "#e74c3c") : "#333";
-    ctx.beginPath();
-    ctx.arc(x, y, slotRadius, 0, 2*Math.PI);
-    ctx.fill();
-    ctx.strokeStyle = "#aaa";
-    ctx.stroke();
-    if (u.alive) {
-      ctx.fillStyle = "white";
-      ctx.font = "20px Arial";
-      ctx.textAlign = "center";
-      ctx.fillText(u.wuhun || u.name, x, y + slotRadius + 22);
-    }
-  }
-
-  // 波浪线
-  ctx.save();
-  ctx.strokeStyle = "rgba(173,216,230,0.5)";
-  ctx.lineWidth = 2.5;
-  const waveStartY = 120;
-  const waveEndY = canvas.height - 140;
-  ctx.beginPath();
-  for (let y = waveStartY; y < waveEndY; y += 8) {
-    const x = centerX - 25 + Math.sin(y * 0.08) * 4;
-    if (y === waveStartY) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
-  }
-  ctx.stroke();
-  ctx.beginPath();
-  for (let y = waveStartY; y < waveEndY; y += 8) {
-    const x = centerX + 25 + Math.sin(y * 0.08 + 1) * 4;
-    if (y === waveStartY) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
-  }
-  ctx.stroke();
-  ctx.restore();
-
-  // 高亮当前行动者
-  const currentActor = battle.getCurrentActor();
-  if (currentActor && currentActor.alive) {
-    let cx, cy;
-    if (currentActor.side === 'player') {
-      const idx = battle.playerTeam.indexOf(currentActor);
-      if (idx >= 0) { const s = app.battlePlayerSlots[idx]; cx = s.x; cy = s.y; }
-    } else {
-      const idx = battle.enemyTeam.indexOf(currentActor);
-      if (idx >= 0) { const s = app.battleEnemySlots[idx]; cx = s.x; cy = s.y; }
-    }
-    if (cx !== undefined) {
-      ctx.strokeStyle = "yellow";
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      ctx.arc(cx, cy, slotRadius + 6, 0, 2*Math.PI);
-      ctx.stroke();
-    }
+  // ---- 目标选择高亮（覆盖在3D场景之上） ----
+  if (battleTargeting || battleSkillMode) {
+    drawBattleTargetingHighlights();
   }
 
   // 速度面板 + 日志按钮 + 面板切换按钮
@@ -422,14 +338,6 @@ export function drawBattle() {
       }
       app.battleCandidateSlots = candidateSlots;
 
-      candidateSlots.forEach(slot => {
-        ctx.strokeStyle = "lime";
-        ctx.lineWidth = 4;
-        ctx.beginPath();
-        ctx.arc(slot.x, slot.y, slotRadius + 6, 0, 2 * Math.PI);
-        ctx.stroke();
-      });
-
       ctx.fillStyle = "rgba(0,0,0,0.7)";
       ctx.fillRect(0, canvas.height - 80, canvas.width, 80);
       ctx.fillStyle = "#ffcc88";
@@ -456,14 +364,12 @@ export function drawBattle() {
       ctx.font = "18px Arial";
       ctx.fillText("跳过", 750, btnY + 28);
       app.battleSkipBtn = { x: 720, y: btnY, w: 60, h: 40 };
-
       app.battleButtons = [];
       app.battleSkillInfoBtn = null;
     } else {
       ctx.fillStyle = "rgba(0,0,0,0.7)";
       ctx.fillRect(0, canvas.height - 80, canvas.width, 80);
       
-      // 自动按钮（F键功能）
       ctx.fillStyle = "#2ecc71";
       ctx.fillRect(10, btnY, 80, 40);
       ctx.fillStyle = "white";
@@ -480,25 +386,22 @@ export function drawBattle() {
       
       const skills = battle.getAvailableSkills(currentActor).filter(s => s.id !== 'normal');
       let skillBtnX = 200;
-      const skillBtns = [];
       for (let skill of skills) {
         ctx.fillStyle = skill.disabled ? "#555" : "#e67e22";
         ctx.fillRect(skillBtnX, btnY, 90, 40);
         ctx.fillStyle = "white";
         ctx.font = "18px Arial";
         ctx.fillText(`${skill.name}(${skill.actualCost})`, skillBtnX + 45, btnY + 28);
-        skillBtns.push({
-          x: skillBtnX, y: btnY, w: 90, h: 40,
-          action: 'skill', skillId: skill.id, disabled: skill.disabled, skill: skill
-        });
         skillBtnX += 100;
       }
       app.battleButtons = [
         { x: 10, y: btnY, w: 80, h: 40, action: 'auto' },
         { x: 100, y: btnY, w: 90, h: 40, action: 'normal' },
-        ...skillBtns
+        ...skills.map(s => ({
+          x: 200 + skills.indexOf(s) * 100, y: btnY, w: 90, h: 40,
+          action: 'skill', skillId: s.id, disabled: s.disabled, skill: s
+        }))
       ];
-
 
       const skillInfoX = 630, skillInfoY = btnY, skillInfoW = 80, skillInfoH = 40;
       ctx.fillStyle = "#8e44ad";
@@ -536,6 +439,5 @@ export function drawBattle() {
     ctx.fillStyle = "#ddd";
   }
   ctx.fillText(battle.log, centerX, canvas.height - 55);
-
   ctx.textAlign = "start";
 }

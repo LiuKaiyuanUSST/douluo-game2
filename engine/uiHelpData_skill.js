@@ -182,8 +182,8 @@ export default {
                   <th style="padding:10px 12px; border-radius:0 8px 0 0;">效果</th>
                 </tr>
                 <tr style="background:rgba(255,255,255,0.03);"><td style="padding:10px 12px; ">治疗</td><td style="padding:10px 12px; text-align:center;">2SP</td><td style="padding:10px 12px;">50%回复2点HP</td></tr>
-                <tr style="background:rgba(255,255,255,0.06);"><td style="padding:10px 12px; ">一曰力</td><td style="padding:10px 12px; text-align:center;">3SP</td><td style="padding:10px 12px;">50%附加巨力（本场力量+2），七宝琉璃塔天赋可使概率翻倍</td></tr>
-                <tr style="background:rgba(255,255,255,0.03);"><td style="padding:10px 12px; border-radius:0 0 0 8px; ">二曰速</td><td style="padding:10px 12px; text-align:center;">3SP</td><td style="padding:10px 12px; border-radius:0 0 8px 0;">50%附加极速（本场速度+2），七宝琉璃塔天赋可使概率翻倍</td></tr>
+                <tr style="background:rgba(255,255,255,0.06);"><td style="padding:10px 12px; ">一曰力</td><td style="padding:10px 12px; text-align:center;">3SP</td><td style="padding:10px 12px;">50%附加巨力（本场力量+3），七宝琉璃塔天赋可使概率翻倍</td></tr>
+                <tr style="background:rgba(255,255,255,0.03);"><td style="padding:10px 12px; border-radius:0 0 0 8px; ">二曰速</td><td style="padding:10px 12px; text-align:center;">3SP</td><td style="padding:10px 12px; border-radius:0 0 8px 0;">50%附加极速（本场速度+3），七宝琉璃塔天赋可使概率翻倍</td></tr>
               </table>
             `
           }
@@ -243,8 +243,8 @@ export default {
             <tr style="background:rgba(255,255,255,0.06);"><td style="padding:6px 10px; ">复生</td><td style="padding:6px 10px;">每回合结束50%回复1HP（本场）</td></tr>
             <tr style="background:rgba(255,255,255,0.03);"><td style="padding:6px 10px; ">兽王</td><td style="padding:6px 10px;">免疫控制（本场）</td></tr>
             <tr style="background:rgba(255,255,255,0.06);"><td style="padding:6px 10px; ">肉盾</td><td style="padding:6px 10px;">每回合抵挡1点伤害（本场，不可叠加）</td></tr>
-            <tr style="background:rgba(255,255,255,0.03);"><td style="padding:6px 10px; ">巨力</td><td style="padding:6px 10px;">力量+2（本场）</td></tr>
-            <tr style="background:rgba(255,255,255,0.06);"><td style="padding:6px 10px; ">极速</td><td style="padding:6px 10px;">速度+2（本场）</td></tr>
+            <tr style="background:rgba(255,255,255,0.03);"><td style="padding:6px 10px; ">巨力</td><td style="padding:6px 10px;">力量+3（本场）</td></tr>
+            <tr style="background:rgba(255,255,255,0.06);"><td style="padding:6px 10px; ">极速</td><td style="padding:6px 10px;">速度+3（本场）</td></tr>
             <tr style="background:rgba(255,255,255,0.03);"><td style="padding:6px 10px; ">迟滞</td><td style="padding:6px 10px;">速度-2（本场）</td></tr>
             <tr style="background:rgba(255,255,255,0.06);"><td style="padding:6px 10px; border-radius:0 0 0 8px; ">激发</td><td style="padding:6px 10px; border-radius:0 0 8px 0;">智力+3（本场），简称"激"</td></tr>
           </table>

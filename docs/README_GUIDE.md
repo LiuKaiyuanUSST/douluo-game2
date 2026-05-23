@@ -206,4 +206,57 @@ if (app.currentTown === 'shrek_village') {
   setMoveTip("请前往下一关地图");
 }
 ```
+
+## 10.17 修改城镇木牌与建筑UI
+
+**文件**：`engine/uiTown.js`
+
+### 修改木牌尺寸与字体
+
+木牌绘制函数 `drawWoodenSign()` 的默认参数：
+```javascript
+function drawWoodenSign(ctx, cx, cy, text, color, width = 72, height = 60) {
+  // 字体大小: ctx.font = 'bold 19px "楷体", "KaiTi", serif';
+}
+```
+
+**移除木牌钉子**：木牌四角的钉子代码（4个坐标点的灰色圆+白色高光）已被移除。如需恢复，可在函数底部厚度代码后添加以下代码：
+```javascript
+// 钉子在牌面四角
+const nailPositions = [
+  { x: rx + 10, y: ry + 10 },
+  { x: rx + w - 10, y: ry + 10 },
+  { x: rx + 10, y: ry + h - 10 },
+  { x: rx + w - 10, y: ry + h - 10 }
+];
+for (const np of nailPositions) {
+  ctx.fillStyle = '#8a8a8a';
+  ctx.beginPath();
+  ctx.arc(np.x, np.y, 3, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#b0b0b0';
+  ctx.beginPath();
+  ctx.arc(np.x - 1, np.y - 1, 1.5, 0, Math.PI * 2);
+  ctx.fill();
+}
+```
+
+### 修改建筑尺寸与字体
+
+建筑绘制函数 `drawBuildingFront()` 的默认参数：
+```javascript
+function drawBuildingFront(ctx, cx, cy, text, color, width = 96, height = 66) {
+  // 字体大小: ctx.font = 'bold 22px "楷体", "KaiTi", serif';
+}
+```
+
+### 移动整个地图
+
+调整常量 `BASE_X` 可左右移动整个城镇地图：
+```javascript
+const BASE_X = 50;  // 增大→右移，减小→左移
+```
+地形网格、木牌、建筑、跑步小人位置均基于此常量计算，会自动跟随移动。
+此外，`BASE_Y` 控制垂直位置，`CELL_W`/`CELL_H` 控制单元格大小，`SLANT` 控制平行四边形倾斜度。
+```
  

@@ -19,16 +19,62 @@
 8. 速度控制面板：快/中/慢
 9. 日志按钮
 
-## engine/uiTown.js — 城镇界面
+## engine/uiTown.js 及子模块 — 城镇界面
+
+`uiTown.js` 原先较长（~894行），现已拆分为以下子模块：
+
+| 文件 | 职责 |
+|------|------|
+| `engine/uiTownMap.js` | 平行四边形网格几何常量与函数（`CELL_W`、`CELL_H`、`SLANT`、`BASE_X`、`BASE_Y`、`getCellCorners`、`getCellCenter`、`pointInParallelogram`等） |
+| `engine/uiTownColors.js` | 颜色工具函数（`lightenColor`、`darkenColor`） |
+| `engine/uiTownIcons.js` | 图标绘制函数（`drawWoodenSign`、`drawForestIcon`、`drawBuildingFront`） |
+| `engine/uiTownPerson.js` | 跑步小人动画绘制（`drawRunningPerson`） |
+| `engine/uiTown.js` | 主模块 — 导入子模块，导出 `drawTown()` 和 `screenToGrid()` |
 
 **函数**：`drawTown()`
 
-绘制5×5网格地图，不同颜色表示不同功能格：
+绘制5×5等轴网格地图（平行四边形效果），不同颜色表示不同功能格：
 - 绿色（1）：商店
 - 橙色（2）：战斗塔
 - 紫色（3/4）：出口（下一关/上一关）
 - 绿色（5）：圈养森林（史莱克学院地图特有）
-- 蓝色圆点：玩家位置
+- 深紫色（6）：高级圈养森林（通关七怪跑步后开放）
+- 跑步小人：玩家位置（带3帧跑步动画）
+
+**关键常量**（位于 `engine/uiTownMap.js`）：
+| 常量 | 默认值 | 说明 |
+|------|--------|------|
+| `CELL_W` | 100 | 网格单元格宽度 |
+| `CELL_H` | 70 | 网格单元格高度（纵向压缩产生透视感） |
+| `SLANT` | 40 | 每行向右偏移量（平行四边形效果） |
+| `BASE_X` | 50 | 网格左下角X坐标（调整可左右移动地图） |
+| `BASE_Y` | 520 | 网格左下角Y坐标 |
+
+**木牌绘制**：`drawWoodenSign(ctx, cx, cy, text, color, width, height)`（位于 `engine/uiTownIcons.js`）
+- 绘制带3D厚度的竖立木牌，含木杆（柱子）、木纹、浮雕边框
+- 默认尺寸：72×60（已扩大20%）
+- 字体：19px 楷体（已扩大20%）
+- 注意：木牌上的4颗装饰钉子已被移除
+
+**建筑绘制**：`drawBuildingFront(ctx, cx, cy, text, color, width, height)`（位于 `engine/uiTownIcons.js`）
+- 绘制带3D效果的建筑正面，含屋顶装饰线、门、窗户
+- 默认尺寸：96×66（已扩大20%）
+- 字体：22px 楷体（已扩大20%）
+
+**点击检测**：`screenToGrid(mx, my)`（位于 `engine/uiTown.js`）— 将鼠标坐标转换为网格坐标，使用叉积法检测平行四边形内的点。
+<｜end▁of▁thinking｜>
+
+<｜｜DSML｜｜parameter name="task_progress" string="true">- [x] Read README for game context
+- [x] Analyze uiTown.js to find wooden signs and buildings
+- [x] Remove 4 nails from all wooden signs (drawWoodenSign)
+- [x] Increase wooden sign default size by 20% (60→72, 50→60)
+- [x] Increase wooden sign font size by ~20% (16px→19px)
+- [x] Increase building default size by 20% (80→96, 55→66)
+- [x] Increase building font size by ~20% (18px→22px)
+- [x] Increase all caller dimensions by 20%
+- [x] Verify all changes
+- [x] Update docs/README_UI.md to reflect changes
+- [x] Update docs/README_GUIDE.md with new modification guide entries
 
 ## engine/uiShop.js — 商店界面
 

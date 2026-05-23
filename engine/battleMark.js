@@ -66,15 +66,15 @@ export function addMark(unit, type, duration = 1, extra = {}, battle = null) {
   }
 
   else if (type === 'power_up') {
-    unit.powerBonus += 2;
+    unit.powerBonus += 3;
     unit.marks.push({ type: 'power_up' });
-    logPrefix(`${unit.name}力量+2！`);
+    logPrefix(`${unit.name}力量+3！`);
     recalcDerivedStats(unit);
   }
   else if (type === 'speed_up') {
-    unit.speedBonus += 2;
+    unit.speedBonus += 3;
     unit.marks.push({ type: 'speed_up' });
-    logPrefix(`${unit.name}速度+2！`);
+    logPrefix(`${unit.name}速度+3！`);
     recalcDerivedStats(unit);
   }
   else if (type === 'delay') {

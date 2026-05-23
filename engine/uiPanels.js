@@ -218,14 +218,9 @@ function updateSaveSlots() {
     let html = '';
     for (let slot = 1; slot <= 3; slot++) {
         const info = getSaveSlotInfo(slot);
-        const slotColor = info.exists ? '#2ecc71' : '#666';
         html += `
             <div style="border:1px solid #555; border-radius:8px; margin:8px 0; padding:10px; background:rgba(255,255,255,0.05);">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                    <span style=" color:${slotColor};">存档位 ${slot}</span>
-                    <span style="font-size:13px; color:#aaa;">${info.exists ? '有存档' : '空'}</span>
-                </div>
-                <div style="font-size:13px; color:#ddd; margin-bottom:8px; min-height:20px; word-break:break-all;">${info.displayName}</div>
+                <div style="font-size:19.5px; color:#ddd; margin-bottom:8px; min-height:20px; word-break:break-all;">${info.displayName}</div>
                 <div style="display:flex; gap:8px;">
                     <button class="save-slot-btn" data-slot="${slot}" style="flex:1; padding:8px; background:#2ecc71; color:white; border:none; border-radius:6px; cursor:pointer; font-size:14px;">💾 保存</button>
                     <button class="load-slot-btn" data-slot="${slot}" style="flex:1; padding:8px; background:#3498db; color:white; border:none; border-radius:6px; cursor:pointer; font-size:14px;">📂 读取</button>
@@ -355,22 +350,22 @@ export function createBackpackPanel() {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 320px;
+        width: 416px;
         background: rgba(0,0,0,0.92);
         color: white;
         border: 2px solid #aaa;
-        border-radius: 10px;
-        padding: 20px;
+        border-radius: 13px;
+        padding: 26px;
         z-index: 3000;
         display: none;
         font-family: 'Segoe UI';
         text-align: center;
     `;
     panel.innerHTML = `
-        <h3 style="margin-top:0;">🎒 背包</h3>
-        <div id="backpack-list" style="max-height: 200px; overflow-y:auto; text-align:left;"></div>
-        <button id="close-backpack" style="margin-top:10px; background:#666; color:white; border:none; padding:5px 10px; cursor:pointer;">关闭</button>
-        <p style="margin-top:15px; color:#aaa; font-size:14px;">💡 按 <b>Q</b> 键可快速打开/关闭背包</p>
+        <h3 style="margin-top:0; font-size:31px;">🎒 背包</h3>
+        <div id="backpack-list" style="max-height: 260px; overflow-y:auto; text-align:left;"></div>
+        <button id="close-backpack" style="margin-top:13px; background:#666; color:white; border:none; padding:7px 13px; cursor:pointer; font-size:21px; border-radius:6px;">关闭</button>
+        <p style="margin-top:20px; color:#aaa; font-size:18px;">💡 按 <b>Q</b> 键可快速打开/关闭背包</p>
     `;
     document.body.appendChild(panel);
     document.getElementById('close-backpack').addEventListener('click', () => toggleBackpack(false));
@@ -390,15 +385,15 @@ function updateBackpackList() {
         items.push({ name: '皇家试炼令', count: app.inventory.royalTrialToken, type: 'royalTrialToken' });
     }
     if (items.length === 0) {
-        list.innerHTML = '<p style="text-align:center;">背包空空如也</p>';
+        list.innerHTML = '<p style="text-align:center; font-size:21px;">背包空空如也</p>';
         return;
     }
 
     let html = '';
     items.forEach(item => {
-        html += `<div style="display:flex; justify-content:space-between; align-items:center; margin:5px 0;">
+        html += `<div style="display:flex; justify-content:space-between; align-items:center; margin:7px 0; font-size:21px;">
             <span>${item.name} ×${item.count}</span>
-            <button class="use-item" data-type="${item.type}" style="background:#4a6a7f; color:white; border:none; padding:4px 10px; border-radius:4px; cursor:pointer;">使 用</button>
+            <button class="use-item" data-type="${item.type}" style="background:#4a6a7f; color:white; border:none; padding:5px 13px; border-radius:5px; cursor:pointer; font-size:18px;">使 用</button>
         </div>`;
     });
     list.innerHTML = html;

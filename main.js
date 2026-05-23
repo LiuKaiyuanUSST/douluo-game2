@@ -7,6 +7,8 @@ import {
 } from './engine/utils.js';
 import { initTownMap, goToTown, startLevel, initDialogue, onBattleWin, onBattleLoss, startDialogue, playCityMusic } from './engine/gameLogic.js';
 import { drawTown, drawShop, drawMaze, drawBattle } from './engine/uiRenderer.js';
+import { updateTownMoveAnimation, updateMazeMoveAnimation } from './engine/gameLogic.js';
+
 import { attachMouseHandler, attachKeyboardHandler } from './engine/eventHandlers.js';
 import { BattleSystem } from './engine/battle.js';
 import { calcDerivedStats } from './engine/battleUtils.js';
@@ -63,7 +65,7 @@ window.initGame = async function() {
         initTownMap();
         app.state = 'TOWN';
         app.currentTown = 'noting';
-        app.townPlayerPos = { x: 0, y: 0 };
+            app.townPlayerPos = { x: 0, y: 0 };
         setMoveTip("");
 
         // 初始化主城背景音乐（在开场对话期间创建，对话结束后播放）
@@ -174,14 +176,11 @@ document.getElementById('load-game-btn').addEventListener('click', () => {
     let html = '<h2 style="color:#ffcc88; margin-top:0;">📂 选择存档</h2>';
     for (let slot = 1; slot <= 3; slot++) {
         const info = getSaveSlotInfo(slot);
-        const color = info.exists ? '#2ecc71' : '#666';
         html += `<div style="border:1px solid #555; border-radius:8px; margin:10px 0; padding:12px; background:rgba(255,255,255,0.05);">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                <span style=" color:${color};">存档位 ${slot}</span>
-                <span style="font-size:13px; color:#aaa;">${info.exists ? '有存档' : '空'}</span>
+            <div style="font-size:21px; color:#ddd; margin-bottom:8px; min-height:20px; text-align:center;">${info.displayName}</div>
+            <div style="text-align:center;">
+                <button class="load-slot-select" data-slot="${slot}" style="padding:8px 20px; background:#3498db; color:white; border:none; border-radius:6px; cursor:pointer; font-size:14px;" ${info.exists ? '' : 'disabled'}>${info.exists ? '读取此存档' : '（空）'}</button>
             </div>
-            <div style="font-size:14px; color:#ddd; margin-bottom:8px; min-height:20px;">${info.displayName}</div>
-            <button class="load-slot-select" data-slot="${slot}" style="padding:8px 20px; background:#3498db; color:white; border:none; border-radius:6px; cursor:pointer; font-size:14px;" ${info.exists ? '' : 'disabled'}>${info.exists ? '读取此存档' : '（空）'}</button>
         </div>`;
     }
     html += '<button id="cancel-load-select" style="margin-top:10px; padding:8px 20px; background:#666; color:white; border:none; border-radius:6px; cursor:pointer; font-size:14px;">取消</button>';
@@ -367,6 +366,17 @@ function gameLoop() {
                 }
             }
         }
+
+        // 更新城镇跑步动画
+        if (app.state === 'TOWN' && app.townMoving) {
+            updateTownMoveAnimation(performance.now());
+        }
+
+        // 更新迷宫跑步动画
+        if (app.state === 'MAZE' && app.mazeMoving) {
+            updateMazeMoveAnimation(performance.now());
+        }
+
 
         if (app.applyDelay) {
             app.applyDelay = false;

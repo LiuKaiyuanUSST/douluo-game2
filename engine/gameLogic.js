@@ -40,10 +40,17 @@ import {
     initTownMap as _initTownMap,
     goToTown as _goToTown,
     tryMoveTown as _tryMoveTown,
+    isTownMoving as _isTownMoving,
+    isMazeMoving as _isMazeMoving,
+    updateTownMoveAnimation as _updateTownMoveAnimation,
+    updateMazeMoveAnimation as _updateMazeMoveAnimation,
+    completeTownMove as _completeTownMove,
+    completeMazeMove as _completeMazeMove,
     openShop as _openShop,
     openLevelSelect as _openLevelSelect,
     startLevel as _startLevel,
     tryMoveMaze as _tryMoveMaze,
+
     registerShowMasterWuhunChoice as _registerShowMasterWuhunChoice,
     registerShowXiaoWuWuhunChoice as _registerShowXiaoWuWuhunChoice,
     registerShowShrekPartnerChoice as _registerShowShrekPartnerChoice,
@@ -158,7 +165,14 @@ export const tryMoveTown = _tryMoveTown;
 export const openShop = _openShop;
 export const openLevelSelect = _openLevelSelect;
 export const startLevel = _startLevel;
+export const isTownMoving = _isTownMoving;
+export const isMazeMoving = _isMazeMoving;
+export const updateTownMoveAnimation = _updateTownMoveAnimation;
+export const updateMazeMoveAnimation = _updateMazeMoveAnimation;
+export const completeTownMove = _completeTownMove;
+export const completeMazeMove = _completeMazeMove;
 export const tryMoveMaze = _tryMoveMaze;
+
 export const registerShowMasterWuhunChoice = _registerShowMasterWuhunChoice;
 export const registerShowXiaoWuWuhunChoice = _registerShowXiaoWuWuhunChoice;
 export const registerShowShrekPartnerChoice = _registerShowShrekPartnerChoice;

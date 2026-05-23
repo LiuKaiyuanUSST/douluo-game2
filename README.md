@@ -86,7 +86,7 @@ DouluoGame/
 | [docs/README_UI.md](./docs/README_UI.md) | UI渲染模块详解（uiRenderer、uiBattle、uiTown、uiShop、uiMaze、uiPanels、uiCharacterTeam） |
 | [docs/README_DIALOGUES.md](./docs/README_DIALOGUES.md) | 对话系统详解（格式、文件列表、触发流程） |
 | [docs/README_AUDIO.md](./docs/README_AUDIO.md) | 音频系统详解（音乐文件、控制函数、切换逻辑） |
-| [docs/README_GUIDE.md](./docs/README_GUIDE.md) | 常见修改指南（武魂、技能、天赋、战斗等15项修改指南） |
+| [docs/README_GUIDE.md](./docs/README_GUIDE.md) | 常见修改指南（武魂、技能、天赋、战斗等17项修改指南） |
 
 ## 核心数据流
 

@@ -113,7 +113,32 @@ export let app = {
   showBattleLog: false,
   battleLog: [],
   lastMoveWasAffinityHint: false,
+
+  // 主城跑步动画状态
+  townMoving: false,
+  townMoveFrom: { x: 0, y: 0 },
+  townMoveTo: { x: 0, y: 0 },
+  townMoveProgress: 0,       // 0.0 ~ 1.0
+  townMoveDirection: { dx: 1, dy: 0 },
+  townMoveAnimStartTime: 0,
+  townMoveAnimDuration: 300, // 毫秒
+  townMoveFrame: 0,          // 当前动画帧 0,1,2
+  townMovePendingDx: 0,
+  townMovePendingDy: 0,
+
+  // 迷宫跑步动画状态（战斗塔和猎魂森林使用和主城一样的小人动画）
+  mazeMoving: false,
+  mazeMoveFrom: { x: 0, y: 0 },
+  mazeMoveTo: { x: 0, y: 0 },
+  mazeMoveProgress: 0,
+  mazeMoveDirection: { dx: 1, dy: 0 },
+  mazeMoveAnimStartTime: 0,
+  mazeMoveAnimDuration: 300,
+  mazeMoveFrame: 0,
+  mazeMovePendingDx: 0,
+  mazeMovePendingDy: 0,
 };
+
 
 export function initApp() {
   app.canvas = document.getElementById('gameCanvas');

@@ -1,6 +1,9 @@
 // engine/eventHandlers.js
 import { app } from './gameState.js';
-import { tryMoveTown, tryMoveMaze, performAttack, handleShopPurchase, goToTown, skipPlayerTurn, onBattleWin, onBattleLoss } from './gameLogic.js';
+import { tryMoveTown, tryMoveMaze, performAttack, handleShopPurchase, goToTown, skipPlayerTurn, onBattleWin, onBattleLoss, isTownMoving, isMazeMoving } from './gameLogic.js';
+
+import { screenToGrid } from './uiTown.js';
+import { mazeScreenToGrid } from './uiMaze.js';
 import { setMoveTip, toggleBackpack } from './utils.js';
 import { getActualProb, getSkillById } from './skills.js';
 // 魂环吸收迷宫移动已集成到 gameTown.js 的 tryMoveMaze 中
@@ -156,23 +159,27 @@ export function attachMouseHandler() {
 
     // Swipe detected - use for directional movement (equivalent to WASD/Arrow keys)
     if (app.state === 'TOWN' && !app.levelSelectDiv) {
+      if (isTownMoving()) return; // 动画中不可打断
       let dx = 0, dy = 0;
       if (Math.abs(deltaX) > Math.abs(deltaY)) {
         // Horizontal swipe
         dx = deltaX > 0 ? -1 : 1;
       } else {
-        // Vertical swipe
-        dy = deltaY > 0 ? -1 : 1;
+        // Vertical swipe - 地图上下对调后：上滑=数据y增大
+        dy = deltaY > 0 ? 1 : -1;
       }
       tryMoveTown(dx, dy);
     } else if (app.state === 'MAZE') {
+      if (isMazeMoving()) return; // 动画中不可打断
       let dx = 0, dy = 0;
       if (Math.abs(deltaX) > Math.abs(deltaY)) {
         dx = deltaX > 0 ? -1 : 1;
       } else {
-        dy = deltaY > 0 ? -1 : 1;
+        // 3D等轴测视图：上滑(↑)→增大dataY；下滑(↓)→减小dataY
+        dy = deltaY > 0 ? 1 : -1;
       }
       tryMoveMaze(dx, dy);
+
     }
   }, { passive: false });
 
@@ -340,35 +347,30 @@ export function attachMouseHandler() {
 
     // 城镇 / 迷宫移动
     if (app.state === 'TOWN' && !app.levelSelectDiv) {
-      const cellW = 100, cellH = 100, offsetX = 100, offsetY = 100;
-      const gx = Math.floor((mx - offsetX) / cellW);
-      const gy = Math.floor((my - offsetY) / cellH);
-      if (gx >= 0 && gx < 5 && gy >= 0 && gy < 5) {
-        const dx = gx - app.townPlayerPos.x;
-        const dy = gy - app.townPlayerPos.y;
+      if (isTownMoving()) return; // 动画中不可打断
+      // 使用平行四边形感知的坐标转换（uiTown.js的screenToGrid）
+      const gridInfo = screenToGrid(mx, my);
+      if (gridInfo) {
+        // 上下对调后：屏幕 gy=0（底部）= 数据 y=0，屏幕 gy=4（顶部）= 数据 y=4
+        // mapY = gy 直接对应数据坐标
+        const dx = gridInfo.gx - app.townPlayerPos.x;
+        const dy = gridInfo.gy - app.townPlayerPos.y;
         if (Math.abs(dx) + Math.abs(dy) === 1) tryMoveTown(dx, dy);
         else setMoveTip("只能移动到相邻格子");
       }
     }
 
     if (app.state === 'MAZE' && app.maze) {
-      const cellSize = app.maze.size >= 9 ? 55 : (app.maze.size >= 8 ? 60 : 80);
-      const offset = app.maze.size >= 9 ? 152 : (app.maze.size >= 8 ? 50 : 100);
-      const offsetY = app.maze.size >= 9 ? 80 : offset;
-
-
-
-      const gx = Math.floor((mx - offset) / cellSize);
-      const gy = Math.floor((my - offsetY) / cellSize);
-
-
-      if (gx >= 0 && gx < app.maze.size && gy >= 0 && gy < app.maze.size) {
-        const dx = gx - app.maze.px;
-        const dy = gy - app.maze.py;
+      // 使用3D等轴测视图感知的坐标转换
+      const gridInfo = mazeScreenToGrid(mx, my);
+      if (gridInfo) {
+        const dx = gridInfo.gx - app.maze.px;
+        const dy = gridInfo.dataY - app.maze.py;
         if (Math.abs(dx) + Math.abs(dy) === 1) tryMoveMaze(dx, dy);
         else setMoveTip("只能移动到相邻格子");
       }
     }
+
   });
 }
 
@@ -387,19 +389,24 @@ export function attachKeyboardHandler() {
       return;
     }
     if (app.state === 'TOWN' && !app.levelSelectDiv) {
+      if (isTownMoving()) return; // 动画中不可打断
       let dx = 0, dy = 0;
-      if (e.key === 'ArrowUp' || e.key === 'w') dy = -1;
-      else if (e.key === 'ArrowDown' || e.key === 's') dy = 1;
+      // 地图上下对调后：上=数据y增大
+      if (e.key === 'ArrowUp' || e.key === 'w') dy = 1;
+      else if (e.key === 'ArrowDown' || e.key === 's') dy = -1;
       else if (e.key === 'ArrowLeft' || e.key === 'a') dx = -1;
       else if (e.key === 'ArrowRight' || e.key === 'd') dx = 1;
       if (dx || dy) tryMoveTown(dx, dy);
     } else if (app.state === 'MAZE') {
+      if (isMazeMoving()) return; // 动画中不可打断
       let dx = 0, dy = 0;
-      if (e.key === 'ArrowUp' || e.key === 'w') dy = -1;
-      else if (e.key === 'ArrowDown' || e.key === 's') dy = 1;
+      // 3D等轴测视图：上→增大dataY（往右上角Boss走），下→减小dataY
+      if (e.key === 'ArrowUp' || e.key === 'w') dy = 1;
+      else if (e.key === 'ArrowDown' || e.key === 's') dy = -1;
       else if (e.key === 'ArrowLeft' || e.key === 'a') dx = -1;
       else if (e.key === 'ArrowRight' || e.key === 'd') dx = 1;
       if (dx || dy) tryMoveMaze(dx, dy);
+
     } else if (app.state === 'BATTLE') {
       if (e.key === 'f' || e.key === 'F') {
         e.preventDefault();

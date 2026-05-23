@@ -35,8 +35,8 @@ export const SKILL_POOL = {
     ],
     '天工': [
         { id: '治疗', name: '治疗', cost: 2, type: 'heal', target: 'ally', baseProb: 0.5, desc: '50%回复2点HP' },
-        { id: '一曰力', name: '一曰力', cost: 3, type: 'power_up', target: 'ally', baseProb: 0.5, desc: '50%附加巨力（本场力量+2）' },
-        { id: '二曰速', name: '二曰速', cost: 3, type: 'speed_up', target: 'ally', baseProb: 0.5, desc: '50%附加极速（本场速度+2）' }
+        { id: '一曰力', name: '一曰力', cost: 3, type: 'power_up', target: 'ally', baseProb: 0.5, desc: '50%附加巨力（本场力量+3）' },
+        { id: '二曰速', name: '二曰速', cost: 3, type: 'speed_up', target: 'ally', baseProb: 0.5, desc: '50%附加极速（本场速度+3）' }
     ],
     '沧澜': [
         { id: '痊愈', name: '痊愈', cost: 3, type: 'heal_all', target: 'all_ally', baseProb: 0.5, desc: '50%概率为每个存活队友回复1HP' },

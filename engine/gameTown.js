@@ -60,6 +60,210 @@ export function goToTown(resetPos = true) {
     }
 }
 
+export function isTownMoving() {
+  return app.townMoving;
+}
+
+export function isMazeMoving() {
+  return app.mazeMoving;
+}
+
+export function updateMazeMoveAnimation(currentTime) {
+  if (!app.mazeMoving) return false;
+  const elapsed = currentTime - app.mazeMoveAnimStartTime;
+  const duration = app.mazeMoveAnimDuration;
+  app.mazeMoveProgress = Math.min(1, elapsed / duration);
+  
+  // 计算当前帧 (0,1,2)
+  if (app.mazeMoveProgress < 0.33) {
+    app.mazeMoveFrame = 0;
+  } else if (app.mazeMoveProgress < 0.66) {
+    app.mazeMoveFrame = 1;
+  } else {
+    app.mazeMoveFrame = 2;
+  }
+  
+  if (app.mazeMoveProgress >= 1) {
+    app.mazeMoving = false;
+    completeMazeMove();
+    return true;
+  }
+  return true;
+}
+
+export function completeMazeMove() {
+  const dx = app.mazeMovePendingDx;
+  const dy = app.mazeMovePendingDy;
+  
+  // 执行实际的迷宫移动
+  if (!app.maze.move(dx, dy)) return;
+  
+  // 以下逻辑原为 tryMoveMaze 中 maze.move() 后的后处理
+  // ======== 猎魂森林模式 ========
+  if (app.maze.isHuntingForest) {
+    if (app.maze.isBossCell()) {
+      const bossInfo = app.maze.getCurrentBossInfo();
+      if (bossInfo) {
+        if (bossInfo.defeated) {
+          setMoveTip(`🌲 该魂兽已被击败`);
+        } else {
+          startBeastForestBossFight(bossInfo);
+        }
+      }
+    } else {
+      setMoveTip("🌲 猎魂森林 - 探索并找到所有魂兽");
+    }
+    return;
+  }
+  
+  // ======== 七怪跑步自定义迷宫 ========
+  if (app.maze._isCustomMaze && app.currentLevel === 4) {
+    const px = app.maze.px;
+    const py = app.maze.py;
+    if (!app.qiGuaiComplainDone && px === 3) {
+      app.qiGuaiComplainDone = true;
+      startDialogue('complain', 'chapter5_qiGuai.txt', () => {
+        setMoveTip("继续前进...");
+      });
+      return;
+    }
+    if (!app.qiGuaiHelpDone && py >= 0 && py <= 2 && px >= 4 && px <= 8) {
+      app.qiGuaiHelpDone = true;
+      startDialogue('help_each_other', 'chapter5_qiGuai.txt', () => {
+        setMoveTip("继续前进...");
+      });
+      return;
+    }
+    if (!app.maze.isBossCell() && Math.random() < 0.5) {
+      const decadeBeasts = [
+        { name: '孤竹', wuhun: '孤竹', level: 1, skills: [], chosenAffinity: '苍木', subAffinity: '苍木', color: '#27ae60' },
+        { name: '闪电兔', wuhun: '闪电兔', level: 1, skills: [], chosenAffinity: '雷霆', subAffinity: '雷霆', color: '#f1c40f' },
+        { name: '尖尾雨燕', wuhun: '尖尾雨燕', level: 1, skills: [], chosenAffinity: '沧澜', subAffinity: '沧澜', color: '#3498db' },
+        { name: '斑斓猫', wuhun: '斑斓猫', level: 1, skills: [], chosenAffinity: '烈焰', subAffinity: '烈焰', color: '#e74c3c' },
+        { name: '断肠草', wuhun: '断肠草', level: 1, skills: [], chosenAffinity: '蛊毒', subAffinity: '蛊毒', color: '#8e44ad' },
+        { name: '大角羊', wuhun: '大角羊', level: 1, skills: [], chosenAffinity: '巨兽', subAffinity: '巨兽', color: '#d35400' },
+        { name: '锄头', wuhun: '锄头', level: 1, skills: [], chosenAffinity: '天工', subAffinity: '天工', color: '#7f8c8d' }
+      ];
+      const shuffled = [...decadeBeasts].sort(() => Math.random() - 0.5);
+      const enemies = shuffled.slice(0, 3);
+      const formations = ['front-front-front', 'front-front-back', 'front-back-back'];
+      const formation = formations[Math.floor(Math.random() * formations.length)];
+      stopCityMusic();
+      const players = buildUnitsFromParty(1);
+      app.battle = new BattleSystem(players, enemies, {
+        playerFormation: app.selectedFormation,
+        enemyFormation: formation
+      });
+      app.state = 'BATTLE'; app.battleTargeting = false; app.battleEnemyTurnDone = false;
+      setMoveTip("⚔️ 遭遇十年魂兽！");
+      return;
+    }
+  }
+  
+  // ======== Boss格检查 ========
+  if (app.maze.isBossCell()) {
+    const stage = app.config.stages.levels[app.currentLevel];
+    if (stage.bosses && stage.bosses.length) {
+      const bossDef = stage.bosses[app.currentBossPhase] || stage.bosses[0];
+      if (app.currentLevel === 1 && app.currentBossPhase === 0) {
+        startDialogue('before_boss_dmb', 'chapter2_dmb.txt', () => {
+          startBossFight(bossDef);
+        });
+      } else if (app.currentLevel === 3) {
+        startDialogue('village_walk', 'chapter4_mhj.txt', () => {
+          startDialogue('separate', 'chapter4_mhj.txt', () => {
+            startDialogue('meet_mhj', 'chapter4_mhj.txt', () => {
+              startDialogue('boss_mhj', 'chapter4_mhj.txt', () => {
+                startBossFight(bossDef);
+              });
+            });
+          });
+        });
+      } else if (app.currentLevel === 4) {
+        app.qiGuaiMazeCompleted = true;
+        startDialogue('after_battle_summary', 'chapter5_qiGuai.txt', () => {
+          setMoveTip("🏁 七怪跑步完成！");
+          const next = app.currentLevel + 1;
+          if (next < app.config.stages.levels.length && !app.unlockedLevels.includes(next)) {
+            app.unlockedLevels.push(next);
+            app.unlockedLevels.sort((a,b)=>a-b);
+          }
+          goToTown();
+        });
+      } else {
+        startBossFight(bossDef);
+      }
+    }
+    return;
+  }
+  
+  // ======== 随机小怪 ========
+  if (!app.maze._isCustomMaze && Math.random() < 0.2) {
+    let enemies = [];
+    if (app.currentLevel === 3) {
+      enemies = [
+        { name: '火蜥蜴', wuhun: '火蜥蜴', level: 2, skills: ['灼烧'], chosenAffinity: '烈焰', subAffinity: '巨兽', color: '#e67e22' },
+        { name: '斑斓猫', wuhun: '斑斓猫', level: 1, skills: [], chosenAffinity: '烈焰', subAffinity: '蛊毒', color: '#e74c3c' },
+        { name: '闪电兔', wuhun: '闪电兔', level: 1, skills: [], chosenAffinity: '烈焰', subAffinity: '烈焰', color: '#f39c12' }
+      ];
+    } else {
+      const count = (app.currentLevel === 1) ? 2 : (app.currentLevel === 2) ? 3 : 1;
+      const enemyId = (app.currentLevel === 0) ? 'student' : (app.currentLevel === 2) ? 'beast_outskirt' : 'beast';
+      for (let i = 0; i < count; i++) {
+        const e = buildEnemyFromMonster(enemyId, 1, true);
+        if (e) enemies.push(e);
+      }
+      if (!enemies.length) {
+        enemies.push({ name:'野怪', wuhun:'豹子', level:1, skills:[], chosenAffinity:'巨兽', subAffinity:'雷霆', color:'#e74c3c' });
+      }
+    }
+    stopCityMusic();
+    const players = buildUnitsFromParty(1);
+    app.battle = new BattleSystem(players, enemies, {
+      playerFormation: app.selectedFormation
+    });
+    app.state = 'BATTLE'; app.battleTargeting = false; app.battleEnemyTurnDone = false;
+    setMoveTip("⚔️ 遭遇小怪！");
+    return;
+  }
+  
+  // ======== 普通移动提示 ========
+  const hasDead = app.party.some(m => m.alive === false);
+  if (hasDead) {
+    setMoveTip("您的队伍有人倒下了，您可以点击下方主城按钮补给后再来挑战哦");
+  } else {
+    if (Math.random() < 0.3) {
+      setMoveTip("如需获取金魂币，您可以选择低等级关卡战斗哦");
+    } else {
+      setMoveTip("您可以随时点击下方主城按钮回到主城");
+    }
+  }
+}
+
+
+export function updateTownMoveAnimation(currentTime) {
+  if (!app.townMoving) return false;
+  const elapsed = currentTime - app.townMoveAnimStartTime;
+  const duration = app.townMoveAnimDuration;
+  app.townMoveProgress = Math.min(1, elapsed / duration);
+  
+  // 计算当前帧 (0,1,2)
+  if (app.townMoveProgress < 0.33) {
+    app.townMoveFrame = 0;
+  } else if (app.townMoveProgress < 0.66) {
+    app.townMoveFrame = 1;
+  } else {
+    app.townMoveFrame = 2;
+  }
+  
+  if (app.townMoveProgress >= 1) {
+    app.townMoving = false;
+    completeTownMove();
+    return true;
+  }
+  return true;
+}
+
 export function tryMoveTown(dx, dy) {
     const townData = app.townMaps[app.currentTown];
     if (!townData) return false;
@@ -185,8 +389,26 @@ export function tryMoveTown(dx, dy) {
         return true;
     }
 
-    app.townPlayerPos = { x: nx, y: ny };
-    if (app.lastMoveWasAffinityHint) {
+    // 开始跑步动画
+    app.townMoveFrom = { ...app.townPlayerPos };
+    app.townMoveTo = { x: nx, y: ny };
+    app.townMoveDirection = { dx, dy };
+    app.townMoving = true;
+    app.townMoveProgress = 0;
+    app.townMoveAnimStartTime = performance.now();
+    app.townMovePendingDx = dx;
+    app.townMovePendingDy = dy;
+    return true;
+}
+
+export function completeTownMove() {
+  const dx = app.townMovePendingDx;
+  const dy = app.townMovePendingDy;
+  const nx = app.townPlayerPos.x + dx;
+  const ny = app.townPlayerPos.y + dy;
+  app.townPlayerPos = { x: nx, y: ny };
+
+  if (app.lastMoveWasAffinityHint) {
         app.showAffinityHint = false;
         app.lastMoveWasAffinityHint = false;
     }
@@ -263,21 +485,22 @@ export function openLevelSelect() {
     if (available.length === 0) { setMoveTip("当前区域暂无可用关卡"); return; }
     const div = document.createElement('div');
     div.id = 'level-select-panel';
-    div.style.cssText = 'position:fixed; left:30%; top:30%; width:300px; background:#2c3e2f; border:3px solid gold; padding:20px; z-index:1000; text-align:center; color:white;';
-    div.innerHTML = '<h3>选择关卡</h3><hr>';
+    div.style.cssText = 'position:fixed; left:26%; top:26%; width:380px; background:#2c3e2f; border:4px solid gold; padding:28px; z-index:1000; text-align:center; color:white; font-size:20px;';
+    div.innerHTML = '<h3 style="font-size:28px; margin:0 0 12px 0;">选择关卡</h3><hr style="margin:10px 0;">';
     const list = document.createElement('ul');
-    list.style.listStyle = 'none'; list.style.padding = 0;
+    list.style.listStyle = 'none'; list.style.padding = 0; list.style.fontSize = '20px';
     for (let idx of available) {
         const stage = app.config.stages.levels[idx];
         const li = document.createElement('li');
-        li.style.cssText = 'margin:10px; cursor:pointer; background:#4a6a7f; padding:8px;';
+        li.style.cssText = 'margin:14px; cursor:pointer; background:#4a6a7f; padding:12px; font-size:20px; border-radius:8px;';
         li.innerText = `${stage.name} (${stage.size}x${stage.size})`;
         li.onclick = () => { document.body.removeChild(div); app.levelSelectDiv = null; startLevel(idx); };
         list.appendChild(li);
     }
     div.appendChild(list);
     const closeBtn = document.createElement('button');
-    closeBtn.innerText = '取消'; closeBtn.style.marginTop = '15px';
+    closeBtn.innerText = '取消'; 
+    closeBtn.style.cssText = 'margin-top:18px; padding:12px 28px; background:#666; color:white; border:none; border-radius:8px; cursor:pointer; font-size:20px;';
     closeBtn.onclick = () => { document.body.removeChild(div); app.levelSelectDiv = null; };
     div.appendChild(closeBtn);
     document.body.appendChild(div);
@@ -375,200 +598,26 @@ export function startLevel(levelIdx) {
 export function tryMoveMaze(dx, dy) {
     if (app.state !== 'MAZE') return false;
     
-    // 魂环吸收迷宫模式 - 使用独立的移动逻辑
+    // 魂环吸收迷宫模式 - 使用独立的移动逻辑（不作改变）
     if (app.maze._isSoulRingMaze) {
         return tryMoveSoulRingMaze(dx, dy);
     }
     
-    if (!app.maze.move(dx, dy)) return false;
+    // 检查是否可以移动（使用 canMove 而不是直接 move，因为实际移动将在动画完成后执行）
+    if (!app.maze.canMove(dx, dy)) return false;
     
-    // 猎魂森林模式
-    if (app.maze.isHuntingForest) {
-        if (app.maze.isBossCell()) {
-            const bossInfo = app.maze.getCurrentBossInfo();
-            if (bossInfo) {
-                if (bossInfo.defeated) {
-                    setMoveTip(`🌲 该魂兽已被击败`);
-                } else {
-                    // 触发魂兽森林Boss战斗
-                    startBeastForestBossFight(bossInfo);
-                }
-            }
-        } else {
-            setMoveTip("🌲 猎魂森林 - 探索并找到所有魂兽");
-        }
-        return true;
-    }
-    
-    // 七怪跑步自定义迷宫：触发剧情事件 + 随机小怪
-    if (app.maze._isCustomMaze && app.currentLevel === 4) {
-        const px = app.maze.px;
-        const py = app.maze.py;
-        // 首次进入第4列（x=3）时触发抱怨剧情
-        if (!app.qiGuaiComplainDone && px === 3) {
-            app.qiGuaiComplainDone = true;
-            startDialogue('complain', 'chapter5_qiGuai.txt', () => {
-                setMoveTip("继续前进...");
-            });
-            return true;
-        }
-        // 首次进入前三行（y=0,1,2）且第5-9列（x=4~8）时触发互相帮助剧情
-        if (!app.qiGuaiHelpDone && py >= 0 && py <= 2 && px >= 4 && px <= 8) {
-            app.qiGuaiHelpDone = true;
-            startDialogue('help_each_other', 'chapter5_qiGuai.txt', () => {
-                setMoveTip("继续前进...");
-            });
-            return true;
-        }
-        // 非Boss格随机遭遇小怪（50%概率）
-        if (!app.maze.isBossCell() && Math.random() < 0.5) {
-            // 十年魂兽池
-            const decadeBeasts = [
-                { name: '孤竹', wuhun: '孤竹', level: 1, skills: [], chosenAffinity: '苍木', subAffinity: '苍木', color: '#27ae60' },
-                { name: '闪电兔', wuhun: '闪电兔', level: 1, skills: [], chosenAffinity: '雷霆', subAffinity: '雷霆', color: '#f1c40f' },
-                { name: '尖尾雨燕', wuhun: '尖尾雨燕', level: 1, skills: [], chosenAffinity: '沧澜', subAffinity: '沧澜', color: '#3498db' },
-                { name: '斑斓猫', wuhun: '斑斓猫', level: 1, skills: [], chosenAffinity: '烈焰', subAffinity: '烈焰', color: '#e74c3c' },
-                { name: '断肠草', wuhun: '断肠草', level: 1, skills: [], chosenAffinity: '蛊毒', subAffinity: '蛊毒', color: '#8e44ad' },
-                { name: '大角羊', wuhun: '大角羊', level: 1, skills: [], chosenAffinity: '巨兽', subAffinity: '巨兽', color: '#d35400' },
-                { name: '锄头', wuhun: '锄头', level: 1, skills: [], chosenAffinity: '天工', subAffinity: '天工', color: '#7f8c8d' }
-            ];
-            // 随机选3个
-            const shuffled = [...decadeBeasts].sort(() => Math.random() - 0.5);
-            const enemies = shuffled.slice(0, 3);
-            // 随机阵型
-            const formations = ['front-front-front', 'front-front-back', 'front-back-back'];
-            const formation = formations[Math.floor(Math.random() * formations.length)];
-            // 进入战斗
-            stopCityMusic();
-            const players = buildUnitsFromParty(1);
-            app.battle = new BattleSystem(players, enemies, {
-                playerFormation: app.selectedFormation,
-                enemyFormation: formation
-            });
-            app.state = 'BATTLE'; app.battleTargeting = false; app.battleEnemyTurnDone = false;
-            setMoveTip("⚔️ 遭遇十年魂兽！");
-            return true;
-        }
-    }
-    
-    // 普通迷宫逻辑
-    if (app.maze.isBossCell()) {
-
-
-        const stage = app.config.stages.levels[app.currentLevel];
-        if (stage.bosses && stage.bosses.length) {
-            const bossDef = stage.bosses[app.currentBossPhase] || stage.bosses[0];
-            // 第2关（戴沐白）：进Boss格先播放剧情，再开始Boss战（仅第一次进入时播放）
-            if (app.currentLevel === 1 && app.currentBossPhase === 0) {
-                startDialogue('before_boss_dmb', 'chapter2_dmb.txt', () => {
-                    startBossFight(bossDef);
-                });
-            }
-            // 第4关（马红俊）：进Boss格先播放剧情，再开始Boss战
-            else if (app.currentLevel === 3) {
-                startDialogue('village_walk', 'chapter4_mhj.txt', () => {
-                    startDialogue('separate', 'chapter4_mhj.txt', () => {
-                        startDialogue('meet_mhj', 'chapter4_mhj.txt', () => {
-                            startDialogue('boss_mhj', 'chapter4_mhj.txt', () => {
-                                startBossFight(bossDef);
-                            });
-                        });
-                    });
-                });
-            }
-            // 第5关（七怪跑步）：到达终点播放结束剧情
-            else if (app.currentLevel === 4) {
-                app.qiGuaiMazeCompleted = true;
-                startDialogue('after_battle_summary', 'chapter5_qiGuai.txt', () => {
-                    setMoveTip("🏁 七怪跑步完成！");
-                    // 解锁下一关
-                    const next = app.currentLevel + 1;
-                    if (next < app.config.stages.levels.length && !app.unlockedLevels.includes(next)) {
-                        app.unlockedLevels.push(next);
-                        app.unlockedLevels.sort((a,b)=>a-b);
-                    }
-                    // 返回主城
-                    goToTown();
-                });
-            }
-
-            else {
-                startBossFight(bossDef);
-            }
-        }
-    } else if (!app.maze._isCustomMaze && Math.random() < 0.2) {
-
-
-        let enemies = [];
-        // 邪火凤凰关卡（关卡索引3）：小怪改为火蜥蜴（2级灼烧）、斑斓猫（1级）、闪电兔（1级），全部以烈焰系出战
-        if (app.currentLevel === 3) {
-            enemies = [
-                {
-                    name: '火蜥蜴',
-                    wuhun: '火蜥蜴',
-                    level: 2,
-                    skills: ['灼烧'],
-                    chosenAffinity: '烈焰',
-                    subAffinity: '巨兽',
-                    color: '#e67e22'
-                },
-                {
-                    name: '斑斓猫',
-                    wuhun: '斑斓猫',
-                    level: 1,
-                    skills: [],
-                    chosenAffinity: '烈焰',
-                    subAffinity: '蛊毒',
-                    color: '#e74c3c'
-                },
-                {
-                    name: '闪电兔',
-                    wuhun: '闪电兔',
-                    level: 1,
-                    skills: [],
-                    chosenAffinity: '烈焰',
-                    subAffinity: '烈焰',
-                    color: '#f39c12'
-                }
-            ];
-        } else {
-            const count = (app.currentLevel === 1) ? 2 : (app.currentLevel === 2) ? 3 : 1;
-            const enemyId = (app.currentLevel === 0) ? 'student' : (app.currentLevel === 2) ? 'beast_outskirt' : 'beast';
-            for (let i = 0; i < count; i++) {
-                const e = buildEnemyFromMonster(enemyId, 1, true);
-                if (e) enemies.push(e);
-            }
-            if (!enemies.length) {
-                enemies.push({
-                    name:'野怪', wuhun:'豹子', level:1, skills:[],
-                    chosenAffinity:'巨兽', subAffinity:'雷霆', color:'#e74c3c'
-                });
-            }
-        }
-        // 进入战斗，停止主城音乐
-        stopCityMusic();
-
-        const players = buildUnitsFromParty(1);
-        app.battle = new BattleSystem(players, enemies, {
-            playerFormation: app.selectedFormation
-        });
-        app.state = 'BATTLE'; app.battleTargeting = false; app.battleEnemyTurnDone = false;
-        setMoveTip("⚔️ 遭遇小怪！");
-
-    } else {
-        const hasDead = app.party.some(m => m.alive === false);
-        if (hasDead) {
-            setMoveTip("您的队伍有人倒下了，您可以点击下方主城按钮补给后再来挑战哦");
-        } else {
-            if (Math.random() < 0.3) {
-                setMoveTip("如需获取金魂币，您可以选择低等级关卡战斗哦");
-            } else {
-                setMoveTip("您可以随时点击下方主城按钮回到主城");
-            }
-        }
-    }
+    // 开始跑步动画，延迟执行实际移动
+    app.mazeMoveFrom = { x: app.maze.px, y: app.maze.py };
+    app.mazeMoveTo = { x: app.maze.px + dx, y: app.maze.py + dy };
+    app.mazeMoveDirection = { dx, dy };
+    app.mazeMoving = true;
+    app.mazeMoveProgress = 0;
+    app.mazeMoveAnimStartTime = performance.now();
+    app.mazeMovePendingDx = dx;
+    app.mazeMovePendingDy = dy;
     return true;
 }
+
 
 // ---------- 猎魂森林相关函数 ----------
 
